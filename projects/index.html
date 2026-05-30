@@ -38,7 +38,7 @@ body {
   top: 0; left: 0;
   width: 100%; height: 100%;
   z-index: 0;
-  opacity: 0.12;
+  opacity: 0.06;
   pointer-events: none;
 }
 
@@ -312,8 +312,8 @@ h1 {
 
 /* ── MODULES GRID ── */
 .modules-label {
-  font-size: 10px;
-  color: var(--text-dim);
+  font-size: 11px;
+  color: #00aa22;
   letter-spacing: 3px;
   text-transform: uppercase;
   margin-bottom: 14px;
@@ -325,7 +325,7 @@ h1 {
 .modules-label::after {
   content: '';
   flex: 1; height: 1px;
-  background: var(--border);
+  background: #005500;
 }
 
 .modules-grid {
@@ -355,12 +355,23 @@ h1 {
 
 .module-item.done {
   color: var(--green-mid);
-  border-color: #003300;
+  border-color: #005500;
 }
 
-.module-item.done::before { content: '✓'; color: var(--green); font-size: 10px; text-shadow: var(--glow); }
 .module-item.wip::before  { content: '⟳'; color: #ffaa00; font-size: 10px; }
-.module-item.todo::before { content: '○'; color: var(--text-dim); font-size: 10px; }
+.module-item.todo::before { content: '○'; color: #00aa22; font-size: 10px; }
+
+.module-item.done::before { content: '✓'; color: var(--green); font-size: 10px; text-shadow: var(--glow); }
+
+.module-item.wip {
+  color: #ffaa00;
+  border-color: #554400;
+}
+
+.module-item.todo {
+  color: #00aa22;
+  border-color: #004400;
+}
 
 /* ── TECH STACK ── */
 .stack-label {
@@ -388,11 +399,11 @@ h1 {
 }
 
 .stack-tag {
-  font-size: 11px;
+  font-size: 12px;
   letter-spacing: 1px;
-  color: var(--text-dim);
+  color: #00aa22;
   padding: 5px 12px;
-  border: 1px solid var(--border);
+  border: 1px solid #005500;
   transition: all 0.2s;
 }
 
@@ -408,14 +419,14 @@ h1 {
   justify-content: space-between;
   align-items: center;
   padding-top: 24px;
-  border-top: 1px solid var(--border);
+  border-top: 1px solid #005500;
   flex-wrap: wrap;
   gap: 12px;
 }
 
 .card-meta {
-  font-size: 11px;
-  color: var(--text-dim);
+  font-size: 12px;
+  color: #00aa22;
   letter-spacing: 1px;
 }
 
@@ -425,13 +436,13 @@ h1 {
 }
 
 .card-link {
-  font-size: 11px;
+  font-size: 12px;
   letter-spacing: 2px;
   text-transform: uppercase;
-  color: var(--text-dim);
+  color: #00aa22;
   text-decoration: none;
   padding: 7px 16px;
-  border: 1px solid var(--border);
+  border: 1px solid #005500;
   transition: all 0.2s;
   display: flex;
   align-items: center;
