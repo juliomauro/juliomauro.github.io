@@ -588,13 +588,13 @@ footer {
           </div>
           <div class="card-badges">
             <span class="badge badge-wip">⟳ In Progress</span>
-            <span class="badge badge-platform">M5Stack Core2 ADV</span>
+            <span class="badge badge-platform">M5Cardputer ADV</span>
             <span class="badge badge-lang">C++ · PlatformIO</span>
           </div>
         </div>
 
         <p class="card-desc">
-          <strong>ORUAM BSS</strong> (Basic Security Suite) is a custom firmware for the <strong>M5Stack Core2 ADV</strong> that turns the device into a compact, handheld security reconnaissance tool. The project explores the real limits of what an <strong>ESP32-based device</strong> can do in the field of network and wireless security — no Linux, no external SBCs, pure embedded C++.
+          <strong>ORUAM BSS</strong> (Basic Security Suite) is a custom firmware for the <strong>M5Cardputer ADV</strong> that turns the device into a compact, handheld security reconnaissance tool. The project explores the real limits of what an <strong>ESP32-S3-based device</strong> can do in the field of network and wireless security — no Linux, no external SBCs, pure embedded C++.
           <br><br>
           The name carries a double meaning: <strong>ORUAM</strong> is the author's security codename, and <strong>BSS</strong> (Basic Security Suite) is also a reference to the 802.11 wireless term <strong>Basic Service Set</strong> — a nod to the WiFi-heavy nature of the tool.
         </p>
@@ -635,7 +635,7 @@ footer {
           <span class="stack-tag">C++</span>
           <span class="stack-tag">PlatformIO</span>
           <span class="stack-tag">Arduino Core</span>
-          <span class="stack-tag">M5Unified</span>
+          <span class="stack-tag">M5Cardputer</span>
           <span class="stack-tag">LovyanGFX</span>
           <span class="stack-tag">802.11</span>
           <span class="stack-tag">BLE</span>
@@ -645,7 +645,7 @@ footer {
         <div class="card-footer">
           <div class="card-meta">Apache 2.0 · Started May 2026</div>
           <div class="card-links">
-            <a href="https://github.com/juliomauro/oruambbs" target="_blank" class="card-link primary">⌥ GitHub Repo</a>
+            <a href="https://github.com/juliomauro/oruam-BSS" target="_blank" class="card-link primary">⌥ GitHub Repo</a>
             <a href="/" class="card-link">← Back</a>
           </div>
         </div>
@@ -705,6 +705,109 @@ footer {
           <div class="card-links">
             <a href="https://meshcore.com.br" target="_blank" class="card-link primary">⌥ meshcore.com.br</a>
             <a href="https://meshcore.io" target="_blank" class="card-link">⌥ meshcore.io</a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- POMODORO CARD -->
+    <div class="project-card">
+      <div class="card-inner">
+
+        <div class="card-header">
+          <div class="card-title-wrap">
+            <div class="card-codename">Project #004 · 2026</div>
+            <div class="card-title">🍅 POMO<span>DORO</span></div>
+          </div>
+          <div class="card-badges">
+            <span class="badge badge-platform">macOS · Linux</span>
+            <span class="badge badge-lang">Bash</span>
+          </div>
+        </div>
+
+        <p class="card-desc">
+          Terminal <strong>Pomodoro timer</strong> for macOS and Linux with no external dependencies. Detects the OS automatically and uses native notifications and audio on each platform — <strong>osascript + afplay</strong> on macOS, <strong>notify-send + sox</strong> on Linux.
+          <br><br>
+          Configurable work and break durations, automatic long break every N sessions, live countdown display, session counter, and graceful <strong>Ctrl+C exit</strong> with a focus time summary.
+        </p>
+
+        <div class="modules-label">Features</div>
+        <div class="modules-grid">
+          <div class="module-item done">macOS support</div>
+          <div class="module-item done">Linux support</div>
+          <div class="module-item done">Live countdown</div>
+          <div class="module-item done">Long break cycle</div>
+          <div class="module-item done">Configurable flags</div>
+          <div class="module-item done">Session summary</div>
+          <div class="module-item done">Native audio</div>
+          <div class="module-item done">Desktop notify</div>
+        </div>
+
+        <div class="stack-label">Tech Stack</div>
+        <div class="stack-tags">
+          <span class="stack-tag">Bash</span>
+          <span class="stack-tag">osascript</span>
+          <span class="stack-tag">afplay</span>
+          <span class="stack-tag">notify-send</span>
+          <span class="stack-tag">sox</span>
+        </div>
+
+        <div class="card-footer">
+          <div class="card-meta">MIT · Started 2026</div>
+          <div class="card-links">
+            <a href="https://github.com/juliomauro/pomodoro" target="_blank" class="card-link primary">⌥ GitHub Repo</a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- HIDEPWPUSHPASSWORD CARD -->
+    <div class="project-card">
+      <div class="card-inner">
+
+        <div class="card-header">
+          <div class="card-title-wrap">
+            <div class="card-codename">Project #005 · 2021</div>
+            <div class="card-title">HIDE<span>PWPUSH</span></div>
+          </div>
+          <div class="card-badges">
+            <span class="badge badge-platform">macOS · Linux</span>
+            <span class="badge badge-lang">Bash · Security</span>
+          </div>
+        </div>
+
+        <p class="card-desc">
+          Secure CLI wrapper for <strong>PWPush</strong> — share passwords via one-time URLs that expire by time or view count. The password is passed as a <strong>JSON body via stdin</strong> to curl, never as a process argument, making it safe against <strong>ps aux</strong> snooping.
+          <br><br>
+          Supports self-hosted PWPush instances, optional notes, recipient delete, numeric validation, and dependency checking. Password can be passed via flag, environment variable, or <strong>stdin pipe</strong>.
+        </p>
+
+        <div class="modules-label">Features</div>
+        <div class="modules-grid">
+          <div class="module-item done">ps aux safe</div>
+          <div class="module-item done">Self-hosted support</div>
+          <div class="module-item done">stdin / env input</div>
+          <div class="module-item done">Expiry by views</div>
+          <div class="module-item done">Expiry by days</div>
+          <div class="module-item done">Optional note</div>
+          <div class="module-item done">Recipient delete</div>
+          <div class="module-item done">Error handling</div>
+        </div>
+
+        <div class="stack-label">Tech Stack</div>
+        <div class="stack-tags">
+          <span class="stack-tag">Bash</span>
+          <span class="stack-tag">curl</span>
+          <span class="stack-tag">jq</span>
+          <span class="stack-tag">PWPush API</span>
+        </div>
+
+        <div class="card-footer">
+          <div class="card-meta">Apache 2.0 · Started 2021</div>
+          <div class="card-links">
+            <a href="https://github.com/juliomauro/HidePWPushPassword" target="_blank" class="card-link primary">⌥ GitHub Repo</a>
           </div>
         </div>
 
