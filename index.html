@@ -5,164 +5,205 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Julio Cesar Mauro — IT Security & Infrastructure</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg:       #0b0c0e;
-  --surface:  #111318;
-  --border:   #1e2028;
-  --green:    #00e5a0;
-  --green-dim:#00916550;
-  --blue:     #4488ff;
-  --muted:    #3a3d4a;
-  --text:     #c8cad4;
-  --text-dim: #5a5e70;
-  --white:    #eceef5;
+  --bg:         #000300;
+  --surface:    #020b02;
+  --border:     #003300;
+  --green:      #00ff41;
+  --green-mid:  #00cc33;
+  --green-dim:  #00aa2244;
+  --green-dark: #003300;
+  --text:       #00cc33;
+  --text-dim:   #006622;
+  --white:      #ccffcc;
+  --glow:       0 0 10px #00ff4166, 0 0 20px #00ff4133;
+  --glow-strong:0 0 8px #00ff41, 0 0 20px #00ff4188, 0 0 40px #00ff4144;
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
 html { scroll-behavior: smooth; }
 
 body {
   background: var(--bg);
   color: var(--text);
-  font-family: 'DM Sans', sans-serif;
-  font-weight: 300;
+  font-family: 'Share Tech Mono', monospace;
   line-height: 1.7;
   overflow-x: hidden;
+  cursor: default;
 }
 
-/* ── NOISE TEXTURE ── */
-body::before {
-  content: '';
+/* ── MATRIX RAIN CANVAS ── */
+#matrix-canvas {
   position: fixed;
-  inset: 0;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
-  pointer-events: none;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
   z-index: 0;
-  opacity: 0.4;
+  opacity: 0.18;
+  pointer-events: none;
 }
 
-/* ── GRID LINES ── */
+/* ── SCANLINES ── */
 body::after {
   content: '';
   position: fixed;
   inset: 0;
-  background-image:
-    linear-gradient(var(--border) 1px, transparent 1px),
-    linear-gradient(90deg, var(--border) 1px, transparent 1px);
-  background-size: 48px 48px;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0,0,0,0.15) 2px,
+    rgba(0,0,0,0.15) 4px
+  );
   pointer-events: none;
-  z-index: 0;
-  opacity: 0.3;
+  z-index: 999;
+}
+
+/* ── VIGNETTE ── */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(ellipse at center, transparent 60%, rgba(0,0,0,0.7) 100%);
+  pointer-events: none;
+  z-index: 1;
 }
 
 .wrap {
   position: relative;
-  z-index: 1;
-  max-width: 860px;
+  z-index: 10;
+  max-width: 900px;
   margin: 0 auto;
   padding: 0 32px;
 }
 
 /* ── HEADER ── */
 header {
-  padding: 80px 0 64px;
+  padding: 80px 0 60px;
   border-bottom: 1px solid var(--border);
+  position: relative;
 }
 
-.header-inner {
+.boot-line {
+  font-size: 11px;
+  color: var(--text-dim);
+  letter-spacing: 1px;
+  margin-bottom: 6px;
+  opacity: 0;
+  animation: fadeIn 0.3s ease forwards;
+}
+.boot-line:nth-child(1) { animation-delay: 0.1s; }
+.boot-line:nth-child(2) { animation-delay: 0.4s; }
+.boot-line:nth-child(3) { animation-delay: 0.7s; }
+.boot-line:nth-child(4) { animation-delay: 1.0s; }
+.boot-line:nth-child(5) { animation-delay: 1.3s; }
+
+.boot-seq { margin-bottom: 40px; }
+
+.header-main {
   display: grid;
   grid-template-columns: 1fr auto;
-  gap: 48px;
-  align-items: end;
-}
-
-.header-tag {
-  font-family: 'DM Mono', monospace;
-  font-size: 11px;
-  color: var(--green);
-  letter-spacing: 3px;
-  text-transform: uppercase;
-  margin-bottom: 20px;
-  display: flex;
+  gap: 40px;
   align-items: center;
-  gap: 10px;
-}
-
-.header-tag::before {
-  content: '';
-  width: 24px;
-  height: 1px;
-  background: var(--green);
+  opacity: 0;
+  animation: fadeIn 0.5s ease 1.6s forwards;
 }
 
 h1 {
-  font-family: 'DM Serif Display', serif;
-  font-size: clamp(38px, 6vw, 58px);
-  color: var(--white);
-  line-height: 1.1;
-  letter-spacing: -1px;
-  margin-bottom: 16px;
-}
-
-h1 em {
-  font-style: italic;
+  font-family: 'Orbitron', monospace;
+  font-size: clamp(28px, 5vw, 46px);
+  font-weight: 900;
   color: var(--green);
+  text-shadow: var(--glow-strong);
+  letter-spacing: 2px;
+  line-height: 1.1;
+  margin-bottom: 10px;
 }
 
 .subtitle {
-  font-size: 14px;
+  font-size: 12px;
   color: var(--text-dim);
-  letter-spacing: 0.5px;
-  line-height: 1.6;
-  max-width: 480px;
+  letter-spacing: 1px;
+  line-height: 1.8;
+}
+
+.subtitle span {
+  color: var(--green-mid);
+}
+
+.avatar-wrap {
+  position: relative;
 }
 
 .avatar {
-  width: 88px;
-  height: 88px;
-  border-radius: 50%;
+  width: 100px;
+  height: 100px;
+  border-radius: 2px;
+  border: 1px solid var(--green-mid);
+  filter: grayscale(100%) brightness(0.8) sepia(100%) hue-rotate(80deg) saturate(3);
+  box-shadow: var(--glow);
+  display: block;
+}
+
+.avatar-wrap::before {
+  content: '';
+  position: absolute;
+  inset: -4px;
   border: 1px solid var(--border);
-  filter: grayscale(20%);
-  opacity: 0.9;
+  border-radius: 2px;
+  animation: pulse 3s ease infinite;
+}
+
+@keyframes pulse {
+  0%,100% { opacity: 0.3; }
+  50% { opacity: 1; }
 }
 
 .header-links {
   display: flex;
-  gap: 20px;
-  margin-top: 32px;
+  gap: 12px;
+  margin-top: 28px;
   flex-wrap: wrap;
+  opacity: 0;
+  animation: fadeIn 0.5s ease 2s forwards;
 }
 
 .link-pill {
-  font-family: 'DM Mono', monospace;
   font-size: 11px;
-  letter-spacing: 1.5px;
+  letter-spacing: 2px;
   text-transform: uppercase;
   color: var(--text-dim);
   text-decoration: none;
   padding: 7px 16px;
   border: 1px solid var(--border);
-  border-radius: 2px;
   transition: all 0.2s;
   display: flex;
   align-items: center;
   gap: 8px;
+  position: relative;
+  overflow: hidden;
+}
+
+.link-pill::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 2px;
+  background: var(--green);
+  transform: scaleY(0);
+  transition: transform 0.2s;
 }
 
 .link-pill:hover {
   color: var(--green);
-  border-color: var(--green);
+  border-color: var(--green-mid);
   background: var(--green-dim);
+  box-shadow: var(--glow);
 }
 
-.link-pill .dot {
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
-  background: currentColor;
+.link-pill:hover::before {
+  transform: scaleY(1);
 }
 
 /* ── NAV ── */
@@ -170,46 +211,65 @@ nav {
   position: sticky;
   top: 0;
   z-index: 100;
-  background: rgba(11,12,14,0.92);
-  backdrop-filter: blur(12px);
+  background: rgba(0,3,0,0.95);
+  backdrop-filter: blur(8px);
   border-bottom: 1px solid var(--border);
-  padding: 14px 0;
+  padding: 12px 0;
 }
 
 .nav-inner {
   display: flex;
-  gap: 28px;
+  gap: 24px;
   align-items: center;
 }
 
 nav a {
-  font-family: 'DM Mono', monospace;
   font-size: 11px;
   letter-spacing: 2px;
   text-transform: uppercase;
   color: var(--text-dim);
   text-decoration: none;
-  transition: color 0.2s;
+  transition: all 0.2s;
+  padding: 4px 0;
+  border-bottom: 1px solid transparent;
 }
 
-nav a:hover { color: var(--green); }
+nav a:hover {
+  color: var(--green);
+  border-bottom-color: var(--green);
+  text-shadow: var(--glow);
+}
 
-.nav-name {
-  font-family: 'DM Mono', monospace;
-  font-size: 11px;
-  letter-spacing: 2px;
-  color: var(--muted);
+.nav-status {
   margin-left: auto;
+  font-size: 10px;
+  color: var(--text-dim);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--green);
+  box-shadow: var(--glow);
+  animation: blink 2s ease infinite;
+}
+
+@keyframes blink {
+  0%,100% { opacity: 1; }
+  50% { opacity: 0.2; }
 }
 
 /* ── SECTIONS ── */
 section {
-  padding: 72px 0;
+  padding: 64px 0;
   border-bottom: 1px solid var(--border);
 }
 
 .section-label {
-  font-family: 'DM Mono', monospace;
   font-size: 10px;
   color: var(--text-dim);
   letter-spacing: 3px;
@@ -220,69 +280,78 @@ section {
   gap: 14px;
 }
 
+.section-label .num {
+  color: var(--green);
+  text-shadow: var(--glow);
+}
+
 .section-label::after {
   content: '';
   flex: 1;
   height: 1px;
-  background: var(--border);
+  background: linear-gradient(90deg, var(--border), transparent);
 }
 
 /* ── SUMMARY ── */
 .summary-text {
-  font-size: 17px;
-  line-height: 1.85;
+  font-size: 16px;
   color: var(--text);
-  max-width: 680px;
+  max-width: 700px;
+  line-height: 1.9;
+  border-left: 2px solid var(--green-dark);
+  padding-left: 24px;
 }
 
 .summary-text strong {
-  color: var(--white);
-  font-weight: 500;
+  color: var(--green);
+  text-shadow: 0 0 8px #00ff4155;
 }
 
 /* ── COMPETENCIES ── */
 .comp-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 10px;
+  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+  gap: 8px;
 }
 
 .comp-item {
-  font-family: 'DM Mono', monospace;
-  font-size: 11px;
+  font-size: 13px;
   letter-spacing: 1px;
   color: var(--text-dim);
   padding: 10px 14px;
   border: 1px solid var(--border);
-  border-radius: 2px;
+  background: var(--surface);
   display: flex;
   align-items: center;
   gap: 10px;
   transition: all 0.2s;
+  cursor: default;
 }
 
 .comp-item:hover {
-  color: var(--text);
-  border-color: var(--muted);
-  background: var(--surface);
+  color: var(--green);
+  border-color: var(--green-mid);
+  background: var(--green-dim);
+  box-shadow: var(--glow);
+  text-shadow: 0 0 8px #00ff4155;
 }
 
 .comp-item::before {
-  content: '▸';
+  content: '>';
   color: var(--green);
-  font-size: 9px;
+  font-size: 10px;
+  text-shadow: var(--glow);
 }
 
 /* ── EXPERIENCE ── */
 .exp-list {
   display: flex;
   flex-direction: column;
-  gap: 0;
 }
 
 .exp-item {
   display: grid;
-  grid-template-columns: 180px 1fr;
+  grid-template-columns: 160px 1fr;
   gap: 32px;
   padding: 36px 0;
   border-bottom: 1px solid var(--border);
@@ -291,48 +360,50 @@ section {
 
 .exp-item:last-child { border-bottom: none; }
 
-.exp-item:hover .exp-company {
-  color: var(--green);
-}
-
-.exp-meta {
-  padding-top: 4px;
-}
-
 .exp-company {
-  font-family: 'DM Serif Display', serif;
-  font-size: 16px;
-  color: var(--white);
-  margin-bottom: 6px;
-  transition: color 0.2s;
-}
-
-.exp-period {
-  font-family: 'DM Mono', monospace;
-  font-size: 10px;
-  color: var(--text-dim);
+  font-family: 'Orbitron', monospace;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--green);
+  text-shadow: var(--glow);
+  margin-bottom: 8px;
   letter-spacing: 1px;
 }
 
-.exp-location {
-  font-family: 'DM Mono', monospace;
+.exp-period {
   font-size: 10px;
-  color: var(--muted);
-  margin-top: 4px;
+  color: var(--text-dim);
+  letter-spacing: 1px;
+  margin-bottom: 4px;
+}
+
+.exp-location {
+  font-size: 10px;
+  color: var(--border);
   letter-spacing: 0.5px;
+  color: #004400;
 }
 
 .exp-role {
   font-size: 13px;
   font-weight: 500;
-  color: var(--green);
-  letter-spacing: 0.5px;
+  color: var(--green-mid);
+  letter-spacing: 1px;
   margin-bottom: 12px;
-  font-family: 'DM Mono', monospace;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.exp-role::before {
+  content: '//';
+  color: var(--text-dim);
+  font-size: 10px;
 }
 
 .exp-body {
-  font-size: 14px;
+  font-size: 15px;
   color: var(--text);
   line-height: 1.75;
 }
@@ -349,128 +420,176 @@ section {
   display: flex;
   gap: 10px;
   align-items: flex-start;
+  font-size: 14px;
+  color: var(--text-dim);
+  transition: color 0.2s;
 }
+
+.exp-body li:hover { color: var(--text); }
 
 .exp-body li::before {
-  content: '—';
-  color: var(--muted);
-  font-family: 'DM Mono', monospace;
-  font-size: 11px;
+  content: '$';
+  color: var(--green);
+  font-size: 10px;
   margin-top: 3px;
   flex-shrink: 0;
+  text-shadow: var(--glow);
 }
 
-.exp-dual .exp-role + .exp-role {
-  margin-top: 24px;
-  padding-top: 24px;
+.exp-sep {
   border-top: 1px solid var(--border);
+  margin: 20px 0;
 }
 
 /* ── EDUCATION ── */
 .edu-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-  gap: 16px;
+  gap: 12px;
 }
 
 .edu-item {
   padding: 24px;
   border: 1px solid var(--border);
-  border-radius: 2px;
   background: var(--surface);
   transition: all 0.2s;
+  position: relative;
+  overflow: hidden;
 }
 
-.edu-item:hover {
-  border-color: var(--muted);
-  transform: translateY(-2px);
+.edu-item::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--green), transparent);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.3s;
 }
+
+.edu-item:hover::before { transform: scaleX(1); }
+.edu-item:hover { border-color: var(--green-mid); }
 
 .edu-school {
-  font-family: 'DM Serif Display', serif;
-  font-size: 16px;
-  color: var(--white);
-  margin-bottom: 6px;
+  font-family: 'Orbitron', monospace;
+  font-size: 13px;
+  color: var(--green);
+  text-shadow: var(--glow);
+  margin-bottom: 8px;
+  letter-spacing: 1px;
 }
 
 .edu-degree {
-  font-size: 13px;
-  color: var(--text);
-  margin-bottom: 8px;
+  font-size: 12px;
+  color: var(--text-dim);
+  margin-bottom: 10px;
+  line-height: 1.5;
 }
 
 .edu-period {
-  font-family: 'DM Mono', monospace;
   font-size: 10px;
-  color: var(--text-dim);
+  color: #004400;
   letter-spacing: 1px;
 }
 
 /* ── FOOTER ── */
 footer {
-  padding: 48px 0;
+  padding: 40px 0;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  flex-wrap: gap;
+  flex-wrap: wrap;
+  gap: 12px;
 }
 
-.footer-name {
-  font-family: 'DM Serif Display', serif;
-  font-size: 20px;
-  color: var(--muted);
+.footer-sig {
+  font-family: 'Orbitron', monospace;
+  font-size: 14px;
+  color: var(--green);
+  text-shadow: var(--glow);
+  letter-spacing: 2px;
 }
 
 .footer-copy {
-  font-family: 'DM Mono', monospace;
   font-size: 10px;
   color: var(--text-dim);
   letter-spacing: 2px;
 }
 
 /* ── ANIMATIONS ── */
-@keyframes fadeUp {
-  from { opacity: 0; transform: translateY(20px); }
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
   to   { opacity: 1; transform: translateY(0); }
 }
 
-header { animation: fadeUp 0.6s ease both; }
-section { animation: fadeUp 0.6s ease both; }
+/* ── GLITCH ── */
+@keyframes glitch {
+  0%,100% { text-shadow: var(--glow-strong); }
+  92% { text-shadow: var(--glow-strong); }
+  93% { text-shadow: -2px 0 #ff0040, 2px 0 #00ffff; transform: translateX(-2px); }
+  94% { text-shadow: var(--glow-strong); transform: translateX(0); }
+  96% { text-shadow: 2px 0 #ff0040, -2px 0 #00ffff; transform: translateX(2px); }
+  97% { text-shadow: var(--glow-strong); transform: translateX(0); }
+}
+
+h1 { animation: glitch 8s ease infinite; }
 
 /* ── RESPONSIVE ── */
 @media (max-width: 640px) {
-  .header-inner { grid-template-columns: 1fr; }
-  .avatar { display: none; }
+  .header-main { grid-template-columns: 1fr; }
+  .avatar-wrap { display: none; }
   .exp-item { grid-template-columns: 1fr; gap: 8px; }
-  .nav-name { display: none; }
-  .wrap { padding: 0 20px; }
+  .nav-status { display: none; }
+  .wrap { padding: 0 16px; }
+  body { font-size: 16px; }
+  .summary-text { font-size: 15px; }
+  .comp-item { font-size: 14px; }
+  .exp-company { font-size: 16px; }
+  .exp-role { font-size: 14px; }
+  .exp-body { font-size: 15px; }
+  .exp-body li { font-size: 14px; }
+  .exp-period, .exp-location { font-size: 12px; }
+  .section-label { font-size: 12px; }
+  nav a { font-size: 13px; }
+  h1 { font-size: 32px; }
+  .subtitle { font-size: 14px; }
 }
 </style>
 </head>
 <body>
 
+<canvas id="matrix-canvas"></canvas>
+
 <div class="wrap">
 
   <!-- HEADER -->
   <header>
-    <div class="header-inner">
+    <div class="boot-seq">
+      <div class="boot-line">> SYSTEM BOOT... [OK]</div>
+      <div class="boot-line">> LOADING PROFILE: juliomauro [OK]</div>
+      <div class="boot-line">> SECURITY CLEARANCE: GRANTED [OK]</div>
+      <div class="boot-line">> EXPERIENCE: 25+ YEARS [OK]</div>
+      <div class="boot-line">> INITIALIZING INTERFACE...</div>
+    </div>
+
+    <div class="header-main">
       <div>
-        <div class="header-tag">Available for strategic roles</div>
-        <h1>Julio Cesar <em>Mauro</em></h1>
-        <p class="subtitle">Head of Infrastructure, Cloud &amp; Security · +25 years managing critical environments · São Paulo, Brazil</p>
+        <h1>JULIO CESAR<br>MAURO</h1>
+        <p class="subtitle">
+          <span>Head of Infrastructure, Cloud &amp; Security</span><br>
+          +25 years managing critical environments<br>
+          São Paulo, Brazil
+        </p>
         <div class="header-links">
-          <a href="https://github.com/juliomauro" target="_blank" class="link-pill">
-            <span class="dot"></span>GitHub
-          </a>
-          <a href="https://linkedin.com/in/juliomauro" target="_blank" class="link-pill">
-            <span class="dot"></span>LinkedIn
-          </a>
-          <a href="mailto:julio.mauro@gmail.com" class="link-pill">
-            <span class="dot"></span>Email
-          </a>
+          <a href="https://github.com/juliomauro" target="_blank" class="link-pill">⌥ GitHub</a>
+          <a href="https://linkedin.com/in/juliomauro" target="_blank" class="link-pill">⌥ LinkedIn</a>
+          <a href="mailto:julio.mauro@gmail.com" class="link-pill">⌥ Email</a>
         </div>
       </div>
-      <img src="https://avatars1.githubusercontent.com/u/25463339?s=180&v=4" alt="Julio Mauro" class="avatar">
+      <div class="avatar-wrap">
+        <img src="https://avatars1.githubusercontent.com/u/25463339?s=180&v=4" alt="Julio Mauro" class="avatar">
+      </div>
     </div>
   </header>
 
@@ -481,40 +600,47 @@ section { animation: fadeUp 0.6s ease both; }
       <a href="#competencies">Skills</a>
       <a href="#experience">Experience</a>
       <a href="#education">Education</a>
-      <span class="nav-name">juliomauro.github.io</span>
+      <div class="nav-status">
+        <div class="status-dot"></div>
+        ONLINE
+      </div>
     </div>
   </nav>
 
   <!-- SUMMARY -->
   <section id="summary">
-    <div class="section-label">01 · Summary</div>
+    <div class="section-label"><span class="num">01</span> Summary</div>
     <p class="summary-text">
       With over <strong>25 years of experience</strong> in Information Technology, I lead infrastructure, information security, and cloud environments. My career has been built managing critical operations, ensuring <strong>high availability</strong>, optimizing hybrid environments, and leading technical teams to deliver strategic solutions aligned with business goals.
       <br><br>
-      Throughout my journey, I led initiatives at major companies such as <strong>Sinch</strong>, <strong>CVC Corp</strong>, <strong>Folha de S.Paulo</strong>, and <strong>Estadão</strong>, combining technical expertise with business-driven results.
+      Throughout my journey, I led initiatives at major companies such as <strong>Sinch</strong>, <strong>CVC Corp</strong>, <strong>Folha de S.Paulo</strong>, and <strong>Estadão</strong>, combining technical expertise with business-driven results. Strong experience in building multidisciplinary teams, promoting innovation, agility, and technological resilience.
     </p>
   </section>
 
   <!-- COMPETENCIES -->
   <section id="competencies">
-    <div class="section-label">02 · Core Competencies</div>
+    <div class="section-label"><span class="num">02</span> Core Competencies</div>
     <div class="comp-grid">
       <div class="comp-item">IT Team Leadership</div>
       <div class="comp-item">Infrastructure Strategy</div>
-      <div class="comp-item">Information Security</div>
-      <div class="comp-item">IT Governance</div>
-      <div class="comp-item">AWS · GCP · Huawei Cloud</div>
+      <div class="comp-item">Incident Response & Forensics</div>
+      <div class="comp-item">Threat Intelligence</div>
+      <div class="comp-item">Security Operations (SecOps)</div>
+      <div class="comp-item">Vulnerability Management</div>
+      <div class="comp-item">Cloud Security · AWS · GCP</div>
+      <div class="comp-item">Zero Trust Architecture</div>
       <div class="comp-item">Terraform · Ansible</div>
-      <div class="comp-item">Systems Migration</div>
+      <div class="comp-item">SIEM · EDR · XDR</div>
+      <div class="comp-item">Penetration Testing</div>
+      <div class="comp-item">DevSecOps</div>
+      <div class="comp-item">IT Governance & Compliance</div>
       <div class="comp-item">Cloud Cost Optimization</div>
-      <div class="comp-item">DevOps</div>
-      <div class="comp-item">Incident Response</div>
     </div>
   </section>
 
   <!-- EXPERIENCE -->
   <section id="experience">
-    <div class="section-label">03 · Professional Experience</div>
+    <div class="section-label"><span class="num">03</span> Professional Experience</div>
     <div class="exp-list">
 
       <div class="exp-item">
@@ -523,17 +649,18 @@ section { animation: fadeUp 0.6s ease both; }
           <div class="exp-period">2019 — Present</div>
           <div class="exp-location">Stockholm, Sweden</div>
         </div>
-        <div class="exp-body exp-dual">
-          <div class="exp-role">IT Security Specialist · Sep 2023 – Present</div>
+        <div class="exp-body">
+          <div class="exp-role">IT Security Specialist · 2023–Present</div>
           <ul>
             <li>Co-leading cybersecurity initiatives to protect cloud and on-premises environments.</li>
             <li>Defining proactive and reactive risk mitigation strategies and managing incident response.</li>
-            <li>Strengthening security operations through threat intelligence, forensic analysis, and automation.</li>
+            <li>Strengthening SecOps through threat intelligence, forensic analysis, and automation.</li>
           </ul>
-          <div class="exp-role">IT Infrastructure Specialist · Apr 2019 – Oct 2023</div>
+          <div class="exp-sep"></div>
+          <div class="exp-role">IT Infrastructure Specialist · 2019–2023</div>
           <ul>
-            <li>Designed and managed critical IT infrastructures across AWS, GCP, Huawei Cloud, and on-premises data centers.</li>
-            <li>Maintained SLA of <strong>99.998% availability</strong>.</li>
+            <li>Designed and managed critical IT infrastructures across AWS, GCP, Huawei Cloud, and on-premises.</li>
+            <li>Maintained SLA of <strong style="color:var(--green)">99.998% availability</strong>.</li>
             <li>Integrated IT environments of acquired companies and optimized cloud resource costs.</li>
           </ul>
         </div>
@@ -557,7 +684,7 @@ section { animation: fadeUp 0.6s ease both; }
 
       <div class="exp-item">
         <div class="exp-meta">
-          <div class="exp-company">Folha de S.Paulo</div>
+          <div class="exp-company">Folha S.Paulo</div>
           <div class="exp-period">2013 — 2015</div>
           <div class="exp-location">São Paulo, Brazil</div>
         </div>
@@ -565,7 +692,7 @@ section { animation: fadeUp 0.6s ease both; }
           <div class="exp-role">IT Coordinator</div>
           <ul>
             <li>Led virtualization migration from XEN to VMware and redesign of web portals and mobile apps.</li>
-            <li>Supported large-scale events: 2014 Brazilian Elections and FIFA World Cup.</li>
+            <li>Supported large-scale events: 2014 Brazilian Elections and FIFA World Cup coverage.</li>
           </ul>
         </div>
       </div>
@@ -577,7 +704,7 @@ section { animation: fadeUp 0.6s ease both; }
           <div class="exp-location">São Paulo, Brazil</div>
         </div>
         <div class="exp-body">
-          <div class="exp-role">VMware Specialist & Senior Linux Consultant</div>
+          <div class="exp-role">VMware Specialist & Sr Linux Consultant</div>
           <ul>
             <li>Consolidated physical servers onto VMware vSphere with HP P4000 iSCSI storage.</li>
             <li>Implemented HA strategies with Varnish load balancers and Akamai CDN integration.</li>
@@ -589,7 +716,7 @@ section { animation: fadeUp 0.6s ease both; }
         <div class="exp-meta">
           <div class="exp-company">Sterling Commerce</div>
           <div class="exp-period">2005 — 2009</div>
-          <div class="exp-location">São Paulo & Curitiba</div>
+          <div class="exp-location">SP & Curitiba</div>
         </div>
         <div class="exp-body">
           <div class="exp-role">GIS & Unix Senior Consultant</div>
@@ -620,7 +747,7 @@ section { animation: fadeUp 0.6s ease both; }
 
   <!-- EDUCATION -->
   <section id="education">
-    <div class="section-label">04 · Education</div>
+    <div class="section-label"><span class="num">04</span> Education</div>
     <div class="edu-grid">
       <div class="edu-item">
         <div class="edu-school">FASP</div>
@@ -628,8 +755,8 @@ section { animation: fadeUp 0.6s ease both; }
         <div class="edu-period">2002 — 2007</div>
       </div>
       <div class="edu-item">
-        <div class="edu-school">Kaplan International</div>
-        <div class="edu-degree">Intensive English Program · Toronto</div>
+        <div class="edu-school">Kaplan</div>
+        <div class="edu-degree">Intensive English Program · Toronto, Canada</div>
         <div class="edu-period">2017</div>
       </div>
       <div class="edu-item">
@@ -642,11 +769,50 @@ section { animation: fadeUp 0.6s ease both; }
 
   <!-- FOOTER -->
   <footer>
-    <div class="footer-name">Julio Mauro</div>
-    <div class="footer-copy">São Paulo · Brazil · 2026</div>
+    <div class="footer-sig">ORUAMOLIUJ.BIN</div>
+    <div class="footer-copy">> Brazil · 2026</div>
   </footer>
 
 </div>
 
+<script>
+// ── MATRIX RAIN ──
+const canvas = document.getElementById('matrix-canvas');
+const ctx = canvas.getContext('2d');
+
+canvas.width  = window.innerWidth;
+canvas.height = window.innerHeight;
+
+window.addEventListener('resize', () => {
+  canvas.width  = window.innerWidth;
+  canvas.height = window.innerHeight;
+  init();
+});
+
+const chars = 'アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン0123456789ABCDEF$#@%&';
+const fontSize = 18;
+let columns, drops;
+
+function init() {
+  columns = Math.floor(canvas.width / fontSize);
+  drops = Array(columns).fill(1);
+}
+
+function draw() {
+  ctx.fillStyle = 'rgba(0, 3, 0, 0.04)';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  ctx.fillStyle = '#00ff41';
+  ctx.font = fontSize + 'px Share Tech Mono';
+  for (let i = 0; i < drops.length; i++) {
+    const char = chars[Math.floor(Math.random() * chars.length)];
+    ctx.fillText(char, i * fontSize, drops[i] * fontSize);
+    if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
+    drops[i]++;
+  }
+}
+
+init();
+setInterval(draw, 45);
+</script>
 </body>
 </html>
