@@ -10,13 +10,13 @@
 :root {
   --bg:         #000300;
   --surface:    #020b02;
-  --border:     #003300;
+  --border:     #005500;
   --green:      #00ff41;
   --green-mid:  #00cc33;
   --green-dim:  #00aa2244;
-  --green-dark: #003300;
-  --text:       #00cc33;
-  --text-dim:   #006622;
+  --green-dark: #005500;
+  --text:       #00dd33;
+  --text-dim:   #00aa22;
   --white:      #ccffcc;
   --glow:       0 0 10px #00ff4166, 0 0 20px #00ff4133;
   --glow-strong:0 0 8px #00ff41, 0 0 20px #00ff4188, 0 0 40px #00ff4144;
@@ -173,10 +173,10 @@ h1 {
   font-size: 11px;
   letter-spacing: 2px;
   text-transform: uppercase;
-  color: var(--text-dim);
+  color: var(--green-mid);
   text-decoration: none;
   padding: 7px 16px;
-  border: 1px solid var(--border);
+  border: 1px solid #005500;
   transition: all 0.2s;
   display: flex;
   align-items: center;
@@ -227,7 +227,7 @@ nav a {
   font-size: 11px;
   letter-spacing: 2px;
   text-transform: uppercase;
-  color: var(--text-dim);
+  color: var(--green-mid);
   text-decoration: none;
   transition: all 0.2s;
   padding: 4px 0;
@@ -362,7 +362,7 @@ section {
 
 .exp-company {
   font-family: 'Orbitron', monospace;
-  font-size: 13px;
+  font-size: 16px;
   font-weight: 700;
   color: var(--green);
   text-shadow: var(--glow);
@@ -371,17 +371,16 @@ section {
 }
 
 .exp-period {
-  font-size: 10px;
+  font-size: 13px;
   color: var(--text-dim);
   letter-spacing: 1px;
   margin-bottom: 4px;
 }
 
 .exp-location {
-  font-size: 10px;
-  color: var(--border);
+  font-size: 12px;
   letter-spacing: 0.5px;
-  color: #004400;
+  color: #00aa22;
 }
 
 .exp-role {
@@ -489,7 +488,7 @@ section {
 
 .edu-period {
   font-size: 10px;
-  color: #004400;
+  color: #00aa22;
   letter-spacing: 1px;
 }
 
@@ -585,6 +584,7 @@ h1 { animation: glitch 8s ease infinite; }
           <a href="https://github.com/juliomauro" target="_blank" class="link-pill">⌥ GitHub</a>
           <a href="https://linkedin.com/in/juliomauro" target="_blank" class="link-pill">⌥ LinkedIn</a>
           <a href="mailto:julio.mauro@gmail.com" class="link-pill">⌥ Email</a>
+          <a href="/projects/" class="link-pill">⌥ Projects</a>
         </div>
       </div>
       <div class="avatar-wrap">
@@ -600,6 +600,7 @@ h1 { animation: glitch 8s ease infinite; }
       <a href="#competencies">Skills</a>
       <a href="#experience">Experience</a>
       <a href="#education">Education</a>
+      <a href="/projects/">Projects</a>
       <div class="nav-status">
         <div class="status-dot"></div>
         ONLINE
@@ -613,7 +614,7 @@ h1 { animation: glitch 8s ease infinite; }
     <p class="summary-text">
       With over <strong>25 years of experience</strong> in Information Technology, I lead infrastructure, information security, and cloud environments. My career has been built managing critical operations, ensuring <strong>high availability</strong>, optimizing hybrid environments, and leading technical teams to deliver strategic solutions aligned with business goals.
       <br><br>
-      Throughout my journey, I led initiatives at major companies such as <strong>Sinch</strong>, <strong>CVC Corp</strong>, <strong>Folha de S.Paulo</strong>, and <strong>Estadão</strong>, combining technical expertise with business-driven results. Strong experience in building multidisciplinary teams, promoting innovation, agility, and technological resilience.
+      Throughout my journey, I led initiatives at <strong>major companies in the communications, tourism, and technology sectors</strong>, combining technical expertise with business-driven results. Strong experience in building multidisciplinary teams, promoting innovation, agility, and technological resilience.
     </p>
   </section>
 
@@ -652,15 +653,18 @@ h1 { animation: glitch 8s ease infinite; }
         <div class="exp-body">
           <div class="exp-role">IT Security Specialist · 2023–Present</div>
           <ul>
-            <li>Co-leading cybersecurity initiatives to protect cloud and on-premises environments.</li>
-            <li>Defining proactive and reactive risk mitigation strategies and managing incident response.</li>
-            <li>Strengthening SecOps through threat intelligence, forensic analysis, and automation.</li>
+            <li>Global leader of the Vulnerability Management Program (VMP), responsible for strategy, governance, and full lifecycle execution across hybrid and multi-cloud environments.</li>
+            <li>Coordinating cybersecurity initiatives across on-premises and multi-cloud environments, with cross-functional engagement between engineering, product, and operations teams.</li>
+            <li>Defining and standardizing vulnerability management strategies for critical CVEs — including deep technical analysis, false positive triage, risk assessment, and exception management.</li>
+            <li>Leading incident investigations and response activities using industry-leading EDR and forensic analysis techniques, contributing to reduced mean time to respond.</li>
+            <li>Automating security processes and reporting through scripting and API integrations — reducing manual team effort by approximately 40%.</li>
+            <li>Risk governance over public asset exposure, insecure configurations, and unauthorized access — focused on attack surface reduction and evidence-based decision making.</li>
           </ul>
           <div class="exp-sep"></div>
           <div class="exp-role">IT Infrastructure Specialist · 2019–2023</div>
           <ul>
-            <li>Designed and managed critical IT infrastructures across AWS, GCP, Huawei Cloud, and on-premises.</li>
-            <li>Maintained SLA of <strong style="color:var(--green)">99.998% availability</strong>.</li>
+            <li>Designed and managed critical IT infrastructures across multi-cloud and on-premises data centers.</li>
+            <li>Maintained SLA of 99.998% availability.</li>
             <li>Integrated IT environments of acquired companies and optimized cloud resource costs.</li>
           </ul>
         </div>
@@ -770,7 +774,7 @@ h1 { animation: glitch 8s ease infinite; }
   <!-- FOOTER -->
   <footer>
     <div class="footer-sig">ORUAMOLIUJ.BIN</div>
-    <div class="footer-copy">> Brazil · 2026</div>
+    <div class="footer-copy">> 2026_</div>
   </footer>
 
 </div>

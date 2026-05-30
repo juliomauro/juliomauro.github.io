@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Projects — Oruam Oliuj</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:          #000300;
+  --surface:     #020b02;
+  --border:      #003300;
+  --green:       #00ff41;
+  --green-mid:   #00cc33;
+  --green-dim:   #00aa2233;
+  --text:        #00cc33;
+  --text-dim:    #006622;
+  --white:       #ccffcc;
+  --glow:        0 0 10px #00ff4166, 0 0 20px #00ff4133;
+  --glow-strong: 0 0 8px #00ff41, 0 0 20px #00ff4188, 0 0 40px #00ff4144;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Share Tech Mono', monospace;
+  line-height: 1.7;
+  overflow-x: hidden;
+  min-height: 100vh;
+}
+
+#matrix-canvas {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  z-index: 0;
+  opacity: 0.12;
+  pointer-events: none;
+}
+
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg, transparent, transparent 2px,
+    rgba(0,0,0,0.12) 2px, rgba(0,0,0,0.12) 4px
+  );
+  pointer-events: none;
+  z-index: 999;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(ellipse at center, transparent 60%, rgba(0,0,0,0.7) 100%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.wrap {
+  position: relative;
+  z-index: 10;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 0 32px;
+}
+
+/* ── NAV ── */
+nav {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(0,3,0,0.95);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--border);
+  padding: 14px 0;
+}
+
+.nav-inner {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+}
+
+.nav-home {
+  font-family: 'Orbitron', monospace;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--green);
+  text-decoration: none;
+  text-shadow: var(--glow);
+  letter-spacing: 2px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.nav-home::before { content: '←'; }
+
+nav a.nav-link {
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  text-decoration: none;
+  transition: all 0.2s;
+}
+
+nav a.nav-link:hover {
+  color: var(--green);
+  text-shadow: var(--glow);
+}
+
+.nav-status {
+  margin-left: auto;
+  font-size: 10px;
+  color: var(--text-dim);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.status-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--green);
+  box-shadow: var(--glow);
+  animation: blink 2s ease infinite;
+}
+
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.2} }
+
+/* ── HEADER ── */
+header {
+  padding: 64px 0 48px;
+  border-bottom: 1px solid var(--border);
+}
+
+.header-tag {
+  font-size: 10px;
+  color: var(--text-dim);
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.header-tag::before {
+  content: '';
+  width: 20px; height: 1px;
+  background: var(--green);
+  box-shadow: var(--glow);
+}
+
+h1 {
+  font-family: 'Orbitron', monospace;
+  font-size: clamp(28px, 5vw, 42px);
+  font-weight: 900;
+  color: var(--green);
+  text-shadow: var(--glow-strong);
+  letter-spacing: 2px;
+  margin-bottom: 12px;
+  animation: glitch 8s ease infinite;
+}
+
+.header-sub {
+  font-size: 13px;
+  color: var(--text-dim);
+  letter-spacing: 1px;
+}
+
+@keyframes glitch {
+  0%,100% { text-shadow: var(--glow-strong); }
+  92% { text-shadow: var(--glow-strong); }
+  93% { text-shadow: -2px 0 #ff0040, 2px 0 #00ffff; transform: translateX(-2px); }
+  94% { text-shadow: var(--glow-strong); transform: translateX(0); }
+  96% { text-shadow: 2px 0 #ff0040, -2px 0 #00ffff; transform: translateX(2px); }
+  97% { text-shadow: var(--glow-strong); transform: translateX(0); }
+}
+
+/* ── PROJECT CARD ── */
+.projects {
+  padding: 56px 0;
+}
+
+.project-card {
+  border: 1px solid var(--border);
+  background: var(--surface);
+  margin-bottom: 32px;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s;
+  animation: fadeUp 0.6s ease both;
+}
+
+.project-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--green), transparent);
+}
+
+.project-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, var(--green-dim), transparent);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.project-card:hover {
+  border-color: var(--green-mid);
+  box-shadow: var(--glow);
+}
+
+.project-card:hover::after { opacity: 1; }
+
+.card-inner {
+  position: relative;
+  z-index: 2;
+  padding: 36px;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.card-title-wrap {}
+
+.card-codename {
+  font-size: 10px;
+  color: var(--text-dim);
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.card-title {
+  font-family: 'Orbitron', monospace;
+  font-size: clamp(20px, 4vw, 28px);
+  font-weight: 900;
+  color: var(--green);
+  text-shadow: var(--glow);
+  letter-spacing: 2px;
+  line-height: 1.1;
+}
+
+.card-title span {
+  color: var(--white);
+  opacity: 0.6;
+}
+
+.card-badges {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  align-items: flex-end;
+}
+
+.badge {
+  font-size: 10px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  padding: 4px 12px;
+  border: 1px solid;
+}
+
+.badge-wip {
+  color: #ffaa00;
+  border-color: #ffaa0055;
+  background: #ffaa0011;
+}
+
+.badge-platform {
+  color: var(--text-dim);
+  border-color: var(--border);
+}
+
+.badge-lang {
+  color: var(--green-mid);
+  border-color: var(--border);
+}
+
+.card-desc {
+  font-size: 14px;
+  color: var(--text);
+  line-height: 1.85;
+  margin-bottom: 28px;
+  border-left: 2px solid var(--border);
+  padding-left: 20px;
+}
+
+.card-desc strong {
+  color: var(--green);
+  text-shadow: 0 0 8px #00ff4155;
+}
+
+/* ── MODULES GRID ── */
+.modules-label {
+  font-size: 10px;
+  color: var(--text-dim);
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.modules-label::after {
+  content: '';
+  flex: 1; height: 1px;
+  background: var(--border);
+}
+
+.modules-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 8px;
+  margin-bottom: 28px;
+}
+
+.module-item {
+  font-size: 11px;
+  letter-spacing: 1px;
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s;
+  color: var(--text-dim);
+}
+
+.module-item:hover {
+  color: var(--green);
+  border-color: var(--green-mid);
+  background: var(--green-dim);
+}
+
+.module-item.done {
+  color: var(--green-mid);
+  border-color: #003300;
+}
+
+.module-item.done::before { content: '✓'; color: var(--green); font-size: 10px; text-shadow: var(--glow); }
+.module-item.wip::before  { content: '⟳'; color: #ffaa00; font-size: 10px; }
+.module-item.todo::before { content: '○'; color: var(--text-dim); font-size: 10px; }
+
+/* ── TECH STACK ── */
+.stack-label {
+  font-size: 10px;
+  color: var(--text-dim);
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.stack-label::after {
+  content: '';
+  flex: 1; height: 1px;
+  background: var(--border);
+}
+
+.stack-tags {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 32px;
+}
+
+.stack-tag {
+  font-size: 11px;
+  letter-spacing: 1px;
+  color: var(--text-dim);
+  padding: 5px 12px;
+  border: 1px solid var(--border);
+  transition: all 0.2s;
+}
+
+.stack-tag:hover {
+  color: var(--green);
+  border-color: var(--green-mid);
+  box-shadow: var(--glow);
+}
+
+/* ── CARD FOOTER ── */
+.card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 24px;
+  border-top: 1px solid var(--border);
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.card-meta {
+  font-size: 11px;
+  color: var(--text-dim);
+  letter-spacing: 1px;
+}
+
+.card-links {
+  display: flex;
+  gap: 12px;
+}
+
+.card-link {
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  text-decoration: none;
+  padding: 7px 16px;
+  border: 1px solid var(--border);
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.card-link:hover {
+  color: var(--green);
+  border-color: var(--green-mid);
+  background: var(--green-dim);
+  box-shadow: var(--glow);
+}
+
+.card-link.primary {
+  color: var(--green);
+  border-color: var(--green-mid);
+}
+
+.card-link.primary:hover {
+  background: var(--green-dim);
+  box-shadow: var(--glow-strong);
+}
+
+/* ── PROGRESS BAR ── */
+.progress-wrap {
+  margin-bottom: 28px;
+}
+
+.progress-label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 10px;
+  color: var(--text-dim);
+  letter-spacing: 2px;
+  margin-bottom: 8px;
+}
+
+.progress-bar {
+  height: 4px;
+  background: var(--border);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  width: 8%;
+  background: linear-gradient(90deg, var(--green-mid), var(--green));
+  box-shadow: var(--glow);
+  border-radius: 2px;
+  position: relative;
+  overflow: hidden;
+}
+
+.progress-fill::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+  0%{transform:translateX(-100%)} 100%{transform:translateX(200%)}
+}
+
+/* ── FOOTER ── */
+footer {
+  padding: 40px 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid var(--border);
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.footer-sig {
+  font-family: 'Orbitron', monospace;
+  font-size: 13px;
+  color: var(--green);
+  text-shadow: var(--glow);
+  letter-spacing: 2px;
+}
+
+.footer-copy {
+  font-size: 10px;
+  color: var(--text-dim);
+  letter-spacing: 2px;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 640px) {
+  .wrap { padding: 0 16px; }
+  .card-inner { padding: 24px; }
+  .card-header { flex-direction: column; }
+  .card-badges { align-items: flex-start; }
+  .nav-status { display: none; }
+  .card-footer { flex-direction: column; align-items: flex-start; }
+  .modules-grid { grid-template-columns: 1fr 1fr; }
+}
+</style>
+</head>
+<body>
+
+<canvas id="matrix-canvas"></canvas>
+
+<nav>
+  <div class="wrap">
+    <div class="nav-inner">
+      <a href="/" class="nav-home">ORUAM.CLOUD</a>
+      <a href="/projects/" class="nav-link">Projects</a>
+      <div class="nav-status">
+        <div class="status-dot"></div>
+        ONLINE
+      </div>
+    </div>
+  </div>
+</nav>
+
+<div class="wrap">
+
+  <header>
+    <div class="header-tag">Oruam Oliuj · Personal Projects</div>
+    <h1>PROJECTS</h1>
+    <p class="header-sub">> Hands-on security, hardware and tooling projects_</p>
+  </header>
+
+  <div class="projects">
+
+    <!-- ORUAM BSS CARD -->
+    <div class="project-card">
+      <div class="card-inner">
+
+        <div class="card-header">
+          <div class="card-title-wrap">
+            <div class="card-codename">Project #001 · 2026</div>
+            <div class="card-title">ORUAM <span>BSS</span></div>
+          </div>
+          <div class="card-badges">
+            <span class="badge badge-wip">⟳ In Progress</span>
+            <span class="badge badge-platform">M5Stack Core2 ADV</span>
+            <span class="badge badge-lang">C++ · PlatformIO</span>
+          </div>
+        </div>
+
+        <p class="card-desc">
+          <strong>ORUAM BSS</strong> (Basic Security Suite) is a custom firmware for the <strong>M5Stack Core2 ADV</strong> that turns the device into a compact, handheld security reconnaissance tool. The project explores the real limits of what an <strong>ESP32-based device</strong> can do in the field of network and wireless security — no Linux, no external SBCs, pure embedded C++.
+          <br><br>
+          The name carries a double meaning: <strong>ORUAM</strong> is the author's security codename, and <strong>BSS</strong> (Basic Security Suite) is also a reference to the 802.11 wireless term <strong>Basic Service Set</strong> — a nod to the WiFi-heavy nature of the tool.
+        </p>
+
+        <div class="progress-wrap">
+          <div class="progress-label">
+            <span>OVERALL PROGRESS</span>
+            <span>v1.0.0 — INITIAL COMMIT</span>
+          </div>
+          <div class="progress-bar">
+            <div class="progress-fill"></div>
+          </div>
+        </div>
+
+        <div class="modules-label">Planned Modules</div>
+        <div class="modules-grid">
+          <div class="module-item done">Core / Boot</div>
+          <div class="module-item done">Menu UI</div>
+          <div class="module-item wip">WiFi Scanner</div>
+          <div class="module-item todo">Beacon Sniffer</div>
+          <div class="module-item todo">Deauth Detector</div>
+          <div class="module-item todo">Evil Twin Detect</div>
+          <div class="module-item todo">Host Discovery</div>
+          <div class="module-item todo">Port Scanner</div>
+          <div class="module-item todo">Banner Grabber</div>
+          <div class="module-item todo">SSL Inspector</div>
+          <div class="module-item todo">BLE Scanner</div>
+          <div class="module-item todo">GATT Explorer</div>
+          <div class="module-item todo">I2C Scanner</div>
+          <div class="module-item todo">Hash Calculator</div>
+          <div class="module-item todo">JWT Decoder</div>
+          <div class="module-item todo">Entropy Analyzer</div>
+        </div>
+
+        <div class="stack-label">Tech Stack</div>
+        <div class="stack-tags">
+          <span class="stack-tag">ESP32</span>
+          <span class="stack-tag">C++</span>
+          <span class="stack-tag">PlatformIO</span>
+          <span class="stack-tag">Arduino Core</span>
+          <span class="stack-tag">M5Unified</span>
+          <span class="stack-tag">LovyanGFX</span>
+          <span class="stack-tag">802.11</span>
+          <span class="stack-tag">BLE</span>
+          <span class="stack-tag">TCP/IP</span>
+        </div>
+
+        <div class="card-footer">
+          <div class="card-meta">Apache 2.0 · Started May 2026</div>
+          <div class="card-links">
+            <a href="https://github.com/juliomauro/oruam-bss" target="_blank" class="card-link primary">⌥ GitHub Repo</a>
+            <a href="/" class="card-link">← Back</a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <footer>
+    <div class="footer-sig">ORUAM_OLIUJ</div>
+    <div class="footer-copy">> oruam.cloud/projects · 2026_</div>
+  </footer>
+
+</div>
+
+<script>
+const canvas = document.getElementById('matrix-canvas');
+const ctx = canvas.getContext('2d');
+canvas.width  = window.innerWidth;
+canvas.height = window.innerHeight;
+window.addEventListener('resize', () => {
+  canvas.width  = window.innerWidth;
+  canvas.height = window.innerHeight;
+  init();
+});
+const chars = 'アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホ0123456789ABCDEF$#@%&';
+const fontSize = 16;
+let columns, drops;
+function init() {
+  columns = Math.floor(canvas.width / fontSize);
+  drops = Array(columns).fill(1);
+}
+function draw() {
+  ctx.fillStyle = 'rgba(0,3,0,0.04)';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  ctx.fillStyle = '#00ff41';
+  ctx.font = fontSize + 'px Share Tech Mono';
+  for (let i = 0; i < drops.length; i++) {
+    const char = chars[Math.floor(Math.random() * chars.length)];
+    ctx.fillText(char, i * fontSize, drops[i] * fontSize);
+    if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
+    drops[i]++;
+  }
+}
+init();
+setInterval(draw, 45);
+</script>
+
+</body>
+</html>
