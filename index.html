@@ -128,15 +128,47 @@ header {
   letter-spacing: 1px;
   margin-bottom: 6px;
   opacity: 0;
-  animation: fadeIn 0.3s ease forwards;
 }
-.boot-line:nth-child(1) { animation-delay: 0.1s; }
-.boot-line:nth-child(2) { animation-delay: 0.4s; }
-.boot-line:nth-child(3) { animation-delay: 0.7s; }
-.boot-line:nth-child(4) { animation-delay: 1.0s; }
-.boot-line:nth-child(5) { animation-delay: 1.3s; }
+#boot-seq.go .boot-line { animation: fadeIn 0.3s ease forwards; }
+#boot-seq.go .boot-line:nth-child(1) { animation-delay: 0.1s; }
+#boot-seq.go .boot-line:nth-child(2) { animation-delay: 0.4s; }
+#boot-seq.go .boot-line:nth-child(3) { animation-delay: 0.7s; }
+#boot-seq.go .boot-line:nth-child(4) { animation-delay: 1.0s; }
 
 .boot-seq { margin-bottom: 40px; }
+
+#matrix-intro {
+  position: fixed;
+  inset: 0;
+  background: var(--bg);
+  z-index: 500;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  transition: opacity 0.8s ease;
+}
+#matrix-intro.fade-out { opacity: 0; pointer-events: none; }
+#matrix-intro-text {
+  min-width: 280px;
+}
+#matrix-intro-text .intro-line {
+  display: block;
+  font-size: 22px;
+  color: #00dd44;
+  letter-spacing: 3px;
+  margin-bottom: 14px;
+  font-family: 'Share Tech Mono', monospace;
+  text-shadow: 0 0 10px #00dd44, 0 0 20px #00aa2288;
+}
+#matrix-cursor {
+  display: inline-block;
+  width: 9px;
+  height: 16px;
+  background: #00dd44;
+  vertical-align: middle;
+  animation: blink 0.7s step-end infinite;
+}
 
 .header-main {
   display: grid;
@@ -144,8 +176,8 @@ header {
   gap: 40px;
   align-items: center;
   opacity: 0;
-  animation: fadeIn 0.5s ease 1.6s forwards;
 }
+.header-main.go { animation: fadeIn 0.5s ease 0.3s forwards; }
 
 h1 {
   font-family: 'Orbitron', monospace;
@@ -203,8 +235,8 @@ h1 {
   margin-top: 28px;
   flex-wrap: wrap;
   opacity: 0;
-  animation: fadeIn 0.5s ease 2s forwards;
 }
+.header-links.go { animation: fadeIn 0.5s ease 0.7s forwards; }
 
 .link-pill {
   font-size: 11px;
@@ -793,16 +825,18 @@ h1 { animation: glitch 8s ease infinite; }
 <body>
 
 <canvas id="matrix-canvas"></canvas>
+<div id="matrix-intro">
+  <div id="matrix-intro-text"><span id="matrix-cursor"></span></div>
+</div>
 
 <div class="wrap">
 
   <!-- HEADER -->
   <header>
-    <div class="boot-seq">
+    <div class="boot-seq" id="boot-seq">
       <div class="boot-line" data-i18n="boot-1">> SYSTEM BOOT... [OK]</div>
       <div class="boot-line" data-i18n="boot-2">> LOADING PROFILE: juliomauro [OK]</div>
       <div class="boot-line" data-i18n="boot-3">> SECURITY CLEARANCE: GRANTED [OK]</div>
-      <div class="boot-line" data-i18n="boot-4">> EXPERIENCE: 25+ YEARS [OK]</div>
       <div class="boot-line" data-i18n="boot-5">> INITIALIZING INTERFACE...</div>
     </div>
 
@@ -1111,7 +1145,6 @@ const i18n = {
     'boot-1': '&gt; SYSTEM BOOT... [OK]',
     'boot-2': '&gt; LOADING PROFILE: juliomauro [OK]',
     'boot-3': '&gt; SECURITY CLEARANCE: GRANTED [OK]',
-    'boot-4': '&gt; EXPERIENCE: 25+ YEARS [OK]',
     'boot-5': '&gt; INITIALIZING INTERFACE...',
     'subtitle': '<span>Head of Infrastructure, Cloud &amp; Security</span><br>+25 years managing critical environments<br>São Paulo, Brazil',
     'link-projects': '⌥ Projects',
@@ -1178,7 +1211,6 @@ const i18n = {
     'boot-1': '&gt; INICIALIZANDO SISTEMA... [OK]',
     'boot-2': '&gt; CARREGANDO PERFIL: juliomauro [OK]',
     'boot-3': '&gt; AUTORIZAÇÃO DE SEGURANÇA: CONCEDIDA [OK]',
-    'boot-4': '&gt; EXPERIÊNCIA: 25+ ANOS [OK]',
     'boot-5': '&gt; INICIALIZANDO INTERFACE...',
     'subtitle': '<span>Head de Infraestrutura, Cloud &amp; Segurança</span><br>+25 anos gerenciando ambientes críticos<br>São Paulo, Brasil',
     'link-projects': '⌥ Projetos',
@@ -1245,7 +1277,6 @@ const i18n = {
     'boot-1': '&gt; RA\'NAH QAP\'LA\'... [HIja\']',
     'boot-2': '&gt; De\' ngeD: juliomauro [HIja\']',
     'boot-3': '&gt; QaD nob batlh: Qapla\' [HIja\']',
-    'boot-4': '&gt; Sov: 25+ DIS [HIja\']',
     'boot-5': '&gt; yIchu\' jo\'...',
     'subtitle': '<span>HoD ra\' pat, muD \'ej QaD</span><br>+25 DIS batlh vIta\'<br>San pIn, tera\'',
     'nav-summary': 'De\' potlh',
@@ -1348,6 +1379,43 @@ function toggleTheme() {
   updateThemeBtn(next);
 }
 (function() { updateThemeBtn(localStorage.getItem('theme') || 'blue'); })();
+
+(function() {
+  var lines = ['Wake up...', 'Follow the white rabbit.'];
+  var CHAR_DELAY = 100, LINE_PAUSE = 1000, BOOT_DELAY = 2000;
+  var intro = document.getElementById('matrix-intro');
+  var textWrap = document.getElementById('matrix-intro-text');
+  var cursor = document.getElementById('matrix-cursor');
+  var bootSeq = document.getElementById('boot-seq');
+
+  function typeLine(text, done) {
+    var span = document.createElement('span');
+    span.className = 'intro-line';
+    textWrap.insertBefore(span, cursor);
+    var i = 0;
+    (function next() {
+      if (i < text.length) { span.textContent += text[i++]; setTimeout(next, CHAR_DELAY); }
+      else { done(); }
+    })();
+  }
+
+  function typeAll(idx) {
+    if (idx >= lines.length) { setTimeout(startBoot, BOOT_DELAY); return; }
+    typeLine(lines[idx], function() { setTimeout(function() { typeAll(idx + 1); }, LINE_PAUSE); });
+  }
+
+  function startBoot() {
+    intro.classList.add('fade-out');
+    intro.addEventListener('transitionend', function() { intro.remove(); }, { once: true });
+    bootSeq.classList.add('go');
+    setTimeout(function() {
+      document.querySelector('.header-main').classList.add('go');
+      document.querySelector('.header-links').classList.add('go');
+    }, 1400);
+  }
+
+  typeAll(0);
+})();
 </script>
 </body>
 </html>
