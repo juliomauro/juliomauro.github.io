@@ -1416,6 +1416,7 @@ function toggleTheme() {
   }
 
   function startBoot() {
+    sessionStorage.setItem('intro_seen', '1');
     intro.classList.add('fade-out');
     intro.addEventListener('transitionend', function() { intro.remove(); }, { once: true });
     bootSeq.classList.add('go');
@@ -1425,7 +1426,14 @@ function toggleTheme() {
     }, 1400);
   }
 
-  typeAll(0);
+  if (sessionStorage.getItem('intro_seen')) {
+    intro.remove();
+    bootSeq.classList.add('go');
+    document.querySelector('.header-main').classList.add('go');
+    document.querySelector('.header-links').classList.add('go');
+  } else {
+    typeAll(0);
+  }
 })();
 </script>
 </body>
