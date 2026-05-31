@@ -831,6 +831,15 @@ h1 { animation: glitch 8s ease infinite; }
   .tl-company { font-size: 18px; }
   .tl-bullets li { font-size: 13px; }
 }
+
+@font-face {
+  font-family: 'pIqaD';
+  src: url('/fonts/pIqaD.woff') format('woff');
+}
+body.piqad-active [data-i18n] {
+  font-family: 'pIqaD', monospace;
+  letter-spacing: 3px;
+}
 </style>
 </head>
 <body>
@@ -1361,11 +1370,47 @@ function updateThemeBtn(currentTheme) {
   btn.textContent = (themeNames[localStorage.getItem('lang') || 'en'] || themeNames.en)[next];
 }
 
+var pIqaDmap = [
+  ['tlh',''],['ch',''],['gh',''],['ng',''],
+  ['a',''],['b',''],['D',''],['e',''],
+  ['H',''],['I',''],['j',''],['l',''],
+  ['m',''],['n',''],['o',''],['p',''],
+  ['q',''],['Q',''],['r',''],['S',''],
+  ['t',''],['u',''],['v',''],['w',''],
+  ['y',''],["'",''],
+  ['0',''],['1',''],['2',''],['3',''],
+  ['4',''],['5',''],['6',''],['7',''],
+  ['8',''],['9','']
+];
+function toPlqaD(str) {
+  var out = '', i = 0;
+  while (i < str.length) {
+    var hit = false;
+    for (var j = 0; j < pIqaDmap.length; j++) {
+      var k = pIqaDmap[j][0];
+      if (str.substr(i, k.length) === k) { out += pIqaDmap[j][1]; i += k.length; hit = true; break; }
+    }
+    if (!hit) { out += str[i++]; }
+  }
+  return out;
+}
+function pIqaDwalk(el) {
+  el.childNodes.forEach(function(n) {
+    if (n.nodeType === 3) n.nodeValue = toPlqaD(n.nodeValue);
+    else if (n.nodeType === 1) pIqaDwalk(n);
+  });
+}
 function applyLang(lang) {
   document.querySelectorAll('[data-i18n]').forEach(el => {
     const v = i18n[lang]?.[el.dataset.i18n];
     if (v !== undefined) el.innerHTML = v;
   });
+  if (lang === 'tlh') {
+    document.querySelectorAll('[data-i18n]').forEach(function(el) { pIqaDwalk(el); });
+    document.body.classList.add('piqad-active');
+  } else {
+    document.body.classList.remove('piqad-active');
+  }
   if (i18n[lang]._title) document.title = i18n[lang]._title;
   const btn = document.getElementById('lang-btn');
   if (btn) btn.textContent = lang === 'en' ? '◈ PT-BR' : lang === 'pt' ? '◈ Klingon' : '◈ English';
