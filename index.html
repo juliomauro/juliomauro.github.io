@@ -937,10 +937,19 @@ body.piqad-active [data-i18n] {
   100% { clip-path: inset(0% 0 0%);   filter: brightness(1); }
 }
 #crt-screen.poweron { animation: crtOn 0.5s ease forwards; }
-#doom-frame {
+#doom-terminal {
   width: 100%; height: 100%;
-  border: none; display: block;
+  background: #000;
+  padding: 32px 28px;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 15px;
+  color: #00ff41;
+  letter-spacing: 2px;
+  line-height: 2;
+  text-shadow: 0 0 8px #00ff41;
+  box-sizing: border-box;
 }
+#doom-terminal .dt-line { display: block; opacity: 0; animation: fadeIn 0.2s ease forwards; }
 #crt-neck {
   width: 48px; height: 14px;
   background: #1c1c1c;
@@ -973,7 +982,7 @@ body.piqad-active [data-i18n] {
   <div id="crt-monitor">
     <button id="doom-close" onclick="closeDoom()">✕</button>
     <div id="crt-screen">
-      <iframe id="doom-frame" src="" allowfullscreen></iframe>
+      <div id="doom-terminal"></div>
     </div>
     <div id="crt-neck"></div>
     <div id="crt-foot"></div>
@@ -1671,20 +1680,37 @@ function toggleTheme() {
 })();
 
 function openDoom() {
-  var overlay = document.getElementById('doom-overlay');
-  var frame   = document.getElementById('doom-frame');
-  var screen  = document.getElementById('crt-screen');
+  var overlay  = document.getElementById('doom-overlay');
+  var screen   = document.getElementById('crt-screen');
+  var terminal = document.getElementById('doom-terminal');
+  var lines = [
+    '> IDKFA ACTIVATED',
+    '> ALL WEAPONS: OK',
+    '> AMMO: MAXED',
+    '> GOD MODE: OPTIONAL',
+    '> LAUNCHING DOOM...',
+    '> CHECK NEW TAB  [OK]'
+  ];
+  terminal.innerHTML = '';
   screen.classList.remove('poweron');
   void screen.offsetWidth;
-  frame.src = 'https://joeheyming.github.io/doom/?flavor=classic';
   overlay.classList.add('active');
   setTimeout(function() { screen.classList.add('poweron'); }, 50);
+  lines.forEach(function(text, i) {
+    setTimeout(function() {
+      var span = document.createElement('span');
+      span.className = 'dt-line';
+      span.style.animationDelay = '0s';
+      span.textContent = text;
+      terminal.appendChild(span);
+      if (i === lines.length - 1) {
+        window.open('https://joeheyming.github.io/doom/?flavor=classic', '_blank');
+      }
+    }, i * 400);
+  });
 }
 function closeDoom() {
-  var overlay = document.getElementById('doom-overlay');
-  var frame   = document.getElementById('doom-frame');
-  overlay.classList.remove('active');
-  setTimeout(function() { frame.src = ''; }, 400);
+  document.getElementById('doom-overlay').classList.remove('active');
 }
 </script>
 </body>
