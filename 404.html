@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>404 — oruam.cloud</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' fill='%23000308'/><text x='6' y='23' font-size='20' fill='%2300b4ff' font-family='monospace'>_</text></svg>">
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@900&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body {
+  background: #000308;
+  color: #00b4ff;
+  font-family: 'Share Tech Mono', monospace;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+#matrix-canvas {
+  position: fixed;
+  top:0;left:0;width:100%;height:100%;
+  z-index:0;opacity:0.06;pointer-events:none;
+}
+body::after {
+  content:'';position:fixed;inset:0;
+  background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.15) 2px,rgba(0,0,0,0.15) 4px);
+  pointer-events:none;z-index:999;
+}
+.wrap {
+  position:relative;z-index:10;
+  text-align:center;padding:40px 32px;
+}
+.code {
+  font-family:'Orbitron',monospace;
+  font-size:clamp(80px,15vw,140px);
+  font-weight:900;
+  color:#00b4ff;
+  text-shadow:0 0 8px #00b4ff,0 0 20px #00b4ff88,0 0 40px #00b4ff44;
+  line-height:1;
+  margin-bottom:24px;
+}
+.msg {
+  font-size:14px;
+  letter-spacing:2px;
+  color:#0088cc;
+  margin-bottom:40px;
+  line-height:1.8;
+}
+.msg span { color:#00b4ff; }
+.boot {
+  font-size:12px;
+  color:#003388;
+  letter-spacing:1px;
+  margin-bottom:32px;
+  text-align:left;
+  display:inline-block;
+}
+.boot div { margin-bottom:6px; opacity:0; animation:fadeIn 0.3s ease forwards; }
+.boot div:nth-child(1){animation-delay:0.2s}
+.boot div:nth-child(2){animation-delay:0.5s}
+.boot div:nth-child(3){animation-delay:0.8s}
+.home-link {
+  font-size:12px;letter-spacing:3px;text-transform:uppercase;
+  color:#0088cc;text-decoration:none;
+  padding:10px 24px;border:1px solid #003388;
+  transition:all 0.2s;display:inline-block;
+  opacity:0;animation:fadeIn 0.3s ease 1.1s forwards;
+}
+.home-link:hover { color:#00b4ff;border-color:#0088cc;text-shadow:0 0 10px #00b4ff66; }
+@keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+</style>
+</head>
+<body>
+<canvas id="matrix-canvas"></canvas>
+<div class="wrap">
+  <div class="code">404</div>
+  <div class="boot">
+    <div>> LOCATING TARGET... [FAILED]</div>
+    <div>> PAGE NOT FOUND IN SYSTEM</div>
+    <div>> REDIRECTING AVAILABLE</div>
+  </div>
+  <p class="msg">The page you're looking for<br>does <span>not exist</span> in this matrix.</p>
+  <a href="/" class="home-link">⌥ Return to base</a>
+</div>
+<script>
+const canvas=document.getElementById('matrix-canvas');
+const ctx=canvas.getContext('2d');
+function resize(){canvas.width=window.innerWidth;canvas.height=window.innerHeight}
+resize();window.addEventListener('resize',resize);
+const cols=Math.floor(canvas.width/16);
+const drops=Array(cols).fill(1);
+const chars='ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%';
+function draw(){
+  ctx.fillStyle='rgba(0,3,8,0.05)';ctx.fillRect(0,0,canvas.width,canvas.height);
+  ctx.fillStyle='#00b4ff';ctx.font='14px monospace';
+  drops.forEach((y,i)=>{
+    ctx.fillText(chars[Math.floor(Math.random()*chars.length)],i*16,y*16);
+    if(y*16>canvas.height&&Math.random()>0.975)drops[i]=0;
+    drops[i]++;
+  });
+}
+setInterval(draw,50);
+</script>
+</body>
+</html>

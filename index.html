@@ -840,11 +840,43 @@ body.piqad-active [data-i18n] {
   font-family: 'pIqaD', monospace;
   letter-spacing: 3px;
 }
+
+#godmode-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0);
+  z-index: 600;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  pointer-events: none;
+  opacity: 0;
+  transition: background 0.3s ease, opacity 0.3s ease;
+}
+#godmode-overlay.active {
+  opacity: 1;
+  background: rgba(0,0,0,0.93);
+  pointer-events: all;
+}
+#godmode-overlay.fadeout {
+  opacity: 0;
+}
+#godmode-text {
+  min-width: 320px;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 20px;
+  color: #00ff41;
+  letter-spacing: 3px;
+  text-shadow: 0 0 10px #00ff41, 0 0 30px #00ff4199;
+}
+#godmode-text .gm-line { display: block; margin-bottom: 14px; }
 </style>
 </head>
 <body>
 
 <canvas id="matrix-canvas"></canvas>
+<div id="godmode-overlay"><div id="godmode-text"></div></div>
 <div id="matrix-intro">
   <div id="matrix-intro-text"><span id="matrix-cursor"></span></div>
 </div>
@@ -1478,6 +1510,47 @@ function toggleTheme() {
     document.querySelector('.header-links').classList.add('go');
   } else {
     typeAll(0);
+  }
+})();
+
+(function() {
+  var CODE = 'IDDQD', buf = '';
+  var canvas = document.getElementById('matrix-canvas');
+  var overlay = document.getElementById('godmode-overlay');
+  var textEl = document.getElementById('godmode-text');
+
+  document.addEventListener('keydown', function(e) {
+    buf = (buf + e.key.toUpperCase()).slice(-CODE.length);
+    if (buf === CODE) { buf = ''; triggerGodMode(); }
+  });
+
+  function typeLine(lines, idx, done) {
+    if (idx >= lines.length) { done(); return; }
+    var span = document.createElement('span');
+    span.className = 'gm-line';
+    textEl.appendChild(span);
+    var i = 0, text = lines[idx];
+    (function next() {
+      if (i < text.length) { span.textContent += text[i++]; setTimeout(next, 55); }
+      else { setTimeout(function() { typeLine(lines, idx + 1, done); }, 400); }
+    })();
+  }
+
+  function triggerGodMode() {
+    textEl.innerHTML = '';
+    overlay.classList.remove('fadeout');
+    overlay.classList.add('active');
+    canvas.style.transition = 'opacity 0.3s';
+    canvas.style.opacity = '0.85';
+    typeLine(['> IDDQD', '> GOD MODE: ON [OK]', '> DEGREELESSNESS MODE ACTIVATED'], 0, function() {
+      setTimeout(function() {
+        overlay.classList.add('fadeout');
+        setTimeout(function() {
+          overlay.classList.remove('active', 'fadeout');
+          canvas.style.opacity = '0.06';
+        }, 400);
+      }, 3000);
+    });
   }
 })();
 </script>
