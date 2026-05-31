@@ -6,7 +6,7 @@
 <title>Writing — Julio Mauro</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
-<script>if(localStorage.getItem('theme')==='green')document.documentElement.dataset.theme='green';</script>
+<script>(function(){var t=localStorage.getItem('theme');if(t==='green'||t==='amber')document.documentElement.dataset.theme=t;})();</script>
 <style>
 :root {
   --bg:          #000308;
@@ -36,6 +36,21 @@
   --glow-strong: 0 0 8px #00ff41, 0 0 20px #00ff4188, 0 0 40px #00ff4144;
 }
 [data-theme="green"] nav { background: rgba(0,3,0,0.95); }
+
+[data-theme="amber"] {
+  --bg:          #020100;
+  --surface:     #0a0500;
+  --border:      #663300;
+  --green:       #ff8c00;
+  --green-mid:   #cc6600;
+  --green-dim:   #ff8c0033;
+  --text:        #ee7700;
+  --text-dim:    #bb5500;
+  --white:       #ffe8cc;
+  --glow:        0 0 10px #ff8c0066, 0 0 20px #ff8c0033;
+  --glow-strong: 0 0 8px #ff8c00, 0 0 20px #ff8c0088, 0 0 40px #ff8c0044;
+}
+[data-theme="amber"] nav { background: rgba(2,1,0,0.95); }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html { scroll-behavior: smooth; }
@@ -131,6 +146,13 @@ nav a.nav-link {
 nav a.nav-link:hover {
   color: var(--green);
   text-shadow: var(--glow);
+}
+
+.nav-controls {
+  margin-left: auto;
+  display: flex;
+  gap: 8px;
+  align-items: center;
 }
 
 .theme-toggle {
@@ -422,11 +444,9 @@ footer {
       <a href="/" class="nav-home">ORUAM.CLOUD</a>
       <a href="/projects/" class="nav-link" data-i18n="nav-projects">Projects</a>
       <a href="/writing/" class="nav-link" data-i18n="nav-writing">Writing</a>
-      <button class="theme-toggle" id="theme-btn" onclick="toggleTheme()">◈ GRN</button>
-      <button class="theme-toggle" id="lang-btn" onclick="toggleLang()">◈ PT</button>
-      <div class="nav-status">
-        <div class="status-dot"></div>
-        ONLINE
+      <div class="nav-controls">
+        <button class="theme-toggle" id="theme-btn" onclick="toggleTheme()">◈ Green</button>
+        <button class="theme-toggle" id="lang-btn" onclick="toggleLang()">◈ PT-BR</button>
       </div>
     </div>
   </div>
@@ -601,10 +621,10 @@ function init() {
   drops = Array(columns).fill(1);
 }
 function draw() {
-  const isGreen = document.documentElement.dataset.theme === 'green';
-  ctx.fillStyle = isGreen ? 'rgba(0,3,0,0.04)' : 'rgba(0,3,8,0.04)';
+  const theme = document.documentElement.dataset.theme;
+  ctx.fillStyle = theme === 'green' ? 'rgba(0,3,0,0.04)' : theme === 'amber' ? 'rgba(2,1,0,0.04)' : 'rgba(0,3,8,0.04)';
   ctx.fillRect(0, 0, canvas.width, canvas.height);
-  ctx.fillStyle = isGreen ? '#00ff41' : '#00b4ff';
+  ctx.fillStyle = theme === 'green' ? '#00ff41' : theme === 'amber' ? '#ff8c00' : '#00b4ff';
   ctx.font = fontSize + 'px Share Tech Mono';
   for (let i = 0; i < drops.length; i++) {
     const char = chars[Math.floor(Math.random() * chars.length)];
@@ -671,8 +691,47 @@ const i18n = {
     'desc-meshcore':    'Como rádios LoRa e redes mesh permitem comunicação comunitária por dezenas de quilômetros — sem internet, celular ou provedor centralizado. Notas de testes ativos entre Santo André, Jundiaí, Sorocaba e Campinas.',
     'desc-appearances': 'Como vieses cognitivos baseados em aparência se tornam o vetor de ataque preferido da engenharia social — e por que confiar na "embalagem" em vez de evidências entrega ao atacante o mapa do seu ponto mais fraco.',
     'footer-copy':      '&gt; oruam.cloud/writing · 2026_',
+  },
+  tlh: {
+    '_title':           'ghItlh — Julio Mauro',
+    'nav-projects':     'ta\'mey',
+    'nav-writing':      'ghItlh',
+    'header-tag':       'Oruam Oliuj · QaD \'ej pat',
+    'header-sub':       '&gt; Qob De\' — Sov \'ej jatlh_',
+    'filter-all':       'Hoch',
+    'filter-networking':'network',
+    'filter-security':  'QaD',
+    'section-networking':'network',
+    'section-security': 'QaD',
+    'title-container':  'De\'wI\' ngeD ghaH law\' root ghaH puS',
+    'title-wildcard':   'wa\' Hoch voq nab',
+    'title-header':     'network poSmoH HoS',
+    'title-systemd':    'systemd HIv tera\'',
+    'title-rbac':       'RBAC: pagh nob QaQ\'a\'',
+    'title-meshcore':   'MeshCore Brazil: De\' ngeD pat pagh',
+    'title-appearances':'legh \'ej Qob DajQo\'',
+    'desc-container':   'De\'wI\' ngeD root ghobe\' — \'ach metadata endpoint lo\' IAM HoS law\' chenmoH.',
+    'desc-wildcard':    'StringLike glob IAM trust policy — assume role poS. StringEquals potlh.',
+    'desc-header':      'X-Forwarded-For QaD QaHbe\' — Nginx ghobe\' chenmoH — network Hoch poS.',
+    'desc-systemd':     'root Qu\' wej CVE — timer \'ej Daqmey ghItlh — HoS law\' chen.',
+    'desc-rbac':        'create Jobs \'ej service account permissive — namespace yIt — RBAC graph HaD potlh.',
+    'desc-meshcore':    'LoRa radio \'ej mesh network — internet pagh — kilometers law\'. Santo André, Jundiaí, Sorocaba, Campinas.',
+    'desc-appearances': 'DaleghDI\' Davoq — social engineer QaD Daj — packaging ghobe\' Sov.',
+    'footer-copy':      '&gt; oruam.cloud/ghItlh · 2026_ Qapla\'!',
   }
 };
+
+const themeNames = {
+  en:  { green: '◈ Green', amber: '◈ Amber', blue: '◈ Blue'  },
+  pt:  { green: '◈ Verde', amber: '◈ Âmbar', blue: '◈ Azul'  },
+  tlh: { green: '◈ SuD',   amber: '◈ Doq',   blue: '◈ SuD'   },
+};
+function updateThemeBtn(currentTheme) {
+  const btn = document.getElementById('theme-btn');
+  if (!btn) return;
+  const next = currentTheme === 'blue' ? 'green' : currentTheme === 'green' ? 'amber' : 'blue';
+  btn.textContent = (themeNames[localStorage.getItem('lang') || 'en'] || themeNames.en)[next];
+}
 
 function applyLang(lang) {
   document.querySelectorAll('[data-i18n]').forEach(el => {
@@ -681,28 +740,31 @@ function applyLang(lang) {
   });
   if (i18n[lang]._title) document.title = i18n[lang]._title;
   const btn = document.getElementById('lang-btn');
-  if (btn) btn.textContent = lang === 'en' ? '◈ PT' : '◈ EN';
+  if (btn) btn.textContent = lang === 'en' ? '◈ PT-BR' : lang === 'pt' ? '◈ Klingon' : '◈ English';
   localStorage.setItem('lang', lang);
+  updateThemeBtn(document.documentElement.dataset.theme || 'blue');
 }
 
 function toggleLang() {
-  applyLang((localStorage.getItem('lang') || 'en') === 'en' ? 'pt' : 'en');
+  const cur = localStorage.getItem('lang') || 'en';
+  applyLang(cur === 'en' ? 'pt' : cur === 'pt' ? 'tlh' : 'en');
 }
 
-(function() { if (localStorage.getItem('lang') === 'pt') applyLang('pt'); })();
+(function() {
+  const lang = localStorage.getItem('lang');
+  if (lang === 'pt' || lang === 'tlh') applyLang(lang);
+})();
 
 // ── THEME ──
 function toggleTheme() {
   const html = document.documentElement;
-  const isGreen = html.dataset.theme === 'green';
-  html.dataset.theme = isGreen ? '' : 'green';
-  localStorage.setItem('theme', isGreen ? 'blue' : 'green');
-  document.getElementById('theme-btn').textContent = isGreen ? '◈ GRN' : '◈ BLU';
+  const cur = html.dataset.theme || 'blue';
+  const next = cur === 'blue' ? 'green' : cur === 'green' ? 'amber' : 'blue';
+  html.dataset.theme = next === 'blue' ? '' : next;
+  localStorage.setItem('theme', next);
+  updateThemeBtn(next);
 }
-(function() {
-  const btn = document.getElementById('theme-btn');
-  if (btn && localStorage.getItem('theme') === 'green') btn.textContent = '◈ BLU';
-})();
+(function() { updateThemeBtn(localStorage.getItem('theme') || 'blue'); })();
 
 // ── FILTER ──
 function filter(tag) {

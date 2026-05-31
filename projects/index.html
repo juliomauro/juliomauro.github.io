@@ -6,7 +6,7 @@
 <title>Projects — Oruam Oliuj</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
-<script>if(localStorage.getItem('theme')==='green')document.documentElement.dataset.theme='green';</script>
+<script>(function(){var t=localStorage.getItem('theme');if(t==='green'||t==='amber')document.documentElement.dataset.theme=t;})();</script>
 <style>
 :root {
   --bg:          #000308;
@@ -36,6 +36,21 @@
   --glow-strong: 0 0 8px #00ff41, 0 0 20px #00ff4188, 0 0 40px #00ff4144;
 }
 [data-theme="green"] nav { background: rgba(0,3,0,0.95); }
+
+[data-theme="amber"] {
+  --bg:          #020100;
+  --surface:     #0a0500;
+  --border:      #663300;
+  --green:       #ff8c00;
+  --green-mid:   #cc6600;
+  --green-dim:   #ff8c0033;
+  --text:        #ee7700;
+  --text-dim:    #bb5500;
+  --white:       #ffe8cc;
+  --glow:        0 0 10px #ff8c0066, 0 0 20px #ff8c0033;
+  --glow-strong: 0 0 8px #ff8c00, 0 0 20px #ff8c0088, 0 0 40px #ff8c0044;
+}
+[data-theme="amber"] nav { background: rgba(2,1,0,0.95); }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html { scroll-behavior: smooth; }
@@ -131,6 +146,13 @@ nav a.nav-link {
 nav a.nav-link:hover {
   color: var(--green);
   text-shadow: var(--glow);
+}
+
+.nav-controls {
+  margin-left: auto;
+  display: flex;
+  gap: 8px;
+  align-items: center;
 }
 
 .theme-toggle {
@@ -598,11 +620,9 @@ footer {
       <a href="/" class="nav-home">ORUAM.CLOUD</a>
       <a href="/projects/" class="nav-link" data-i18n="nav-projects">Projects</a>
       <a href="/writing/" class="nav-link" data-i18n="nav-writing">Writing</a>
-      <button class="theme-toggle" id="theme-btn" onclick="toggleTheme()">◈ GRN</button>
-      <button class="theme-toggle" id="lang-btn" onclick="toggleLang()">◈ PT</button>
-      <div class="nav-status">
-        <div class="status-dot"></div>
-        ONLINE
+      <div class="nav-controls">
+        <button class="theme-toggle" id="theme-btn" onclick="toggleTheme()">◈ Green</button>
+        <button class="theme-toggle" id="lang-btn" onclick="toggleLang()">◈ PT-BR</button>
       </div>
     </div>
   </div>
@@ -1010,10 +1030,10 @@ function init() {
   drops = Array(columns).fill(1);
 }
 function draw() {
-  const isGreen = document.documentElement.dataset.theme === 'green';
-  ctx.fillStyle = isGreen ? 'rgba(0,3,0,0.04)' : 'rgba(0,3,8,0.04)';
+  const theme = document.documentElement.dataset.theme;
+  ctx.fillStyle = theme === 'green' ? 'rgba(0,3,0,0.04)' : theme === 'amber' ? 'rgba(2,1,0,0.04)' : 'rgba(0,3,8,0.04)';
   ctx.fillRect(0, 0, canvas.width, canvas.height);
-  ctx.fillStyle = isGreen ? '#00ff41' : '#00b4ff';
+  ctx.fillStyle = theme === 'green' ? '#00ff41' : theme === 'amber' ? '#ff8c00' : '#00b4ff';
   ctx.font = fontSize + 'px Share Tech Mono';
   for (let i = 0; i < drops.length; i++) {
     const char = chars[Math.floor(Math.random() * chars.length)];
@@ -1096,8 +1116,55 @@ const i18n = {
     'stack-wiki': 'Plataformas',
     'desc-disc': 'Autor colaborador na <strong>Disconecta</strong>, portal brasileiro de música focado em rock clássico, rock progressivo e música alternativa. Especialista em <strong>Rock Progressivo Italiano</strong> e autor do livro <strong>"Rock Progressivo Italiano"</strong> — disponível na Amazon.<br><br>Escreve análises aprofundadas de álbuns, histórias de artistas, cobertura de shows e artigos de opinião — aplicando o mesmo rigor analítico do trabalho técnico para dissecar a complexidade e a atemporalidade do rock clássico. Também co-apresentador do podcast <strong>Redação Disconecta</strong>.',
     'footer-copy': '&gt; oruam.cloud/projects · 2026_',
+  },
+  tlh: {
+    '_title': 'ta\'mey — Oruam Oliuj',
+    'nav-projects': 'ta\'mey',
+    'nav-writing': 'ghItlh',
+    'header-tag': 'Oruam Oliuj · ta\'mey vIghaj',
+    'header-sub': '&gt; QaD, HoS \'ej De\'wI\' ta\'mey_',
+    'badge-wip-bss': '⟳ ta\'taH',
+    'badge-active-mesh': '⟳ taH',
+    'badge-growing': '⟳ chen',
+    'badge-active-disc': '⟳ taH',
+    'badge-active-wiki': '⟳ taH',
+    'progress-label': 'batlh ta\':',
+    'modules-bss': 'mIwmey',
+    'modules-mesh': 'ta\'mey',
+    'modules-pomo': 'laHmey',
+    'modules-hidepw': 'laHmey',
+    'modules-writeups': 'Qobmey',
+    'modules-disc': 'Dochmey',
+    'modules-wiki': 'boQmey',
+    'stack-bss': 'De\'mey',
+    'stack-mesh': 'De\'mey',
+    'stack-pomo': 'De\'mey',
+    'stack-hidepw': 'De\'mey',
+    'stack-writeups': 'Qobmey',
+    'stack-disc': 'De\'mey',
+    'stack-wiki': 'De\'mey',
+    'desc-bss': '<strong>ORUAM BSS</strong> — M5Cardputer ADV firmware. <strong>ESP32-S3</strong> De\'wI\' lo\'bogh QaD Qu\' — Linux ghobe\', SBC ghobe\', C++ neH. <strong>ORUAM</strong> = QaD pong; <strong>BSS</strong> = Basic Security Suite = 802.11 Basic Service Set.',
+    'desc-meshcore': '<strong>MeshCore</strong> Brazil — mesh network chenmoH. São Paulo — Santo André, Jundiaí, Sorocaba, Campinas. <strong>off-grid</strong> — <strong>LoRa radio</strong> lo\'. internet pagh. qib-Dung HoS lo\'.',
+    'desc-pomodoro': '<strong>Pomodoro</strong> timer terminal macOS \'ej Linux — dependencies pagh. OS tu\' \'ej notifications lo\'. <strong>osascript + afplay</strong> macOS, <strong>notify-send + sox</strong> Linux.',
+    'desc-hidepw': '<strong>PWPush</strong> CLI QaD — pegh ngeD URL lo\'. pegh <strong>JSON stdin</strong> curl — ps aux DaleghQo\'. self-hosted, notes, \'ej stdin pipe.',
+    'desc-writeups': '<strong>QaD HaD ghItlh</strong> — Hoch mIw legh. Linux HoS, cloud IAM, container, Kubernetes RBAC, \'ej lateral movement. Hoch Qob Sov.',
+    'desc-wiki': '<strong>Wikimedia Foundation</strong> boQwI\' — 2014 joq DaH. Hoch Sov lI\' \'ej chenmoH. <strong>portugheSHol \'ej DIvI\' Hol</strong>.',
+    'desc-disc': '<strong>Disconecta</strong> — Brazil music — rock QaQ. <strong>Rock Progressivo Italiano</strong> — paq Amazon Dach. podcast <strong>Redação Disconecta</strong> co-host.',
+    'footer-copy': '&gt; oruam.cloud/ta\'mey · 2026_ Qapla\'!',
   }
 };
+
+const themeNames = {
+  en:  { green: '◈ Green', amber: '◈ Amber', blue: '◈ Blue'  },
+  pt:  { green: '◈ Verde', amber: '◈ Âmbar', blue: '◈ Azul'  },
+  tlh: { green: '◈ SuD',   amber: '◈ Doq',   blue: '◈ SuD'   },
+};
+function updateThemeBtn(currentTheme) {
+  const btn = document.getElementById('theme-btn');
+  if (!btn) return;
+  const next = currentTheme === 'blue' ? 'green' : currentTheme === 'green' ? 'amber' : 'blue';
+  btn.textContent = (themeNames[localStorage.getItem('lang') || 'en'] || themeNames.en)[next];
+}
 
 function applyLang(lang) {
   document.querySelectorAll('[data-i18n]').forEach(el => {
@@ -1106,25 +1173,28 @@ function applyLang(lang) {
   });
   if (i18n[lang]._title) document.title = i18n[lang]._title;
   const btn = document.getElementById('lang-btn');
-  if (btn) btn.textContent = lang === 'en' ? '◈ PT' : '◈ EN';
+  if (btn) btn.textContent = lang === 'en' ? '◈ PT-BR' : lang === 'pt' ? '◈ Klingon' : '◈ English';
   localStorage.setItem('lang', lang);
+  updateThemeBtn(document.documentElement.dataset.theme || 'blue');
 }
 function toggleLang() {
-  applyLang((localStorage.getItem('lang') || 'en') === 'en' ? 'pt' : 'en');
+  const cur = localStorage.getItem('lang') || 'en';
+  applyLang(cur === 'en' ? 'pt' : cur === 'pt' ? 'tlh' : 'en');
 }
-(function() { if (localStorage.getItem('lang') === 'pt') applyLang('pt'); })();
+(function() {
+  const lang = localStorage.getItem('lang');
+  if (lang === 'pt' || lang === 'tlh') applyLang(lang);
+})();
 
 function toggleTheme() {
   const html = document.documentElement;
-  const isGreen = html.dataset.theme === 'green';
-  html.dataset.theme = isGreen ? '' : 'green';
-  localStorage.setItem('theme', isGreen ? 'blue' : 'green');
-  document.getElementById('theme-btn').textContent = isGreen ? '◈ GRN' : '◈ BLU';
+  const cur = html.dataset.theme || 'blue';
+  const next = cur === 'blue' ? 'green' : cur === 'green' ? 'amber' : 'blue';
+  html.dataset.theme = next === 'blue' ? '' : next;
+  localStorage.setItem('theme', next);
+  updateThemeBtn(next);
 }
-(function() {
-  const btn = document.getElementById('theme-btn');
-  if (btn && localStorage.getItem('theme') === 'green') btn.textContent = '◈ BLU';
-})();
+(function() { updateThemeBtn(localStorage.getItem('theme') || 'blue'); })();
 </script>
 
 </body>
