@@ -462,7 +462,7 @@ footer {
             <span class="article-tag cloud">Cloud · IAM · Containers</span>
             <span class="article-level">// Practitioner</span>
           </div>
-          <div class="article-title">Your Container's Identity Is Worth More Than Root</div>
+          <div class="article-title" data-i18n="title-container">Your Container's Identity Is Worth More Than Root</div>
           <div class="article-desc" data-i18n="desc-container">How a non-root container with limited file read access becomes the pivot point for cross-account IAM escalation via the metadata endpoint and image layer history.</div>
         </div>
         <div class="article-arrow">→</div>
@@ -478,7 +478,7 @@ footer {
             <span class="article-tag cloud">Cloud · IAM · Privilege Escalation</span>
             <span class="article-level">// Advanced</span>
           </div>
-          <div class="article-title">One Wildcard in a Trust Policy</div>
+          <div class="article-title" data-i18n="title-wildcard">One Wildcard in a Trust Policy</div>
           <div class="article-desc" data-i18n="desc-wildcard">How StringLike with a glob pattern in an IAM trust policy condition turns a controlled role assumption into an open path — and why StringEquals matters.</div>
         </div>
         <div class="article-arrow">→</div>
@@ -496,7 +496,7 @@ footer {
             <span class="article-tag linux">Linux · Web · Lateral Movement</span>
             <span class="article-level">// Practitioner</span>
           </div>
-          <div class="article-title">The Header That Opened the Network</div>
+          <div class="article-title" data-i18n="title-header">The Header That Opened the Network</div>
           <div class="article-desc" data-i18n="desc-header">Why X-Forwarded-For should never be used for access control at the edge — and how one misconfigured Nginx directive led to full internal network access.</div>
         </div>
         <div class="article-arrow">→</div>
@@ -512,7 +512,7 @@ footer {
             <span class="article-tag linux">Linux · Privilege Escalation</span>
             <span class="article-level">// Practitioner</span>
           </div>
-          <div class="article-title">systemd as an Attack Surface</div>
+          <div class="article-title" data-i18n="title-systemd">systemd as an Attack Surface</div>
           <div class="article-desc" data-i18n="desc-systemd">How services running as root that source files from user-influenced paths enable privilege escalation without a CVE — just a timer and a writable directory.</div>
         </div>
         <div class="article-arrow">→</div>
@@ -530,7 +530,7 @@ footer {
             <span class="article-tag kubernetes">Kubernetes · RBAC · Lateral Movement</span>
             <span class="article-level">// Advanced</span>
           </div>
-          <div class="article-title">RBAC: When No Single Permission Seems Critical</div>
+          <div class="article-title" data-i18n="title-rbac">RBAC: When No Single Permission Seems Critical</div>
           <div class="article-desc" data-i18n="desc-rbac">How create Jobs combined with a permissive service account enables namespace lateral movement — and why Kubernetes RBAC must be reviewed as a permission graph, not individual rules.</div>
         </div>
         <div class="article-arrow">→</div>
@@ -548,7 +548,7 @@ footer {
             <span class="article-tag networking">Networking · Community · LoRa</span>
             <span class="article-level">// Foundational</span>
           </div>
-          <div class="article-title">MeshCore Brazil: Decentralized Communication Without Infrastructure</div>
+          <div class="article-title" data-i18n="title-meshcore">MeshCore Brazil: Decentralized Communication Without Infrastructure</div>
           <div class="article-desc" data-i18n="desc-meshcore">How LoRa radios and mesh networking enable community-driven communication over dozens of kilometers — without internet, cellular, or any centralized provider. Notes from active testing between Santo André, Jundiaí, Sorocaba and Campinas.</div>
         </div>
         <div class="article-arrow">→</div>
@@ -566,7 +566,7 @@ footer {
             <span class="article-tag security">Security · Social Engineering</span>
             <span class="article-level">// Foundational</span>
           </div>
-          <div class="article-title">The Hidden Danger of Judging by Appearances</div>
+          <div class="article-title" data-i18n="title-appearances">The Hidden Danger of Judging by Appearances</div>
           <div class="article-desc" data-i18n="desc-appearances">How appearance-based cognitive biases become the social engineer's preferred attack vector — and why trusting the "packaging" over evidence hands the attacker a map of your weakest point.</div>
         </div>
         <div class="article-arrow">→</div>
@@ -629,6 +629,13 @@ const i18n = {
     'filter-security':  'Security',
     'section-networking':'Networking',
     'section-security': 'Security',
+    'title-container':  "Your Container's Identity Is Worth More Than Root",
+    'title-wildcard':   'One Wildcard in a Trust Policy',
+    'title-header':     'The Header That Opened the Network',
+    'title-systemd':    'systemd as an Attack Surface',
+    'title-rbac':       'RBAC: When No Single Permission Seems Critical',
+    'title-meshcore':   'MeshCore Brazil: Decentralized Communication Without Infrastructure',
+    'title-appearances':'The Hidden Danger of Judging by Appearances',
     'desc-container':   'How a non-root container with limited file read access becomes the pivot point for cross-account IAM escalation via the metadata endpoint and image layer history.',
     'desc-wildcard':    'How StringLike with a glob pattern in an IAM trust policy condition turns a controlled role assumption into an open path — and why StringEquals matters.',
     'desc-header':      'Why X-Forwarded-For should never be used for access control at the edge — and how one misconfigured Nginx directive led to full internal network access.',
@@ -649,6 +656,13 @@ const i18n = {
     'filter-security':  'Segurança',
     'section-networking':'Redes',
     'section-security': 'Segurança',
+    'title-container':  'A Identidade do Seu Container Vale Mais Que Root',
+    'title-wildcard':   'Um Wildcard em uma Trust Policy',
+    'title-header':     'O Header Que Abriu a Rede',
+    'title-systemd':    'systemd como Superfície de Ataque',
+    'title-rbac':       'RBAC: Quando Nenhuma Permissão Parece Crítica Sozinha',
+    'title-meshcore':   'MeshCore Brasil: Comunicação Descentralizada Sem Infraestrutura',
+    'title-appearances':'O Perigo Oculto de Julgar pela Aparência',
     'desc-container':   'Como um container sem root e com acesso limitado a arquivos se torna o ponto de pivot para escalada IAM entre contas, via endpoint de metadados e histórico de camadas de imagem.',
     'desc-wildcard':    'Como StringLike com padrão glob em uma condição de trust policy IAM transforma um assume role controlado em um caminho aberto — e por que StringEquals importa.',
     'desc-header':      'Por que X-Forwarded-For nunca deve ser usado para controle de acesso na borda — e como uma diretiva Nginx mal configurada levou ao acesso completo à rede interna.',
