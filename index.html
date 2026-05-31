@@ -1581,7 +1581,7 @@ function toggleTheme() {
 
 (function() {
   var lines = ['Wake up...', 'Follow the white rabbit.'];
-  var CHAR_DELAY = 100, LINE_PAUSE = 1000, BOOT_DELAY = 2000;
+  var CHAR_DELAY = 100, LINE_PAUSE = 1000, BOOT_DELAY = 500;
   var intro = document.getElementById('matrix-intro');
   var textWrap = document.getElementById('matrix-intro-text');
   var cursor = document.getElementById('matrix-cursor');
@@ -1688,8 +1688,7 @@ function openDoom() {
     '> ALL WEAPONS: OK',
     '> AMMO: MAXED',
     '> GOD MODE: OPTIONAL',
-    '> LAUNCHING DOOM...',
-    '> CHECK NEW TAB  [OK]'
+    '> LAUNCHING DOOM...'
   ];
   terminal.innerHTML = '';
   screen.classList.remove('poweron');
