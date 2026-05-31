@@ -416,9 +416,10 @@ footer {
   <div class="wrap">
     <div class="nav-inner">
       <a href="/" class="nav-home">ORUAM.CLOUD</a>
-      <a href="/projects/" class="nav-link">Projects</a>
-      <a href="/writing/" class="nav-link">Writing</a>
+      <a href="/projects/" class="nav-link" data-i18n="nav-projects">Projects</a>
+      <a href="/writing/" class="nav-link" data-i18n="nav-writing">Writing</a>
       <button class="theme-toggle" id="theme-btn" onclick="toggleTheme()">◈ GRN</button>
+      <button class="theme-toggle" id="lang-btn" onclick="toggleLang()">◈ PT</button>
       <div class="nav-status">
         <div class="status-dot"></div>
         ONLINE
@@ -430,17 +431,17 @@ footer {
 <div class="wrap">
 
   <header>
-    <div class="header-tag">Oruam Oliuj · Security & Infrastructure</div>
+    <div class="header-tag" data-i18n="header-tag">Oruam Oliuj · Security & Infrastructure</div>
     <h1>WRITING</h1>
-    <p class="header-sub">> Technical notes from real incidents, exercises and daily work in cloud security_</p>
+    <p class="header-sub" data-i18n="header-sub">> Technical notes from real incidents, exercises and daily work in cloud security_</p>
 
     <div class="filters">
-      <button class="filter-btn active" onclick="filter('all')">All</button>
+      <button class="filter-btn active" data-i18n="filter-all" onclick="filter('all')">All</button>
       <button class="filter-btn" onclick="filter('cloud')">Cloud</button>
       <button class="filter-btn" onclick="filter('linux')">Linux</button>
       <button class="filter-btn" onclick="filter('kubernetes')">Kubernetes</button>
-      <button class="filter-btn" onclick="filter('networking')">Networking</button>
-      <button class="filter-btn" onclick="filter('security')">Security</button>
+      <button class="filter-btn" data-i18n="filter-networking" onclick="filter('networking')">Networking</button>
+      <button class="filter-btn" data-i18n="filter-security" onclick="filter('security')">Security</button>
     </div>
   </header>
 
@@ -458,7 +459,7 @@ footer {
             <span class="article-level">// Practitioner</span>
           </div>
           <div class="article-title">Your Container's Identity Is Worth More Than Root</div>
-          <div class="article-desc">How a non-root container with limited file read access becomes the pivot point for cross-account IAM escalation via the metadata endpoint and image layer history.</div>
+          <div class="article-desc" data-i18n="desc-container">How a non-root container with limited file read access becomes the pivot point for cross-account IAM escalation via the metadata endpoint and image layer history.</div>
         </div>
         <div class="article-arrow">→</div>
       </div>
@@ -474,7 +475,7 @@ footer {
             <span class="article-level">// Advanced</span>
           </div>
           <div class="article-title">One Wildcard in a Trust Policy</div>
-          <div class="article-desc">How StringLike with a glob pattern in an IAM trust policy condition turns a controlled role assumption into an open path — and why StringEquals matters.</div>
+          <div class="article-desc" data-i18n="desc-wildcard">How StringLike with a glob pattern in an IAM trust policy condition turns a controlled role assumption into an open path — and why StringEquals matters.</div>
         </div>
         <div class="article-arrow">→</div>
       </div>
@@ -492,7 +493,7 @@ footer {
             <span class="article-level">// Practitioner</span>
           </div>
           <div class="article-title">The Header That Opened the Network</div>
-          <div class="article-desc">Why X-Forwarded-For should never be used for access control at the edge — and how one misconfigured Nginx directive led to full internal network access.</div>
+          <div class="article-desc" data-i18n="desc-header">Why X-Forwarded-For should never be used for access control at the edge — and how one misconfigured Nginx directive led to full internal network access.</div>
         </div>
         <div class="article-arrow">→</div>
       </div>
@@ -508,7 +509,7 @@ footer {
             <span class="article-level">// Practitioner</span>
           </div>
           <div class="article-title">systemd as an Attack Surface</div>
-          <div class="article-desc">How services running as root that source files from user-influenced paths enable privilege escalation without a CVE — just a timer and a writable directory.</div>
+          <div class="article-desc" data-i18n="desc-systemd">How services running as root that source files from user-influenced paths enable privilege escalation without a CVE — just a timer and a writable directory.</div>
         </div>
         <div class="article-arrow">→</div>
       </div>
@@ -526,13 +527,13 @@ footer {
             <span class="article-level">// Advanced</span>
           </div>
           <div class="article-title">RBAC: When No Single Permission Seems Critical</div>
-          <div class="article-desc">How create Jobs combined with a permissive service account enables namespace lateral movement — and why Kubernetes RBAC must be reviewed as a permission graph, not individual rules.</div>
+          <div class="article-desc" data-i18n="desc-rbac">How create Jobs combined with a permissive service account enables namespace lateral movement — and why Kubernetes RBAC must be reviewed as a permission graph, not individual rules.</div>
         </div>
         <div class="article-arrow">→</div>
       </div>
     </a>
 
-    <div class="section-label">Networking</div>
+    <div class="section-label" data-i18n="section-networking">Networking</div>
 
     <a class="article-item" data-tag="networking"
        href="https://github.com/juliomauro/sec-notes/blob/main/networking/meshcore-brazil.md"
@@ -544,13 +545,13 @@ footer {
             <span class="article-level">// Foundational</span>
           </div>
           <div class="article-title">MeshCore Brazil: Decentralized Communication Without Infrastructure</div>
-          <div class="article-desc">How LoRa radios and mesh networking enable community-driven communication over dozens of kilometers — without internet, cellular, or any centralized provider. Notes from active testing between Santo André, Jundiaí, Sorocaba and Campinas.</div>
+          <div class="article-desc" data-i18n="desc-meshcore">How LoRa radios and mesh networking enable community-driven communication over dozens of kilometers — without internet, cellular, or any centralized provider. Notes from active testing between Santo André, Jundiaí, Sorocaba and Campinas.</div>
         </div>
         <div class="article-arrow">→</div>
       </div>
     </a>
 
-    <div class="section-label">Security</div>
+    <div class="section-label" data-i18n="section-security">Security</div>
 
     <a class="article-item" data-tag="security"
        href="https://github.com/juliomauro/sec-notes/blob/main/security/the-hidden-danger-of-judging-by-appearances.md"
@@ -562,7 +563,7 @@ footer {
             <span class="article-level">// Foundational</span>
           </div>
           <div class="article-title">The Hidden Danger of Judging by Appearances</div>
-          <div class="article-desc">How appearance-based cognitive biases become the social engineer's preferred attack vector — and why trusting the "packaging" over evidence hands the attacker a map of your weakest point.</div>
+          <div class="article-desc" data-i18n="desc-appearances">How appearance-based cognitive biases become the social engineer's preferred attack vector — and why trusting the "packaging" over evidence hands the attacker a map of your weakest point.</div>
         </div>
         <div class="article-arrow">→</div>
       </div>
@@ -572,7 +573,7 @@ footer {
 
   <footer>
     <div class="footer-sig">ORUAM_OLIUJ</div>
-    <div class="footer-copy">> oruam.cloud/writing · 2026_</div>
+    <div class="footer-copy" data-i18n="footer-copy">> oruam.cloud/writing · 2026_</div>
   </footer>
 
 </div>
@@ -610,6 +611,67 @@ function draw() {
 }
 init();
 setInterval(draw, 45);
+
+// ── LANGUAGE ──
+const i18n = {
+  en: {
+    '_title':           'Writing — Julio Mauro',
+    'nav-projects':     'Projects',
+    'nav-writing':      'Writing',
+    'header-tag':       'Oruam Oliuj · Security &amp; Infrastructure',
+    'header-sub':       '&gt; Technical notes from real incidents, exercises and daily work in cloud security_',
+    'filter-all':       'All',
+    'filter-networking':'Networking',
+    'filter-security':  'Security',
+    'section-networking':'Networking',
+    'section-security': 'Security',
+    'desc-container':   'How a non-root container with limited file read access becomes the pivot point for cross-account IAM escalation via the metadata endpoint and image layer history.',
+    'desc-wildcard':    'How StringLike with a glob pattern in an IAM trust policy condition turns a controlled role assumption into an open path — and why StringEquals matters.',
+    'desc-header':      'Why X-Forwarded-For should never be used for access control at the edge — and how one misconfigured Nginx directive led to full internal network access.',
+    'desc-systemd':     'How services running as root that source files from user-influenced paths enable privilege escalation without a CVE — just a timer and a writable directory.',
+    'desc-rbac':        'How create Jobs combined with a permissive service account enables namespace lateral movement — and why Kubernetes RBAC must be reviewed as a permission graph, not individual rules.',
+    'desc-meshcore':    'How LoRa radios and mesh networking enable community-driven communication over dozens of kilometers — without internet, cellular, or any centralized provider. Notes from active testing between Santo André, Jundiaí, Sorocaba and Campinas.',
+    'desc-appearances': 'How appearance-based cognitive biases become the social engineer\'s preferred attack vector — and why trusting the "packaging" over evidence hands the attacker a map of your weakest point.',
+    'footer-copy':      '&gt; oruam.cloud/writing · 2026_',
+  },
+  pt: {
+    '_title':           'Textos — Julio Mauro',
+    'nav-projects':     'Projetos',
+    'nav-writing':      'Textos',
+    'header-tag':       'Oruam Oliuj · Segurança &amp; Infraestrutura',
+    'header-sub':       '&gt; Notas técnicas de incidentes reais, exercícios e trabalho diário em segurança de nuvem_',
+    'filter-all':       'Todos',
+    'filter-networking':'Redes',
+    'filter-security':  'Segurança',
+    'section-networking':'Redes',
+    'section-security': 'Segurança',
+    'desc-container':   'Como um container sem root e com acesso limitado a arquivos se torna o ponto de pivot para escalada IAM entre contas, via endpoint de metadados e histórico de camadas de imagem.',
+    'desc-wildcard':    'Como StringLike com padrão glob em uma condição de trust policy IAM transforma um assume role controlado em um caminho aberto — e por que StringEquals importa.',
+    'desc-header':      'Por que X-Forwarded-For nunca deve ser usado para controle de acesso na borda — e como uma diretiva Nginx mal configurada levou ao acesso completo à rede interna.',
+    'desc-systemd':     'Como serviços rodando como root que importam arquivos de caminhos influenciados pelo usuário permitem escalada de privilégios sem CVE — apenas um timer e um diretório com permissão de escrita.',
+    'desc-rbac':        'Como create Jobs combinado com uma service account permissiva permite movimentação lateral entre namespaces — e por que o RBAC do Kubernetes deve ser revisado como um grafo de permissões, não como regras isoladas.',
+    'desc-meshcore':    'Como rádios LoRa e redes mesh permitem comunicação comunitária por dezenas de quilômetros — sem internet, celular ou provedor centralizado. Notas de testes ativos entre Santo André, Jundiaí, Sorocaba e Campinas.',
+    'desc-appearances': 'Como vieses cognitivos baseados em aparência se tornam o vetor de ataque preferido da engenharia social — e por que confiar na "embalagem" em vez de evidências entrega ao atacante o mapa do seu ponto mais fraco.',
+    'footer-copy':      '&gt; oruam.cloud/writing · 2026_',
+  }
+};
+
+function applyLang(lang) {
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const v = i18n[lang]?.[el.dataset.i18n];
+    if (v !== undefined) el.innerHTML = v;
+  });
+  if (i18n[lang]._title) document.title = i18n[lang]._title;
+  const btn = document.getElementById('lang-btn');
+  if (btn) btn.textContent = lang === 'en' ? '◈ PT' : '◈ EN';
+  localStorage.setItem('lang', lang);
+}
+
+function toggleLang() {
+  applyLang((localStorage.getItem('lang') || 'en') === 'en' ? 'pt' : 'en');
+}
+
+(function() { if (localStorage.getItem('lang') === 'pt') applyLang('pt'); })();
 
 // ── THEME ──
 function toggleTheme() {

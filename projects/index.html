@@ -592,9 +592,10 @@ footer {
   <div class="wrap">
     <div class="nav-inner">
       <a href="/" class="nav-home">ORUAM.CLOUD</a>
-      <a href="/projects/" class="nav-link">Projects</a>
-      <a href="/writing/" class="nav-link">Writing</a>
+      <a href="/projects/" class="nav-link" data-i18n="nav-projects">Projects</a>
+      <a href="/writing/" class="nav-link" data-i18n="nav-writing">Writing</a>
       <button class="theme-toggle" id="theme-btn" onclick="toggleTheme()">◈ GRN</button>
+      <button class="theme-toggle" id="lang-btn" onclick="toggleLang()">◈ PT</button>
       <div class="nav-status">
         <div class="status-dot"></div>
         ONLINE
@@ -606,9 +607,9 @@ footer {
 <div class="wrap">
 
   <header>
-    <div class="header-tag">Oruam Oliuj · Personal Projects</div>
+    <div class="header-tag" data-i18n="header-tag">Oruam Oliuj · Personal Projects</div>
     <h1>PROJECTS</h1>
-    <p class="header-sub">> Hands-on security, hardware and tooling projects_</p>
+    <p class="header-sub" data-i18n="header-sub">> Hands-on security, hardware and tooling projects_</p>
   </header>
 
   <div class="projects">
@@ -623,21 +624,17 @@ footer {
             <div class="card-title">ORUAM <span>BSS</span></div>
           </div>
           <div class="card-badges">
-            <span class="badge badge-wip">⟳ In Progress</span>
+            <span class="badge badge-wip" data-i18n="badge-wip-bss">⟳ In Progress</span>
             <span class="badge badge-platform">M5Cardputer ADV</span>
             <span class="badge badge-lang">C++ · PlatformIO</span>
           </div>
         </div>
 
-        <p class="card-desc">
-          <strong>ORUAM BSS</strong> (Basic Security Suite) is a custom firmware for the <strong>M5Cardputer ADV</strong> that turns the device into a compact, handheld security reconnaissance tool. The project explores the real limits of what an <strong>ESP32-S3-based device</strong> can do in the field of network and wireless security — no Linux, no external SBCs, pure embedded C++.
-          <br><br>
-          The name carries a double meaning: <strong>ORUAM</strong> is the author's security codename, and <strong>BSS</strong> (Basic Security Suite) is also a reference to the 802.11 wireless term <strong>Basic Service Set</strong> — a nod to the WiFi-heavy nature of the tool.
-        </p>
+        <p class="card-desc" data-i18n="desc-bss"><strong>ORUAM BSS</strong> (Basic Security Suite) is a custom firmware for the <strong>M5Cardputer ADV</strong> that turns the device into a compact, handheld security reconnaissance tool. The project explores the real limits of what an <strong>ESP32-S3-based device</strong> can do in the field of network and wireless security — no Linux, no external SBCs, pure embedded C++.<br><br>The name carries a double meaning: <strong>ORUAM</strong> is the author's security codename, and <strong>BSS</strong> (Basic Security Suite) is also a reference to the 802.11 wireless term <strong>Basic Service Set</strong> — a nod to the WiFi-heavy nature of the tool.</p>
 
         <div class="progress-wrap">
           <div class="progress-label">
-            <span>OVERALL PROGRESS</span>
+            <span data-i18n="progress-label">OVERALL PROGRESS</span>
             <span>v1.0.0 — INITIAL COMMIT</span>
           </div>
           <div class="progress-bar">
@@ -645,7 +642,7 @@ footer {
           </div>
         </div>
 
-        <div class="modules-label">Planned Modules</div>
+        <div class="modules-label" data-i18n="modules-bss">Planned Modules</div>
         <div class="modules-grid">
           <div class="module-item done">Core / Boot</div>
           <div class="module-item done">Menu UI</div>
@@ -665,7 +662,7 @@ footer {
           <div class="module-item todo">Entropy Analyzer</div>
         </div>
 
-        <div class="stack-label">Tech Stack</div>
+        <div class="stack-label" data-i18n="stack-bss">Tech Stack</div>
         <div class="stack-tags">
           <span class="stack-tag">ESP32</span>
           <span class="stack-tag">C++</span>
@@ -699,19 +696,15 @@ footer {
             <div class="card-title">MESH<span>CORE</span> BRASIL</div>
           </div>
           <div class="card-badges">
-            <span class="badge badge-wip">⟳ Active</span>
+            <span class="badge badge-wip" data-i18n="badge-active-mesh">⟳ Active</span>
             <span class="badge badge-platform">LoRa · Off-Grid</span>
             <span class="badge badge-lang">RF · Hardware</span>
           </div>
         </div>
 
-        <p class="card-desc">
-          Active development and expansion of the <strong>MeshCore</strong> decentralized mesh network in Brazil, focusing on interconnecting cities across the state of São Paulo — Santo André, Jundiaí, Sorocaba, and Campinas.
-          <br><br>
-          The project builds a resilient, low-cost communication mesh completely independent of traditional telecommunications infrastructure — <strong>fully off-grid</strong>, powered by <strong>LoRa radio technology</strong>. LoRa (Long Range) is a low-power wireless protocol capable of transmitting data over tens of kilometers without internet or cellular connectivity, ideal for emergency communications and remote areas. Nodes are powered by solar-charged batteries, enabling permanent autonomous operation.
-        </p>
+        <p class="card-desc" data-i18n="desc-meshcore">Active development and expansion of the <strong>MeshCore</strong> decentralized mesh network in Brazil, focusing on interconnecting cities across the state of São Paulo — Santo André, Jundiaí, Sorocaba, and Campinas.<br><br>The project builds a resilient, low-cost communication mesh completely independent of traditional telecommunications infrastructure — <strong>fully off-grid</strong>, powered by <strong>LoRa radio technology</strong>. LoRa (Long Range) is a low-power wireless protocol capable of transmitting data over tens of kilometers without internet or cellular connectivity, ideal for emergency communications and remote areas. Nodes are powered by solar-charged batteries, enabling permanent autonomous operation.</p>
 
-        <div class="modules-label">Key Activities</div>
+        <div class="modules-label" data-i18n="modules-mesh">Key Activities</div>
         <div class="modules-grid">
           <div class="module-item done">Network Architecture</div>
           <div class="module-item done">Node Positioning</div>
@@ -725,7 +718,7 @@ footer {
           <div class="module-item todo">Emergency Comms Layer</div>
         </div>
 
-        <div class="stack-label">Tech Stack</div>
+        <div class="stack-label" data-i18n="stack-mesh">Tech Stack</div>
         <div class="stack-tags">
           <span class="stack-tag">LoRa</span>
           <span class="stack-tag">MeshCore</span>
@@ -762,13 +755,9 @@ footer {
           </div>
         </div>
 
-        <p class="card-desc">
-          Terminal <strong>Pomodoro timer</strong> for macOS and Linux with no external dependencies. Detects the OS automatically and uses native notifications and audio on each platform — <strong>osascript + afplay</strong> on macOS, <strong>notify-send + sox</strong> on Linux.
-          <br><br>
-          Configurable work and break durations, automatic long break every N sessions, live countdown display, session counter, and graceful <strong>Ctrl+C exit</strong> with a focus time summary.
-        </p>
+        <p class="card-desc" data-i18n="desc-pomodoro">Terminal <strong>Pomodoro timer</strong> for macOS and Linux with no external dependencies. Detects the OS automatically and uses native notifications and audio on each platform — <strong>osascript + afplay</strong> on macOS, <strong>notify-send + sox</strong> on Linux.<br><br>Configurable work and break durations, automatic long break every N sessions, live countdown display, session counter, and graceful <strong>Ctrl+C exit</strong> with a focus time summary.</p>
 
-        <div class="modules-label">Features</div>
+        <div class="modules-label" data-i18n="modules-pomo">Features</div>
         <div class="modules-grid">
           <div class="module-item done">macOS support</div>
           <div class="module-item done">Linux support</div>
@@ -780,7 +769,7 @@ footer {
           <div class="module-item done">Desktop notify</div>
         </div>
 
-        <div class="stack-label">Tech Stack</div>
+        <div class="stack-label" data-i18n="stack-pomo">Tech Stack</div>
         <div class="stack-tags">
           <span class="stack-tag">Bash</span>
           <span class="stack-tag">osascript</span>
@@ -814,13 +803,9 @@ footer {
           </div>
         </div>
 
-        <p class="card-desc">
-          Secure CLI wrapper for <strong>PWPush</strong> — share passwords via one-time URLs that expire by time or view count. The password is passed as a <strong>JSON body via stdin</strong> to curl, never as a process argument, making it safe against <strong>ps aux</strong> snooping.
-          <br><br>
-          Supports self-hosted PWPush instances, optional notes, recipient delete, numeric validation, and dependency checking. Password can be passed via flag, environment variable, or <strong>stdin pipe</strong>.
-        </p>
+        <p class="card-desc" data-i18n="desc-hidepw">Secure CLI wrapper for <strong>PWPush</strong> — share passwords via one-time URLs that expire by time or view count. The password is passed as a <strong>JSON body via stdin</strong> to curl, never as a process argument, making it safe against <strong>ps aux</strong> snooping.<br><br>Supports self-hosted PWPush instances, optional notes, recipient delete, numeric validation, and dependency checking. Password can be passed via flag, environment variable, or <strong>stdin pipe</strong>.</p>
 
-        <div class="modules-label">Features</div>
+        <div class="modules-label" data-i18n="modules-hidepw">Features</div>
         <div class="modules-grid">
           <div class="module-item done">ps aux safe</div>
           <div class="module-item done">Self-hosted support</div>
@@ -832,7 +817,7 @@ footer {
           <div class="module-item done">Error handling</div>
         </div>
 
-        <div class="stack-label">Tech Stack</div>
+        <div class="stack-label" data-i18n="stack-hidepw">Tech Stack</div>
         <div class="stack-tags">
           <span class="stack-tag">Bash</span>
           <span class="stack-tag">curl</span>
@@ -860,19 +845,15 @@ footer {
             <div class="card-title">SEC <span>WRITEUPS</span></div>
           </div>
           <div class="card-badges">
-            <span class="badge badge-wip">⟳ Growing</span>
+            <span class="badge badge-wip" data-i18n="badge-growing">⟳ Growing</span>
             <span class="badge badge-platform">Real-World · Hackathons</span>
             <span class="badge badge-lang">Security Research</span>
           </div>
         </div>
 
-        <p class="card-desc">
-          A collection of <strong>security case writeups</strong> from real-world exercises and hackathon simulations — documenting full exploitation chains, root causes, and defensive lessons. Covers <strong>Linux privilege escalation</strong>, <strong>cloud IAM abuse</strong>, <strong>container escape</strong>, <strong>Kubernetes RBAC</strong>, and <strong>lateral movement</strong> techniques observed in practice.
-          <br><br>
-          Each case follows the same structure: scenario context, reconnaissance methodology, step-by-step exploitation chain with commands, root cause analysis, and defensive takeaways. No CVE dependency — real misconfigurations, real chains.
-        </p>
+        <p class="card-desc" data-i18n="desc-writeups">A collection of <strong>security case writeups</strong> from real-world exercises and hackathon simulations — documenting full exploitation chains, root causes, and defensive lessons. Covers <strong>Linux privilege escalation</strong>, <strong>cloud IAM abuse</strong>, <strong>container escape</strong>, <strong>Kubernetes RBAC</strong>, and <strong>lateral movement</strong> techniques observed in practice.<br><br>Each case follows the same structure: scenario context, reconnaissance methodology, step-by-step exploitation chain with commands, root cause analysis, and defensive takeaways. No CVE dependency — real misconfigurations, real chains.</p>
 
-        <div class="modules-label">Cases</div>
+        <div class="modules-label" data-i18n="modules-writeups">Cases</div>
         <div class="modules-grid">
           <div class="module-item done">Linux Pivot · SSH Tunnel</div>
           <div class="module-item done">Container Metadata · IAM</div>
@@ -882,7 +863,7 @@ footer {
           <div class="module-item todo">More cases coming</div>
         </div>
 
-        <div class="stack-label">Topics</div>
+        <div class="stack-label" data-i18n="stack-writeups">Topics</div>
         <div class="stack-tags">
           <span class="stack-tag">Linux</span>
           <span class="stack-tag">Cloud IAM</span>
@@ -913,19 +894,15 @@ footer {
             <div class="card-title">DIS<span>CONECTA</span></div>
           </div>
           <div class="card-badges">
-            <span class="badge badge-wip">⟳ Active</span>
+            <span class="badge badge-wip" data-i18n="badge-active-disc">⟳ Active</span>
             <span class="badge badge-platform">Music · Writing</span>
             <span class="badge badge-lang">Podcast · Editorial</span>
           </div>
         </div>
 
-        <p class="card-desc">
-          Contributing author at <strong>Disconecta</strong>, a Brazilian music portal focused on classic rock, progressive rock, and alternative music. Specialist in <strong>Italian Progressive Rock</strong> and author of the book <strong>"Rock Progressivo Italiano"</strong> — available on Amazon.
-          <br><br>
-          Writing in-depth album reviews, artist histories, show coverage, and opinion pieces — applying the same analytical rigor used in technical work to dissect the complexities and timelessness of classic rock. Also co-host of the <strong>Redação Disconecta</strong> podcast.
-        </p>
+        <p class="card-desc" data-i18n="desc-disc">Contributing author at <strong>Disconecta</strong>, a Brazilian music portal focused on classic rock, progressive rock, and alternative music. Specialist in <strong>Italian Progressive Rock</strong> and author of the book <strong>"Rock Progressivo Italiano"</strong> — available on Amazon.<br><br>Writing in-depth album reviews, artist histories, show coverage, and opinion pieces — applying the same analytical rigor used in technical work to dissect the complexities and timelessness of classic rock. Also co-host of the <strong>Redação Disconecta</strong> podcast.</p>
 
-        <div class="modules-label">Content Areas</div>
+        <div class="modules-label" data-i18n="modules-disc">Content Areas</div>
         <div class="modules-grid">
           <div class="module-item done">Album Reviews</div>
           <div class="module-item done">Artist Histories</div>
@@ -937,7 +914,7 @@ footer {
           <div class="module-item wip">Collector's Guide</div>
         </div>
 
-        <div class="stack-label">Platforms</div>
+        <div class="stack-label" data-i18n="stack-disc">Platforms</div>
         <div class="stack-tags">
           <span class="stack-tag">Disconecta</span>
           <span class="stack-tag">Podcast</span>
@@ -962,7 +939,7 @@ footer {
 
   <footer>
     <div class="footer-sig">ORUAM_OLIUJ</div>
-    <div class="footer-copy">> oruam.cloud/projects · 2026_</div>
+    <div class="footer-copy" data-i18n="footer-copy">> oruam.cloud/projects · 2026_</div>
   </footer>
 
 </div>
@@ -999,6 +976,87 @@ function draw() {
 }
 init();
 setInterval(draw, 45);
+
+// ── LANG ──
+const i18n = {
+  en: {
+    '_title': 'Projects — Oruam Oliuj',
+    'nav-projects': 'Projects',
+    'nav-writing': 'Writing',
+    'header-tag': 'Oruam Oliuj · Personal Projects',
+    'header-sub': '&gt; Hands-on security, hardware and tooling projects_',
+    'badge-wip-bss': '⟳ In Progress',
+    'badge-active-mesh': '⟳ Active',
+    'badge-growing': '⟳ Growing',
+    'badge-active-disc': '⟳ Active',
+    'progress-label': 'OVERALL PROGRESS',
+    'modules-bss': 'Planned Modules',
+    'modules-mesh': 'Key Activities',
+    'modules-pomo': 'Features',
+    'modules-hidepw': 'Features',
+    'modules-writeups': 'Cases',
+    'modules-disc': 'Content Areas',
+    'stack-bss': 'Tech Stack',
+    'stack-mesh': 'Tech Stack',
+    'stack-pomo': 'Tech Stack',
+    'stack-hidepw': 'Tech Stack',
+    'stack-writeups': 'Topics',
+    'stack-disc': 'Platforms',
+    'desc-bss': '<strong>ORUAM BSS</strong> (Basic Security Suite) is a custom firmware for the <strong>M5Cardputer ADV</strong> that turns the device into a compact, handheld security reconnaissance tool. The project explores the real limits of what an <strong>ESP32-S3-based device</strong> can do in the field of network and wireless security — no Linux, no external SBCs, pure embedded C++.<br><br>The name carries a double meaning: <strong>ORUAM</strong> is the author\'s security codename, and <strong>BSS</strong> (Basic Security Suite) is also a reference to the 802.11 wireless term <strong>Basic Service Set</strong> — a nod to the WiFi-heavy nature of the tool.',
+    'desc-meshcore': 'Active development and expansion of the <strong>MeshCore</strong> decentralized mesh network in Brazil, focusing on interconnecting cities across the state of São Paulo — Santo André, Jundiaí, Sorocaba, and Campinas.<br><br>The project builds a resilient, low-cost communication mesh completely independent of traditional telecommunications infrastructure — <strong>fully off-grid</strong>, powered by <strong>LoRa radio technology</strong>. LoRa (Long Range) is a low-power wireless protocol capable of transmitting data over tens of kilometers without internet or cellular connectivity, ideal for emergency communications and remote areas. Nodes are powered by solar-charged batteries, enabling permanent autonomous operation.',
+    'desc-pomodoro': 'Terminal <strong>Pomodoro timer</strong> for macOS and Linux with no external dependencies. Detects the OS automatically and uses native notifications and audio on each platform — <strong>osascript + afplay</strong> on macOS, <strong>notify-send + sox</strong> on Linux.<br><br>Configurable work and break durations, automatic long break every N sessions, live countdown display, session counter, and graceful <strong>Ctrl+C exit</strong> with a focus time summary.',
+    'desc-hidepw': 'Secure CLI wrapper for <strong>PWPush</strong> — share passwords via one-time URLs that expire by time or view count. The password is passed as a <strong>JSON body via stdin</strong> to curl, never as a process argument, making it safe against <strong>ps aux</strong> snooping.<br><br>Supports self-hosted PWPush instances, optional notes, recipient delete, numeric validation, and dependency checking. Password can be passed via flag, environment variable, or <strong>stdin pipe</strong>.',
+    'desc-writeups': 'A collection of <strong>security case writeups</strong> from real-world exercises and hackathon simulations — documenting full exploitation chains, root causes, and defensive lessons. Covers <strong>Linux privilege escalation</strong>, <strong>cloud IAM abuse</strong>, <strong>container escape</strong>, <strong>Kubernetes RBAC</strong>, and <strong>lateral movement</strong> techniques observed in practice.<br><br>Each case follows the same structure: scenario context, reconnaissance methodology, step-by-step exploitation chain with commands, root cause analysis, and defensive takeaways. No CVE dependency — real misconfigurations, real chains.',
+    'desc-disc': 'Contributing author at <strong>Disconecta</strong>, a Brazilian music portal focused on classic rock, progressive rock, and alternative music. Specialist in <strong>Italian Progressive Rock</strong> and author of the book <strong>"Rock Progressivo Italiano"</strong> — available on Amazon.<br><br>Writing in-depth album reviews, artist histories, show coverage, and opinion pieces — applying the same analytical rigor used in technical work to dissect the complexities and timelessness of classic rock. Also co-host of the <strong>Redação Disconecta</strong> podcast.',
+    'footer-copy': '&gt; oruam.cloud/projects · 2026_',
+  },
+  pt: {
+    '_title': 'Projetos — Oruam Oliuj',
+    'nav-projects': 'Projetos',
+    'nav-writing': 'Textos',
+    'header-tag': 'Oruam Oliuj · Projetos Pessoais',
+    'header-sub': '&gt; Projetos práticos de segurança, hardware e ferramentas_',
+    'badge-wip-bss': '⟳ Em Andamento',
+    'badge-active-mesh': '⟳ Ativo',
+    'badge-growing': '⟳ Crescendo',
+    'badge-active-disc': '⟳ Ativo',
+    'progress-label': 'PROGRESSO GERAL',
+    'modules-bss': 'Módulos Planejados',
+    'modules-mesh': 'Atividades Principais',
+    'modules-pomo': 'Funcionalidades',
+    'modules-hidepw': 'Funcionalidades',
+    'modules-writeups': 'Casos',
+    'modules-disc': 'Áreas de Conteúdo',
+    'stack-bss': 'Tecnologias',
+    'stack-mesh': 'Tecnologias',
+    'stack-pomo': 'Tecnologias',
+    'stack-hidepw': 'Tecnologias',
+    'stack-writeups': 'Tópicos',
+    'stack-disc': 'Plataformas',
+    'desc-bss': '<strong>ORUAM BSS</strong> (Basic Security Suite) é um firmware personalizado para o <strong>M5Cardputer ADV</strong> que transforma o dispositivo em uma ferramenta compacta e portátil de reconhecimento de segurança. O projeto explora os limites reais do que um dispositivo <strong>baseado em ESP32-S3</strong> pode fazer na área de segurança de redes e sem fio — sem Linux, sem SBCs externos, C++ embarcado puro.<br><br>O nome tem duplo significado: <strong>ORUAM</strong> é o codinome de segurança do autor, e <strong>BSS</strong> (Basic Security Suite) é também uma referência ao termo 802.11 <strong>Basic Service Set</strong> — uma alusão à natureza intensamente focada em WiFi da ferramenta.',
+    'desc-meshcore': 'Desenvolvimento ativo e expansão da rede mesh descentralizada <strong>MeshCore</strong> no Brasil, com foco na interconexão de cidades no estado de São Paulo — Santo André, Jundiaí, Sorocaba e Campinas.<br><br>O projeto constrói uma malha de comunicação resiliente e de baixo custo, completamente independente de infraestrutura de telecomunicações tradicional — <strong>totalmente off-grid</strong>, alimentada por <strong>tecnologia de rádio LoRa</strong>. LoRa (Long Range) é um protocolo sem fio de baixo consumo capaz de transmitir dados por dezenas de quilômetros sem internet ou sinal celular, ideal para comunicações de emergência e áreas remotas. Os nós são alimentados por baterias carregadas por energia solar, permitindo operação autônoma permanente.',
+    'desc-pomodoro': '<strong>Timer Pomodoro</strong> para terminal no macOS e Linux sem dependências externas. Detecta o sistema operacional automaticamente e usa notificações e áudio nativos em cada plataforma — <strong>osascript + afplay</strong> no macOS, <strong>notify-send + sox</strong> no Linux.<br><br>Durações configuráveis de trabalho e pausa, pausa longa automática a cada N sessões, contagem regressiva ao vivo, contador de sessões e <strong>saída via Ctrl+C</strong> com resumo do tempo de foco.',
+    'desc-hidepw': 'Wrapper CLI seguro para o <strong>PWPush</strong> — compartilhe senhas via URLs de uso único que expiram por tempo ou contagem de visualizações. A senha é enviada como <strong>corpo JSON via stdin</strong> ao curl, nunca como argumento de processo, tornando-a segura contra espionagem via <strong>ps aux</strong>.<br><br>Suporta instâncias auto-hospedadas do PWPush, notas opcionais, exclusão por destinatário, validação numérica e verificação de dependências. A senha pode ser passada via flag, variável de ambiente ou <strong>pipe stdin</strong>.',
+    'desc-writeups': 'Coleção de <strong>writeups de casos de segurança</strong> de exercícios reais e simulações de hackathon — documentando cadeias de exploração completas, causas raiz e lições defensivas. Cobre técnicas de <strong>escalada de privilégios no Linux</strong>, <strong>abuso de IAM em nuvem</strong>, <strong>escape de containers</strong>, <strong>RBAC do Kubernetes</strong> e <strong>movimentação lateral</strong> observadas na prática.<br><br>Cada caso segue a mesma estrutura: contexto do cenário, metodologia de reconhecimento, cadeia de exploração passo a passo com comandos, análise de causa raiz e lições defensivas. Sem dependência de CVE — configurações incorretas reais, cadeias reais.',
+    'desc-disc': 'Autor colaborador na <strong>Disconecta</strong>, portal brasileiro de música focado em rock clássico, rock progressivo e música alternativa. Especialista em <strong>Rock Progressivo Italiano</strong> e autor do livro <strong>"Rock Progressivo Italiano"</strong> — disponível na Amazon.<br><br>Escreve análises aprofundadas de álbuns, histórias de artistas, cobertura de shows e artigos de opinião — aplicando o mesmo rigor analítico do trabalho técnico para dissecar a complexidade e a atemporalidade do rock clássico. Também co-apresentador do podcast <strong>Redação Disconecta</strong>.',
+    'footer-copy': '&gt; oruam.cloud/projects · 2026_',
+  }
+};
+
+function applyLang(lang) {
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const v = i18n[lang]?.[el.dataset.i18n];
+    if (v !== undefined) el.innerHTML = v;
+  });
+  if (i18n[lang]._title) document.title = i18n[lang]._title;
+  const btn = document.getElementById('lang-btn');
+  if (btn) btn.textContent = lang === 'en' ? '◈ PT' : '◈ EN';
+  localStorage.setItem('lang', lang);
+}
+function toggleLang() {
+  applyLang((localStorage.getItem('lang') || 'en') === 'en' ? 'pt' : 'en');
+}
+(function() { if (localStorage.getItem('lang') === 'pt') applyLang('pt'); })();
 
 function toggleTheme() {
   const html = document.documentElement;

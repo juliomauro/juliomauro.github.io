@@ -602,27 +602,23 @@ h1 { animation: glitch 8s ease infinite; }
   <!-- HEADER -->
   <header>
     <div class="boot-seq">
-      <div class="boot-line">> SYSTEM BOOT... [OK]</div>
-      <div class="boot-line">> LOADING PROFILE: juliomauro [OK]</div>
-      <div class="boot-line">> SECURITY CLEARANCE: GRANTED [OK]</div>
-      <div class="boot-line">> EXPERIENCE: 25+ YEARS [OK]</div>
-      <div class="boot-line">> INITIALIZING INTERFACE...</div>
+      <div class="boot-line" data-i18n="boot-1">> SYSTEM BOOT... [OK]</div>
+      <div class="boot-line" data-i18n="boot-2">> LOADING PROFILE: juliomauro [OK]</div>
+      <div class="boot-line" data-i18n="boot-3">> SECURITY CLEARANCE: GRANTED [OK]</div>
+      <div class="boot-line" data-i18n="boot-4">> EXPERIENCE: 25+ YEARS [OK]</div>
+      <div class="boot-line" data-i18n="boot-5">> INITIALIZING INTERFACE...</div>
     </div>
 
     <div class="header-main">
       <div>
         <h1>JULIO CESAR<br>MAURO</h1>
-        <p class="subtitle">
-          <span>Head of Infrastructure, Cloud &amp; Security</span><br>
-          +25 years managing critical environments<br>
-          São Paulo, Brazil
-        </p>
+        <p class="subtitle" data-i18n="subtitle"><span>Head of Infrastructure, Cloud &amp; Security</span><br>+25 years managing critical environments<br>São Paulo, Brazil</p>
         <div class="header-links">
           <a href="https://github.com/juliomauro" target="_blank" class="link-pill">⌥ GitHub</a>
           <a href="https://linkedin.com/in/juliomauro" target="_blank" class="link-pill">⌥ LinkedIn</a>
           <a href="mailto:julio.mauro@gmail.com" class="link-pill">⌥ Email</a>
-          <a href="/projects/" class="link-pill">⌥ Projects</a>
-          <a href="/writing/" class="link-pill">⌥ Writing</a>
+          <a href="/projects/" class="link-pill" data-i18n="link-projects">⌥ Projects</a>
+          <a href="/writing/" class="link-pill" data-i18n="link-writing">⌥ Writing</a>
         </div>
       </div>
     </div>
@@ -631,13 +627,14 @@ h1 { animation: glitch 8s ease infinite; }
   <!-- NAV -->
   <nav>
     <div class="nav-inner">
-      <a href="#summary">Summary</a>
-      <a href="#competencies">Skills</a>
-      <a href="#experience">Experience</a>
-      <a href="#education">Education</a>
-      <a href="/projects/">Projects</a>
-      <a href="/writing/">Writing</a>
+      <a href="#summary" data-i18n="nav-summary">Summary</a>
+      <a href="#competencies" data-i18n="nav-skills">Skills</a>
+      <a href="#experience" data-i18n="nav-experience">Experience</a>
+      <a href="#education" data-i18n="nav-education">Education</a>
+      <a href="/projects/" data-i18n="nav-projects">Projects</a>
+      <a href="/writing/" data-i18n="nav-writing">Writing</a>
       <button class="theme-toggle" id="theme-btn" onclick="toggleTheme()">◈ GRN</button>
+      <button class="theme-toggle" id="lang-btn" onclick="toggleLang()">◈ PT</button>
       <div class="nav-status">
         <div class="status-dot"></div>
         ONLINE
@@ -647,38 +644,34 @@ h1 { animation: glitch 8s ease infinite; }
 
   <!-- SUMMARY -->
   <section id="summary">
-    <div class="section-label"><span class="num">01</span> Summary</div>
-    <p class="summary-text">
-      With over <strong>25 years of experience</strong> in Information Technology, I lead infrastructure, information security, and cloud environments. My career has been built managing critical operations, ensuring <strong>high availability</strong>, optimizing hybrid environments, and leading technical teams to deliver strategic solutions aligned with business goals.
-      <br><br>
-      Throughout my journey, I led initiatives at <strong>major companies in the communications, tourism, and technology sectors</strong>, combining technical expertise with business-driven results. Strong experience in building multidisciplinary teams, promoting innovation, agility, and technological resilience.
-    </p>
+    <div class="section-label"><span class="num">01</span> <span data-i18n="section-summary">Summary</span></div>
+    <p class="summary-text" data-i18n="summary-text">With over <strong>25 years of experience</strong> in Information Technology, I lead infrastructure, information security, and cloud environments. My career has been built managing critical operations, ensuring <strong>high availability</strong>, optimizing hybrid environments, and leading technical teams to deliver strategic solutions aligned with business goals.<br><br>Throughout my journey, I led initiatives at <strong>major companies in the communications, tourism, and technology sectors</strong>, combining technical expertise with business-driven results. Strong experience in building multidisciplinary teams, promoting innovation, agility, and technological resilience.</p>
   </section>
 
   <!-- COMPETENCIES -->
   <section id="competencies">
-    <div class="section-label"><span class="num">02</span> Core Competencies</div>
+    <div class="section-label"><span class="num">02</span> <span data-i18n="section-competencies">Core Competencies</span></div>
     <div class="comp-grid">
-      <div class="comp-item">IT Team Leadership</div>
-      <div class="comp-item">Infrastructure Strategy</div>
-      <div class="comp-item">Incident Response & Forensics</div>
-      <div class="comp-item">Threat Intelligence</div>
-      <div class="comp-item">Security Operations (SecOps)</div>
-      <div class="comp-item">Vulnerability Management</div>
-      <div class="comp-item">Cloud Security · AWS · GCP</div>
-      <div class="comp-item">Zero Trust Architecture</div>
-      <div class="comp-item">Terraform · Ansible</div>
-      <div class="comp-item">SIEM · EDR · XDR</div>
-      <div class="comp-item">Penetration Testing</div>
-      <div class="comp-item">DevSecOps</div>
-      <div class="comp-item">IT Governance & Compliance</div>
-      <div class="comp-item">Cloud Cost Optimization</div>
+      <div class="comp-item" data-i18n="comp-leadership">IT Team Leadership</div>
+      <div class="comp-item" data-i18n="comp-infra">Infrastructure Strategy</div>
+      <div class="comp-item" data-i18n="comp-ir">Incident Response &amp; Forensics</div>
+      <div class="comp-item" data-i18n="comp-ti">Threat Intelligence</div>
+      <div class="comp-item" data-i18n="comp-secops">Security Operations (SecOps)</div>
+      <div class="comp-item" data-i18n="comp-vm">Vulnerability Management</div>
+      <div class="comp-item" data-i18n="comp-cloud">Cloud Security · AWS · GCP</div>
+      <div class="comp-item" data-i18n="comp-zt">Zero Trust Architecture</div>
+      <div class="comp-item" data-i18n="comp-iac">Terraform · Ansible</div>
+      <div class="comp-item" data-i18n="comp-siem">SIEM · EDR · XDR</div>
+      <div class="comp-item" data-i18n="comp-pentest">Penetration Testing</div>
+      <div class="comp-item" data-i18n="comp-devsecops">DevSecOps</div>
+      <div class="comp-item" data-i18n="comp-governance">IT Governance &amp; Compliance</div>
+      <div class="comp-item" data-i18n="comp-cost">Cloud Cost Optimization</div>
     </div>
   </section>
 
   <!-- EXPERIENCE -->
   <section id="experience">
-    <div class="section-label"><span class="num">03</span> Professional Experience</div>
+    <div class="section-label"><span class="num">03</span> <span data-i18n="section-experience">Professional Experience</span></div>
     <div class="exp-list">
 
       <div class="exp-item">
@@ -688,8 +681,8 @@ h1 { animation: glitch 8s ease infinite; }
           <div class="exp-location">Stockholm, Sweden</div>
         </div>
         <div class="exp-body">
-          <div class="exp-role">IT Security Specialist · 2023–Present</div>
-          <ul>
+          <div class="exp-role" data-i18n="exp-sinch-role1">IT Security Specialist · 2023–Present</div>
+          <ul data-i18n="exp-sinch-ul1">
             <li>Global leader of the Vulnerability Management Program (VMP), responsible for strategy, governance, and full lifecycle execution across hybrid and multi-cloud environments.</li>
             <li>Coordinating cybersecurity initiatives across on-premises and multi-cloud environments, with cross-functional engagement between engineering, product, and operations teams.</li>
             <li>Defining and standardizing vulnerability management strategies for critical CVEs — including deep technical analysis, false positive triage, risk assessment, and exception management.</li>
@@ -698,8 +691,8 @@ h1 { animation: glitch 8s ease infinite; }
             <li>Risk governance over public asset exposure, insecure configurations, and unauthorized access — focused on attack surface reduction and evidence-based decision making.</li>
           </ul>
           <div class="exp-sep"></div>
-          <div class="exp-role">IT Infrastructure Specialist · 2019–2023</div>
-          <ul>
+          <div class="exp-role" data-i18n="exp-sinch-role2">IT Infrastructure Specialist · 2019–2023</div>
+          <ul data-i18n="exp-sinch-ul2">
             <li>Designed and managed critical IT infrastructures across multi-cloud and on-premises data centers.</li>
             <li>Maintained SLA of 99.998% availability.</li>
             <li>Integrated IT environments of acquired companies and optimized cloud resource costs.</li>
@@ -714,8 +707,8 @@ h1 { animation: glitch 8s ease infinite; }
           <div class="exp-location">São Paulo, Brazil</div>
         </div>
         <div class="exp-body">
-          <div class="exp-role">IT Infrastructure Coordinator</div>
-          <ul>
+          <div class="exp-role" data-i18n="exp-cvc-role">IT Infrastructure Coordinator</div>
+          <ul data-i18n="exp-cvc-ul">
             <li>Led modernization of internal systems, cloud adoption (AWS), and data center migration.</li>
             <li>Coordinated ERP implementation (JDE + Weblogic + Oracle) and MongoDB environments.</li>
             <li>Managed infrastructure relocation during company headquarters move.</li>
@@ -730,8 +723,8 @@ h1 { animation: glitch 8s ease infinite; }
           <div class="exp-location">São Paulo, Brazil</div>
         </div>
         <div class="exp-body">
-          <div class="exp-role">IT Coordinator</div>
-          <ul>
+          <div class="exp-role" data-i18n="exp-folha-role">IT Coordinator</div>
+          <ul data-i18n="exp-folha-ul">
             <li>Led virtualization migration from XEN to VMware and redesign of web portals and mobile apps.</li>
             <li>Supported large-scale events: 2014 Brazilian Elections and FIFA World Cup coverage.</li>
           </ul>
@@ -745,8 +738,8 @@ h1 { animation: glitch 8s ease infinite; }
           <div class="exp-location">São Paulo, Brazil</div>
         </div>
         <div class="exp-body">
-          <div class="exp-role">VMware Specialist & Sr Linux Consultant</div>
-          <ul>
+          <div class="exp-role" data-i18n="exp-estadao-role">VMware Specialist &amp; Sr Linux Consultant</div>
+          <ul data-i18n="exp-estadao-ul">
             <li>Consolidated physical servers onto VMware vSphere with HP P4000 iSCSI storage.</li>
             <li>Implemented HA strategies with Varnish load balancers and Akamai CDN integration.</li>
           </ul>
@@ -760,8 +753,8 @@ h1 { animation: glitch 8s ease infinite; }
           <div class="exp-location">SP & Curitiba</div>
         </div>
         <div class="exp-body">
-          <div class="exp-role">GIS & Unix Senior Consultant</div>
-          <ul>
+          <div class="exp-role" data-i18n="exp-sterling-role">GIS &amp; Unix Senior Consultant</div>
+          <ul data-i18n="exp-sterling-ul">
             <li>Deployed critical file exchange solutions for Itaú, HSBC, Banco Votorantim, and CEMIG.</li>
             <li>Architected HA Linux, Unix, and Solaris environments for banking operations.</li>
           </ul>
@@ -775,8 +768,8 @@ h1 { animation: glitch 8s ease infinite; }
           <div class="exp-location">São Paulo, Brazil</div>
         </div>
         <div class="exp-body">
-          <div class="exp-role">Linux Analyst</div>
-          <ul>
+          <div class="exp-role" data-i18n="exp-interdot-role">Linux Analyst</div>
+          <ul data-i18n="exp-interdot-ul">
             <li>Managed internal network and migrated server platforms from Windows to Linux.</li>
             <li>Provided SLA-based support for dedicated link clients.</li>
           </ul>
@@ -788,21 +781,21 @@ h1 { animation: glitch 8s ease infinite; }
 
   <!-- EDUCATION -->
   <section id="education">
-    <div class="section-label"><span class="num">04</span> Education</div>
+    <div class="section-label"><span class="num">04</span> <span data-i18n="section-education">Education</span></div>
     <div class="edu-grid">
       <div class="edu-item">
         <div class="edu-school">FASP</div>
-        <div class="edu-degree">Bachelor's in Computer Engineering</div>
+        <div class="edu-degree" data-i18n="edu-fasp">Bachelor's in Computer Engineering</div>
         <div class="edu-period">2002 — 2007</div>
       </div>
       <div class="edu-item">
         <div class="edu-school">Kaplan</div>
-        <div class="edu-degree">Intensive English Program · Toronto, Canada</div>
+        <div class="edu-degree" data-i18n="edu-kaplan">Intensive English Program · Toronto, Canada</div>
         <div class="edu-period">2017</div>
       </div>
       <div class="edu-item">
         <div class="edu-school">FECAP</div>
-        <div class="edu-degree">Technical Degree in Data Processing</div>
+        <div class="edu-degree" data-i18n="edu-fecap">Technical Degree in Data Processing</div>
         <div class="edu-period">1995 — 1997</div>
       </div>
     </div>
@@ -811,7 +804,7 @@ h1 { animation: glitch 8s ease infinite; }
   <!-- FOOTER -->
   <footer>
     <div class="footer-sig">ORUAM.CLOUD</div>
-    <div class="footer-copy">> 2026_</div>
+    <div class="footer-copy" data-i18n="footer-copy">> 2026_</div>
   </footer>
 
 </div>
@@ -855,6 +848,133 @@ function draw() {
 
 init();
 setInterval(draw, 45);
+
+// ── LANG ──
+const i18n = {
+  en: {
+    '_title': 'Julio Cesar Mauro — IT Security & Infrastructure',
+    'boot-1': '&gt; SYSTEM BOOT... [OK]',
+    'boot-2': '&gt; LOADING PROFILE: juliomauro [OK]',
+    'boot-3': '&gt; SECURITY CLEARANCE: GRANTED [OK]',
+    'boot-4': '&gt; EXPERIENCE: 25+ YEARS [OK]',
+    'boot-5': '&gt; INITIALIZING INTERFACE...',
+    'subtitle': '<span>Head of Infrastructure, Cloud &amp; Security</span><br>+25 years managing critical environments<br>São Paulo, Brazil',
+    'link-projects': '⌥ Projects',
+    'link-writing': '⌥ Writing',
+    'nav-summary': 'Summary',
+    'nav-skills': 'Skills',
+    'nav-experience': 'Experience',
+    'nav-education': 'Education',
+    'nav-projects': 'Projects',
+    'nav-writing': 'Writing',
+    'section-summary': 'Summary',
+    'section-competencies': 'Core Competencies',
+    'section-experience': 'Professional Experience',
+    'section-education': 'Education',
+    'summary-text': 'With over <strong>25 years of experience</strong> in Information Technology, I lead infrastructure, information security, and cloud environments. My career has been built managing critical operations, ensuring <strong>high availability</strong>, optimizing hybrid environments, and leading technical teams to deliver strategic solutions aligned with business goals.<br><br>Throughout my journey, I led initiatives at <strong>major companies in the communications, tourism, and technology sectors</strong>, combining technical expertise with business-driven results. Strong experience in building multidisciplinary teams, promoting innovation, agility, and technological resilience.',
+    'comp-leadership': 'IT Team Leadership',
+    'comp-infra': 'Infrastructure Strategy',
+    'comp-ir': 'Incident Response &amp; Forensics',
+    'comp-ti': 'Threat Intelligence',
+    'comp-secops': 'Security Operations (SecOps)',
+    'comp-vm': 'Vulnerability Management',
+    'comp-cloud': 'Cloud Security · AWS · GCP',
+    'comp-zt': 'Zero Trust Architecture',
+    'comp-iac': 'Terraform · Ansible',
+    'comp-siem': 'SIEM · EDR · XDR',
+    'comp-pentest': 'Penetration Testing',
+    'comp-devsecops': 'DevSecOps',
+    'comp-governance': 'IT Governance &amp; Compliance',
+    'comp-cost': 'Cloud Cost Optimization',
+    'exp-sinch-role1': 'IT Security Specialist · 2023–Present',
+    'exp-sinch-ul1': '<li>Global leader of the Vulnerability Management Program (VMP), responsible for strategy, governance, and full lifecycle execution across hybrid and multi-cloud environments.</li><li>Coordinating cybersecurity initiatives across on-premises and multi-cloud environments, with cross-functional engagement between engineering, product, and operations teams.</li><li>Defining and standardizing vulnerability management strategies for critical CVEs — including deep technical analysis, false positive triage, risk assessment, and exception management.</li><li>Leading incident investigations and response activities using industry-leading EDR and forensic analysis techniques, contributing to reduced mean time to respond.</li><li>Automating security processes and reporting through scripting and API integrations — reducing manual team effort by approximately 40%.</li><li>Risk governance over public asset exposure, insecure configurations, and unauthorized access — focused on attack surface reduction and evidence-based decision making.</li>',
+    'exp-sinch-role2': 'IT Infrastructure Specialist · 2019–2023',
+    'exp-sinch-ul2': '<li>Designed and managed critical IT infrastructures across multi-cloud and on-premises data centers.</li><li>Maintained SLA of 99.998% availability.</li><li>Integrated IT environments of acquired companies and optimized cloud resource costs.</li>',
+    'exp-cvc-role': 'IT Infrastructure Coordinator',
+    'exp-cvc-ul': '<li>Led modernization of internal systems, cloud adoption (AWS), and data center migration.</li><li>Coordinated ERP implementation (JDE + Weblogic + Oracle) and MongoDB environments.</li><li>Managed infrastructure relocation during company headquarters move.</li>',
+    'exp-folha-role': 'IT Coordinator',
+    'exp-folha-ul': '<li>Led virtualization migration from XEN to VMware and redesign of web portals and mobile apps.</li><li>Supported large-scale events: 2014 Brazilian Elections and FIFA World Cup coverage.</li>',
+    'exp-estadao-role': 'VMware Specialist &amp; Sr Linux Consultant',
+    'exp-estadao-ul': '<li>Consolidated physical servers onto VMware vSphere with HP P4000 iSCSI storage.</li><li>Implemented HA strategies with Varnish load balancers and Akamai CDN integration.</li>',
+    'exp-sterling-role': 'GIS &amp; Unix Senior Consultant',
+    'exp-sterling-ul': '<li>Deployed critical file exchange solutions for Itaú, HSBC, Banco Votorantim, and CEMIG.</li><li>Architected HA Linux, Unix, and Solaris environments for banking operations.</li>',
+    'exp-interdot-role': 'Linux Analyst',
+    'exp-interdot-ul': '<li>Managed internal network and migrated server platforms from Windows to Linux.</li><li>Provided SLA-based support for dedicated link clients.</li>',
+    'edu-fasp': "Bachelor's in Computer Engineering",
+    'edu-kaplan': 'Intensive English Program · Toronto, Canada',
+    'edu-fecap': 'Technical Degree in Data Processing',
+    'footer-copy': '&gt; 2026_',
+  },
+  pt: {
+    '_title': 'Julio Cesar Mauro — Segurança de TI & Infraestrutura',
+    'boot-1': '&gt; INICIALIZANDO SISTEMA... [OK]',
+    'boot-2': '&gt; CARREGANDO PERFIL: juliomauro [OK]',
+    'boot-3': '&gt; AUTORIZAÇÃO DE SEGURANÇA: CONCEDIDA [OK]',
+    'boot-4': '&gt; EXPERIÊNCIA: 25+ ANOS [OK]',
+    'boot-5': '&gt; INICIALIZANDO INTERFACE...',
+    'subtitle': '<span>Head de Infraestrutura, Cloud &amp; Segurança</span><br>+25 anos gerenciando ambientes críticos<br>São Paulo, Brasil',
+    'link-projects': '⌥ Projetos',
+    'link-writing': '⌥ Textos',
+    'nav-summary': 'Resumo',
+    'nav-skills': 'Habilidades',
+    'nav-experience': 'Experiência',
+    'nav-education': 'Educação',
+    'nav-projects': 'Projetos',
+    'nav-writing': 'Textos',
+    'section-summary': 'Resumo',
+    'section-competencies': 'Competências Principais',
+    'section-experience': 'Experiência Profissional',
+    'section-education': 'Educação',
+    'summary-text': 'Com mais de <strong>25 anos de experiência</strong> em Tecnologia da Informação, atuo liderando infraestrutura, segurança da informação e ambientes de nuvem. Minha carreira foi construída gerenciando operações críticas, garantindo <strong>alta disponibilidade</strong>, otimizando ambientes híbridos e liderando equipes técnicas para entregar soluções estratégicas alinhadas aos objetivos de negócio.<br><br>Ao longo da trajetória, conduzi iniciativas em <strong>grandes empresas dos setores de comunicações, turismo e tecnologia</strong>, combinando expertise técnica com resultados orientados ao negócio. Sólida experiência na formação de equipes multidisciplinares, promovendo inovação, agilidade e resiliência tecnológica.',
+    'comp-leadership': 'Liderança de Equipes de TI',
+    'comp-infra': 'Estratégia de Infraestrutura',
+    'comp-ir': 'Resposta a Incidentes &amp; Forense',
+    'comp-ti': 'Inteligência de Ameaças',
+    'comp-secops': 'Operações de Segurança (SecOps)',
+    'comp-vm': 'Gestão de Vulnerabilidades',
+    'comp-cloud': 'Segurança em Nuvem · AWS · GCP',
+    'comp-zt': 'Arquitetura Zero Trust',
+    'comp-iac': 'Terraform · Ansible',
+    'comp-siem': 'SIEM · EDR · XDR',
+    'comp-pentest': 'Penetration Testing',
+    'comp-devsecops': 'DevSecOps',
+    'comp-governance': 'Governança de TI &amp; Compliance',
+    'comp-cost': 'Otimização de Custos em Nuvem',
+    'exp-sinch-role1': 'Especialista em Segurança de TI · 2023–Atual',
+    'exp-sinch-ul1': '<li>Líder global do Programa de Gerenciamento de Vulnerabilidades (VMP), responsável por estratégia, governança e execução do ciclo completo em ambientes híbridos e multi-cloud.</li><li>Coordenação de iniciativas de cibersegurança em ambientes on-premises e multi-cloud, com envolvimento interfuncional entre equipes de engenharia, produto e operações.</li><li>Definição e padronização de estratégias de gerenciamento de vulnerabilidades para CVEs críticos — incluindo análise técnica aprofundada, triagem de falsos positivos, avaliação de risco e gestão de exceções.</li><li>Liderança de investigações de incidentes e atividades de resposta com técnicas de EDR e análise forense, contribuindo para a redução do tempo médio de resposta.</li><li>Automação de processos de segurança e relatórios via scripts e integrações de API — reduzindo o esforço manual da equipe em aproximadamente 40%.</li><li>Governança de risco sobre exposição de ativos públicos, configurações inseguras e acesso não autorizado — foco em redução de superfície de ataque e tomada de decisão baseada em evidências.</li>',
+    'exp-sinch-role2': 'Especialista de Infraestrutura de TI · 2019–2023',
+    'exp-sinch-ul2': '<li>Projetou e gerenciou infraestruturas de TI críticas em data centers multi-cloud e on-premises.</li><li>Manteve SLA de 99,998% de disponibilidade.</li><li>Integrou ambientes de TI de empresas adquiridas e otimizou custos de recursos em nuvem.</li>',
+    'exp-cvc-role': 'Coordenador de Infraestrutura de TI',
+    'exp-cvc-ul': '<li>Liderou a modernização de sistemas internos, adoção de nuvem (AWS) e migração de data center.</li><li>Coordenou a implementação de ERP (JDE + Weblogic + Oracle) e ambientes MongoDB.</li><li>Gerenciou a relocação de infraestrutura durante a mudança da sede da empresa.</li>',
+    'exp-folha-role': 'Coordenador de TI',
+    'exp-folha-ul': '<li>Liderou a migração de virtualização de XEN para VMware e o redesenho de portais web e aplicativos móveis.</li><li>Apoiou grandes eventos: Eleições Brasileiras de 2014 e cobertura da Copa do Mundo FIFA.</li>',
+    'exp-estadao-role': 'Especialista VMware &amp; Consultor Sr Linux',
+    'exp-estadao-ul': '<li>Consolidou servidores físicos em VMware vSphere com storage HP P4000 iSCSI.</li><li>Implementou estratégias de HA com load balancers Varnish e integração com CDN Akamai.</li>',
+    'exp-sterling-role': 'Consultor Sênior GIS &amp; Unix',
+    'exp-sterling-ul': '<li>Implantou soluções críticas de intercâmbio de arquivos para Itaú, HSBC, Banco Votorantim e CEMIG.</li><li>Arquitetou ambientes de HA em Linux, Unix e Solaris para operações bancárias.</li>',
+    'exp-interdot-role': 'Analista Linux',
+    'exp-interdot-ul': '<li>Gerenciou a rede interna e migrou plataformas de servidores de Windows para Linux.</li><li>Forneceu suporte baseado em SLA para clientes com links dedicados.</li>',
+    'edu-fasp': 'Bacharelado em Engenharia da Computação',
+    'edu-kaplan': 'Programa Intensivo de Inglês · Toronto, Canadá',
+    'edu-fecap': 'Técnico em Processamento de Dados',
+    'footer-copy': '&gt; 2026_',
+  }
+};
+
+function applyLang(lang) {
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const v = i18n[lang]?.[el.dataset.i18n];
+    if (v !== undefined) el.innerHTML = v;
+  });
+  if (i18n[lang]._title) document.title = i18n[lang]._title;
+  const btn = document.getElementById('lang-btn');
+  if (btn) btn.textContent = lang === 'en' ? '◈ PT' : '◈ EN';
+  localStorage.setItem('lang', lang);
+}
+function toggleLang() {
+  applyLang((localStorage.getItem('lang') || 'en') === 'en' ? 'pt' : 'en');
+}
+(function() { if (localStorage.getItem('lang') === 'pt') applyLang('pt'); })();
 
 function toggleTheme() {
   const html = document.documentElement;
