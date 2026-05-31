@@ -871,12 +871,114 @@ body.piqad-active [data-i18n] {
   text-shadow: 0 0 10px #00ff41, 0 0 30px #00ff4199;
 }
 #godmode-text .gm-line { display: block; margin-bottom: 14px; }
+
+/* ── CRT DOOM MONITOR ── */
+#doom-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 700;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: rgba(0,0,0,0.92);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s ease;
+}
+#doom-overlay.active { opacity: 1; pointer-events: all; }
+
+#crt-monitor {
+  position: relative;
+  background: #161616;
+  border-radius: 18px;
+  padding: 20px 20px 48px;
+  box-shadow:
+    0 0 0 1px #2a2a2a,
+    0 0 50px rgba(0,255,65,0.12),
+    0 0 100px rgba(0,255,65,0.06),
+    0 30px 80px rgba(0,0,0,0.9);
+  width: min(90vw, 800px);
+}
+#crt-monitor::after {
+  content: '';
+  position: absolute;
+  bottom: 18px; left: 50%;
+  transform: translateX(-50%);
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: #00ff41;
+  box-shadow: 0 0 6px #00ff41, 0 0 14px #00ff4199;
+  animation: blink 2.5s ease infinite;
+}
+#crt-screen {
+  position: relative;
+  border-radius: 8px;
+  overflow: hidden;
+  aspect-ratio: 4 / 3;
+  background: #000;
+  box-shadow: inset 0 0 50px rgba(0,0,0,0.9), 0 0 24px rgba(0,255,65,0.15);
+  transform: perspective(1200px) rotateX(1.5deg);
+}
+#crt-screen::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.18) 2px, rgba(0,0,0,0.18) 4px);
+  pointer-events: none; z-index: 10;
+}
+#crt-screen::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse at center, transparent 50%, rgba(0,0,0,0.65) 100%);
+  pointer-events: none; z-index: 11;
+}
+@keyframes crtOn {
+  0%   { clip-path: inset(50% 0 50%); filter: brightness(3); }
+  50%  { clip-path: inset(2% 0 2%);   filter: brightness(1.2); }
+  100% { clip-path: inset(0% 0 0%);   filter: brightness(1); }
+}
+#crt-screen.poweron { animation: crtOn 0.5s ease forwards; }
+#doom-frame {
+  width: 100%; height: 100%;
+  border: none; display: block;
+}
+#crt-neck {
+  width: 48px; height: 14px;
+  background: #1c1c1c;
+  margin: 0 auto;
+  border-radius: 0 0 4px 4px;
+}
+#crt-foot {
+  width: 130px; height: 8px;
+  background: #1a1a1a;
+  margin: 0 auto;
+  border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.6);
+}
+#doom-close {
+  position: absolute;
+  top: 8px; right: 12px;
+  background: none; border: none;
+  color: #3a3a3a; font-size: 18px;
+  cursor: pointer; font-family: monospace;
+  transition: color 0.2s; z-index: 20; padding: 4px 6px;
+}
+#doom-close:hover { color: #cc2200; }
 </style>
 </head>
 <body>
 
 <canvas id="matrix-canvas"></canvas>
 <div id="godmode-overlay"><div id="godmode-text"></div></div>
+<div id="doom-overlay">
+  <div id="crt-monitor">
+    <button id="doom-close" onclick="closeDoom()">✕</button>
+    <div id="crt-screen">
+      <iframe id="doom-frame" src="" allowfullscreen></iframe>
+    </div>
+    <div id="crt-neck"></div>
+    <div id="crt-foot"></div>
+  </div>
+</div>
 <div id="matrix-intro">
   <div id="matrix-intro-text"><span id="matrix-cursor"></span></div>
 </div>
@@ -1515,6 +1617,18 @@ function toggleTheme() {
 
 (function() {
   var CODE = 'IDDQD', buf = '';
+  var IDKFA_BUF = '';
+  document.addEventListener('keydown', function(e) {
+    IDKFA_BUF = (IDKFA_BUF + e.key.toUpperCase()).slice(-5);
+    if (IDKFA_BUF === 'IDKFA') { IDKFA_BUF = ''; openDoom(); }
+    if (e.key === 'Escape') {
+      var doomOverlay = document.getElementById('doom-overlay');
+      if (doomOverlay && doomOverlay.classList.contains('active')) closeDoom();
+    }
+  });
+  document.getElementById('doom-overlay').addEventListener('click', function(e) {
+    if (e.target === this) closeDoom();
+  });
   var canvas = document.getElementById('matrix-canvas');
   var overlay = document.getElementById('godmode-overlay');
   var textEl = document.getElementById('godmode-text');
@@ -1542,17 +1656,36 @@ function toggleTheme() {
     overlay.classList.add('active');
     canvas.style.transition = 'opacity 0.3s';
     canvas.style.opacity = '0.85';
+    var OVERLAY_DELAY = 1000;  // ms após digitar para fechar o overlay
+    var RAIN_DELAY    = 10000; // ms após digitar para rain voltar ao normal
     typeLine(['> IDDQD', '> GOD MODE: ON [OK]', '> DEGREELESSNESS MODE ACTIVATED'], 0, function() {
       setTimeout(function() {
         overlay.classList.add('fadeout');
-        setTimeout(function() {
-          overlay.classList.remove('active', 'fadeout');
-          canvas.style.opacity = '0.06';
-        }, 400);
-      }, 3000);
+        setTimeout(function() { overlay.classList.remove('active', 'fadeout'); }, 400);
+      }, OVERLAY_DELAY);
+      setTimeout(function() {
+        canvas.style.opacity = '0.06';
+      }, RAIN_DELAY);
     });
   }
 })();
+
+function openDoom() {
+  var overlay = document.getElementById('doom-overlay');
+  var frame   = document.getElementById('doom-frame');
+  var screen  = document.getElementById('crt-screen');
+  screen.classList.remove('poweron');
+  void screen.offsetWidth;
+  frame.src = 'https://joeheyming.github.io/doom/?flavor=classic';
+  overlay.classList.add('active');
+  setTimeout(function() { screen.classList.add('poweron'); }, 50);
+}
+function closeDoom() {
+  var overlay = document.getElementById('doom-overlay');
+  var frame   = document.getElementById('doom-frame');
+  overlay.classList.remove('active');
+  setTimeout(function() { frame.src = ''; }, 400);
+}
 </script>
 </body>
 </html>
