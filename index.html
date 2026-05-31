@@ -529,6 +529,115 @@ section {
   letter-spacing: 1px;
 }
 
+/* ── CERTIFICATIONS ── */
+.cert-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 12px;
+}
+
+.cert-item {
+  padding: 20px 24px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  transition: all 0.2s;
+  position: relative;
+  overflow: hidden;
+}
+
+.cert-item::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--green), transparent);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.3s;
+}
+
+.cert-item:hover::before { transform: scaleX(1); }
+.cert-item:hover { border-color: var(--green-mid); }
+
+.cert-name {
+  font-size: 13px;
+  color: var(--green);
+  text-shadow: var(--glow);
+  margin-bottom: 6px;
+  line-height: 1.4;
+}
+
+.cert-issuer {
+  font-size: 11px;
+  color: var(--text-dim);
+  letter-spacing: 1px;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+}
+
+.cert-id {
+  font-size: 10px;
+  color: #00aa22;
+  letter-spacing: 0.5px;
+  opacity: 0.7;
+  word-break: break-all;
+}
+
+/* ── LANGUAGES ── */
+.lang-grid {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.lang-item {
+  padding: 24px 32px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  transition: all 0.2s;
+  min-width: 200px;
+  position: relative;
+  overflow: hidden;
+}
+
+.lang-item::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--green), transparent);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.3s;
+}
+
+.lang-item:hover::before { transform: scaleX(1); }
+.lang-item:hover { border-color: var(--green-mid); }
+
+.lang-name {
+  font-family: 'Orbitron', monospace;
+  font-size: 15px;
+  color: var(--green);
+  text-shadow: var(--glow);
+  letter-spacing: 1px;
+}
+
+.lang-level {
+  font-size: 12px;
+  color: var(--text-dim);
+  letter-spacing: 1px;
+}
+
+.lang-cert {
+  font-size: 10px;
+  color: #00aa22;
+  letter-spacing: 0.5px;
+  margin-top: 4px;
+}
+
 /* ── FOOTER ── */
 footer {
   padding: 40px 0;
@@ -801,6 +910,86 @@ h1 { animation: glitch 8s ease infinite; }
     </div>
   </section>
 
+  <!-- CERTIFICATIONS -->
+  <section id="certifications">
+    <div class="section-label"><span class="num">05</span> <span data-i18n="section-certs">Certifications</span></div>
+    <div class="cert-grid">
+
+      <div class="cert-item">
+        <div class="cert-name">Formação Cibersegurança</div>
+        <div class="cert-issuer">Alura</div>
+        <div class="cert-id">ID: 57ba9e5e-91dc-4e23-9d74-313a0bf31ba3</div>
+      </div>
+
+      <div class="cert-item">
+        <div class="cert-name">Formação Segurança Ofensiva</div>
+        <div class="cert-issuer">Alura</div>
+        <div class="cert-id">ID: e5a6cd29-62db-4cda-b0b3-eab51b05106f</div>
+      </div>
+
+      <div class="cert-item">
+        <div class="cert-name">Formação Segurança Defensiva</div>
+        <div class="cert-issuer">Alura</div>
+        <div class="cert-id">ID: e79613ef-ecbb-40bb-a454-899f1f58427c</div>
+      </div>
+
+      <div class="cert-item">
+        <div class="cert-name">AWS Certified Solutions Architect</div>
+        <div class="cert-issuer">Amazon Web Services · 2017</div>
+      </div>
+
+      <div class="cert-item">
+        <div class="cert-name">AWS Expert</div>
+        <div class="cert-issuer">LINUXtips</div>
+        <div class="cert-id">ID: 57277438</div>
+      </div>
+
+      <div class="cert-item">
+        <div class="cert-name">AWS Certification: Solutions Architect</div>
+        <div class="cert-issuer">Alura</div>
+        <div class="cert-id">ID: a16340bf-a4ef-4aa9-829c-e3602da59db9</div>
+      </div>
+
+      <div class="cert-item">
+        <div class="cert-name">AWS SQS: Mensageria e Desacoplamento de Sistemas</div>
+        <div class="cert-issuer">Alura</div>
+        <div class="cert-id">ID: 9cb67d8b-448e-40c1-a613-21fc36f17383</div>
+      </div>
+
+      <div class="cert-item">
+        <div class="cert-name">Liderança: Missão e Propósito de Liderar Pessoas</div>
+        <div class="cert-issuer">Alura</div>
+        <div class="cert-id">ID: ae9cabc6-be5c-420e-93c1-82ea48d0fe87</div>
+      </div>
+
+      <div class="cert-item">
+        <div class="cert-name">Governança de TI: Gestão de Demandas de Serviços</div>
+        <div class="cert-issuer">Alura</div>
+        <div class="cert-id">ID: 4d6265e6-5760-4462-a2e3-69110a25f234</div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- LANGUAGES -->
+  <section id="languages">
+    <div class="section-label"><span class="num">06</span> <span data-i18n="section-languages">Languages</span></div>
+    <div class="lang-grid">
+
+      <div class="lang-item">
+        <div class="lang-name" data-i18n="lang-pt-name">Portuguese</div>
+        <div class="lang-level" data-i18n="lang-pt-level">Native</div>
+      </div>
+
+      <div class="lang-item">
+        <div class="lang-name" data-i18n="lang-en-name">English</div>
+        <div class="lang-level" data-i18n="lang-en-level">B2 · Advanced</div>
+        <div class="lang-cert" data-i18n="lang-en-cert">Certified by Lingopass · 60hrs · ID: 1673770441JM</div>
+      </div>
+
+    </div>
+  </section>
+
   <!-- FOOTER -->
   <footer>
     <div class="footer-sig">ORUAM.CLOUD</div>
@@ -903,6 +1092,13 @@ const i18n = {
     'edu-fasp': "Bachelor's in Computer Engineering",
     'edu-kaplan': 'Intensive English Program · Toronto, Canada',
     'edu-fecap': 'Technical Degree in Data Processing',
+    'section-certs': 'Certifications',
+    'section-languages': 'Languages',
+    'lang-pt-name': 'Portuguese',
+    'lang-pt-level': 'Native',
+    'lang-en-name': 'English',
+    'lang-en-level': 'B2 · Advanced',
+    'lang-en-cert': 'Certified by Lingopass · 60hrs · ID: 1673770441JM',
     'footer-copy': '&gt; 2026_',
   },
   pt: {
@@ -957,6 +1153,13 @@ const i18n = {
     'edu-fasp': 'Bacharelado em Engenharia da Computação',
     'edu-kaplan': 'Programa Intensivo de Inglês · Toronto, Canadá',
     'edu-fecap': 'Técnico em Processamento de Dados',
+    'section-certs': 'Certificações',
+    'section-languages': 'Idiomas',
+    'lang-pt-name': 'Português',
+    'lang-pt-level': 'Nativo',
+    'lang-en-name': 'Inglês',
+    'lang-en-level': 'B2 · Avançado',
+    'lang-en-cert': 'Certificado pela Lingopass · 60hrs · ID: 1673770441JM',
     'footer-copy': '&gt; 2026_',
   }
 };

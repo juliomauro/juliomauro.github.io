@@ -935,6 +935,50 @@ footer {
       </div>
     </div>
 
+    <!-- WIKIMEDIA CARD -->
+    <div class="project-card">
+      <div class="card-inner">
+
+        <div class="card-header">
+          <div class="card-title-wrap">
+            <div class="card-codename">Project #007 · 2014 – Present</div>
+            <div class="card-title">WIKI<span>MEDIA</span></div>
+          </div>
+          <div class="card-badges">
+            <span class="badge badge-wip" data-i18n="badge-active-wiki">⟳ Active</span>
+            <span class="badge badge-platform">Volunteer · Editorial</span>
+            <span class="badge badge-lang">PT-BR · EN</span>
+          </div>
+        </div>
+
+        <p class="card-desc" data-i18n="desc-wiki">Volunteer editor at the <strong>Wikimedia Foundation</strong> since 2014, contributing to the world's largest free knowledge base. Work includes article review, content editing, and translation between <strong>Portuguese and English</strong> — ensuring accuracy, neutrality, and quality across Wikipedia's collaborative encyclopedia.</p>
+
+        <div class="modules-label" data-i18n="modules-wiki">Contributions</div>
+        <div class="modules-grid">
+          <div class="module-item done">Article Review</div>
+          <div class="module-item done">Content Editing</div>
+          <div class="module-item done">PT→EN Translation</div>
+          <div class="module-item done">EN→PT Translation</div>
+          <div class="module-item done">Neutrality Check</div>
+          <div class="module-item done">Citation Review</div>
+        </div>
+
+        <div class="stack-label" data-i18n="stack-wiki">Platforms</div>
+        <div class="stack-tags">
+          <span class="stack-tag">Wikipedia</span>
+          <span class="stack-tag">Wikimedia</span>
+          <span class="stack-tag">MediaWiki</span>
+          <span class="stack-tag">PT-BR</span>
+          <span class="stack-tag">Open Knowledge</span>
+        </div>
+
+        <div class="card-footer">
+          <div class="card-meta">Volunteer · 11+ years</div>
+        </div>
+
+      </div>
+    </div>
+
   </div>
 
   <footer>
@@ -1007,6 +1051,10 @@ const i18n = {
     'desc-pomodoro': 'Terminal <strong>Pomodoro timer</strong> for macOS and Linux with no external dependencies. Detects the OS automatically and uses native notifications and audio on each platform — <strong>osascript + afplay</strong> on macOS, <strong>notify-send + sox</strong> on Linux.<br><br>Configurable work and break durations, automatic long break every N sessions, live countdown display, session counter, and graceful <strong>Ctrl+C exit</strong> with a focus time summary.',
     'desc-hidepw': 'Secure CLI wrapper for <strong>PWPush</strong> — share passwords via one-time URLs that expire by time or view count. The password is passed as a <strong>JSON body via stdin</strong> to curl, never as a process argument, making it safe against <strong>ps aux</strong> snooping.<br><br>Supports self-hosted PWPush instances, optional notes, recipient delete, numeric validation, and dependency checking. Password can be passed via flag, environment variable, or <strong>stdin pipe</strong>.',
     'desc-writeups': 'A collection of <strong>security case writeups</strong> from real-world exercises and hackathon simulations — documenting full exploitation chains, root causes, and defensive lessons. Covers <strong>Linux privilege escalation</strong>, <strong>cloud IAM abuse</strong>, <strong>container escape</strong>, <strong>Kubernetes RBAC</strong>, and <strong>lateral movement</strong> techniques observed in practice.<br><br>Each case follows the same structure: scenario context, reconnaissance methodology, step-by-step exploitation chain with commands, root cause analysis, and defensive takeaways. No CVE dependency — real misconfigurations, real chains.',
+    'badge-active-wiki': '⟳ Active',
+    'desc-wiki': 'Volunteer editor at the <strong>Wikimedia Foundation</strong> since 2014, contributing to the world\'s largest free knowledge base. Work includes article review, content editing, and translation between <strong>Portuguese and English</strong> — ensuring accuracy, neutrality, and quality across Wikipedia\'s collaborative encyclopedia.',
+    'modules-wiki': 'Contributions',
+    'stack-wiki': 'Platforms',
     'desc-disc': 'Contributing author at <strong>Disconecta</strong>, a Brazilian music portal focused on classic rock, progressive rock, and alternative music. Specialist in <strong>Italian Progressive Rock</strong> and author of the book <strong>"Rock Progressivo Italiano"</strong> — available on Amazon.<br><br>Writing in-depth album reviews, artist histories, show coverage, and opinion pieces — applying the same analytical rigor used in technical work to dissect the complexities and timelessness of classic rock. Also co-host of the <strong>Redação Disconecta</strong> podcast.',
     'footer-copy': '&gt; oruam.cloud/projects · 2026_',
   },
@@ -1038,6 +1086,10 @@ const i18n = {
     'desc-pomodoro': '<strong>Timer Pomodoro</strong> para terminal no macOS e Linux sem dependências externas. Detecta o sistema operacional automaticamente e usa notificações e áudio nativos em cada plataforma — <strong>osascript + afplay</strong> no macOS, <strong>notify-send + sox</strong> no Linux.<br><br>Durações configuráveis de trabalho e pausa, pausa longa automática a cada N sessões, contagem regressiva ao vivo, contador de sessões e <strong>saída via Ctrl+C</strong> com resumo do tempo de foco.',
     'desc-hidepw': 'Wrapper CLI seguro para o <strong>PWPush</strong> — compartilhe senhas via URLs de uso único que expiram por tempo ou contagem de visualizações. A senha é enviada como <strong>corpo JSON via stdin</strong> ao curl, nunca como argumento de processo, tornando-a segura contra espionagem via <strong>ps aux</strong>.<br><br>Suporta instâncias auto-hospedadas do PWPush, notas opcionais, exclusão por destinatário, validação numérica e verificação de dependências. A senha pode ser passada via flag, variável de ambiente ou <strong>pipe stdin</strong>.',
     'desc-writeups': 'Coleção de <strong>writeups de casos de segurança</strong> de exercícios reais e simulações de hackathon — documentando cadeias de exploração completas, causas raiz e lições defensivas. Cobre técnicas de <strong>escalada de privilégios no Linux</strong>, <strong>abuso de IAM em nuvem</strong>, <strong>escape de containers</strong>, <strong>RBAC do Kubernetes</strong> e <strong>movimentação lateral</strong> observadas na prática.<br><br>Cada caso segue a mesma estrutura: contexto do cenário, metodologia de reconhecimento, cadeia de exploração passo a passo com comandos, análise de causa raiz e lições defensivas. Sem dependência de CVE — configurações incorretas reais, cadeias reais.',
+    'badge-active-wiki': '⟳ Ativo',
+    'desc-wiki': 'Editor voluntário na <strong>Wikimedia Foundation</strong> desde 2014, contribuindo com a maior base de conhecimento livre do mundo. O trabalho inclui revisão de artigos, edição de conteúdo e tradução entre <strong>português e inglês</strong> — garantindo precisão, neutralidade e qualidade na enciclopédia colaborativa da Wikipedia.',
+    'modules-wiki': 'Contribuições',
+    'stack-wiki': 'Plataformas',
     'desc-disc': 'Autor colaborador na <strong>Disconecta</strong>, portal brasileiro de música focado em rock clássico, rock progressivo e música alternativa. Especialista em <strong>Rock Progressivo Italiano</strong> e autor do livro <strong>"Rock Progressivo Italiano"</strong> — disponível na Amazon.<br><br>Escreve análises aprofundadas de álbuns, histórias de artistas, cobertura de shows e artigos de opinião — aplicando o mesmo rigor analítico do trabalho técnico para dissecar a complexidade e a atemporalidade do rock clássico. Também co-apresentador do podcast <strong>Redação Disconecta</strong>.',
     'footer-copy': '&gt; oruam.cloud/projects · 2026_',
   }
