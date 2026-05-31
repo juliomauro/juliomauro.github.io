@@ -1704,7 +1704,9 @@ function openDoom() {
       span.textContent = text;
       terminal.appendChild(span);
       if (i === lines.length - 1) {
-        window.open('https://joeheyming.github.io/doom/?flavor=classic', '_blank');
+        setTimeout(function() {
+          window.open('https://joeheyming.github.io/doom/?flavor=classic', '_blank');
+        }, 2000);
       }
     }, i * 400);
   });
