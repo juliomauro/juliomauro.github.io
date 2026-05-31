@@ -88,20 +88,20 @@ body::after {
   overflow: hidden;
   background: #000;
   box-shadow: inset 0 0 50px rgba(0,0,0,0.9), 0 0 20px rgba(0,255,65,0.1);
-  transform: perspective(1200px) rotateX(1deg);
+  transform: perspective(1800px) rotateX(0.4deg);
   display: flex; align-items: center; justify-content: center;
 }
 
 /* scanlines overlay on screen */
 #crt-screen::before {
   content: ''; position: absolute; inset: 0;
-  background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.2) 2px, rgba(0,0,0,0.2) 4px);
+  background: repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,0,0,0.08) 3px, rgba(0,0,0,0.08) 4px);
   pointer-events: none; z-index: 10;
 }
 /* vignette */
 #crt-screen::after {
   content: ''; position: absolute; inset: 0;
-  background: radial-gradient(ellipse at center, transparent 50%, rgba(0,0,0,0.6) 100%);
+  background: radial-gradient(ellipse at center, transparent 65%, rgba(0,0,0,0.3) 100%);
   pointer-events: none; z-index: 11;
 }
 
