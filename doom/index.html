@@ -213,10 +213,14 @@ function focusDoom() {
 }
 
 /* ── Doom WASM loader ── */
-function loadDoomGame(canvas) {
+async function loadDoomGame(canvas) {
   let moduleInstanceMemory = null;
   let ctx = canvas.getContext('2d');
   let scratchSpaceImageData = null;
+
+  const wadData = new Uint8Array(
+    await fetch('assets/DOOM.WAD').then(r => r.arrayBuffer())
+  );
 
   function onGameInit(width, height) {
     canvas.width = width;
@@ -243,7 +247,18 @@ function loadDoomGame(canvas) {
   }
 
   let imports = {
-    loading:       { onGameInit, wadSizes: ()=>{}, readWads: ()=>{} },
+    loading: {
+      onGameInit,
+      wadSizes: function(numWadsPtr, totalBytesPtr) {
+        const view = new DataView(moduleInstanceMemory.buffer);
+        view.setInt32(numWadsPtr,    1,              true);
+        view.setInt32(totalBytesPtr, wadData.length, true);
+      },
+      readWads: function(dataPtr, sizesPtr) {
+        new Uint8Array(moduleInstanceMemory.buffer).set(wadData, dataPtr);
+        new DataView(moduleInstanceMemory.buffer).setInt32(sizesPtr, wadData.length, true);
+      },
+    },
     ui:            { drawFrame },
     runtimeControl:{ timeInMilliseconds },
     console:       { onInfoMessage, onErrorMessage },
