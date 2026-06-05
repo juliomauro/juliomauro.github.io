@@ -784,6 +784,60 @@ body.piqad-active [data-i18n] {
       </div>
     </div>
 
+    <!-- MESHCORE PALM OS CARD -->
+    <div class="project-card">
+      <div class="card-inner">
+
+        <div class="card-header">
+          <div class="card-title-wrap">
+            <div class="card-codename">Project #008 · 2026</div>
+            <div class="card-title">MESH<span>CORE</span> PALM</div>
+          </div>
+          <div class="card-badges">
+            <span class="badge badge-wip" data-i18n="badge-wip-palm">⟳ In Progress</span>
+            <span class="badge badge-platform">Palm IIIe · Palm OS 3.1</span>
+            <span class="badge badge-lang">C · m68k</span>
+          </div>
+        </div>
+
+        <p class="card-desc" data-i18n="desc-palm">A <strong>MeshCore LoRa mesh client</strong> running on a 1990s <strong>Palm IIIe</strong> — Motorola 68K at 16MHz, 2MB RAM, monochrome 160×160 display. The Palm connects to a <strong>Heltec V3 LoRa node</strong> via the RS-232 HotSync cradle, through a <strong>MAX3232 level shifter</strong>, and joins the mesh network with no internet, no cloud, no Bluetooth.<br><br>Built from scratch in <strong>C for Palm OS 3.1</strong> using <strong>prc-tools-remix</strong>, <strong>PilRC</strong> and the Palm OS SDK 3.5. A purely nostalgic but functional experiment in pushing vintage hardware into modern off-grid communications.</p>
+
+        <div class="modules-label" data-i18n="modules-palm">Status</div>
+        <div class="modules-grid">
+          <div class="module-item done">App icon + UI</div>
+          <div class="module-item done">Main screen</div>
+          <div class="module-item done">Channel selector</div>
+          <div class="module-item done">Config screen</div>
+          <div class="module-item wip">Sub-form navigation</div>
+          <div class="module-item wip">Splash screen</div>
+          <div class="module-item todo">Serial (needs MAX3232)</div>
+          <div class="module-item todo">MeshCore protocol</div>
+          <div class="module-item todo">PalmDB persistence</div>
+        </div>
+
+        <div class="stack-label" data-i18n="stack-palm">Tech Stack</div>
+        <div class="stack-tags">
+          <span class="stack-tag">C</span>
+          <span class="stack-tag">Palm OS SDK 3.5</span>
+          <span class="stack-tag">prc-tools-remix</span>
+          <span class="stack-tag">PilRC</span>
+          <span class="stack-tag">m68k</span>
+          <span class="stack-tag">RS-232</span>
+          <span class="stack-tag">MAX3232</span>
+          <span class="stack-tag">LoRa</span>
+          <span class="stack-tag">MeshCore</span>
+        </div>
+
+        <div class="card-footer">
+          <div class="card-meta">MIT · Started Jun 2026</div>
+          <div class="card-links">
+            <a href="https://github.com/juliomauro/meshcore-palmos" target="_blank" class="card-link primary">⌥ GitHub Repo</a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
     <!-- POMODORO CARD -->
     <div class="project-card">
       <div class="card-inner">
@@ -1091,6 +1145,10 @@ const i18n = {
     'stack-writeups': 'Topics',
     'stack-disc': 'Platforms',
     'desc-bss': '<strong>ORUAM BSS</strong> (Basic Security Suite) is a custom firmware for the <strong>M5Cardputer ADV</strong> that turns the device into a compact, handheld security reconnaissance tool. The project explores the real limits of what an <strong>ESP32-S3-based device</strong> can do in the field of network and wireless security — no Linux, no external SBCs, pure embedded C++.<br><br>The name carries a double meaning: <strong>ORUAM</strong> is the author\'s security codename, and <strong>BSS</strong> (Basic Security Suite) is also a reference to the 802.11 wireless term <strong>Basic Service Set</strong> — a nod to the WiFi-heavy nature of the tool.',
+    'badge-wip-palm': '⟳ In Progress',
+    'modules-palm': 'Status',
+    'stack-palm': 'Tech Stack',
+    'desc-palm': 'A <strong>MeshCore LoRa mesh client</strong> running on a 1990s <strong>Palm IIIe</strong> — Motorola 68K at 16MHz, 2MB RAM, monochrome 160×160 display. The Palm connects to a <strong>Heltec V3 LoRa node</strong> via the RS-232 HotSync cradle, through a <strong>MAX3232 level shifter</strong>, and joins the mesh network with no internet, no cloud, no Bluetooth.<br><br>Built from scratch in <strong>C for Palm OS 3.1</strong> using <strong>prc-tools-remix</strong>, <strong>PilRC</strong> and the Palm OS SDK 3.5. A purely nostalgic but functional experiment in pushing vintage hardware into modern off-grid communications.',
     'desc-meshcore': 'Active development and expansion of the <strong>MeshCore</strong> decentralized mesh network in Brazil, focusing on interconnecting cities across the state of São Paulo — Santo André, Jundiaí, Sorocaba, and Campinas.<br><br>The project builds a resilient, low-cost communication mesh completely independent of traditional telecommunications infrastructure — <strong>fully off-grid</strong>, powered by <strong>LoRa radio technology</strong>. LoRa (Long Range) is a low-power wireless protocol capable of transmitting data over tens of kilometers without internet or cellular connectivity, ideal for emergency communications and remote areas. Nodes are powered by solar-charged batteries, enabling permanent autonomous operation.',
     'desc-pomodoro': 'Terminal <strong>Pomodoro timer</strong> for macOS and Linux with no external dependencies. Detects the OS automatically and uses native notifications and audio on each platform — <strong>osascript + afplay</strong> on macOS, <strong>notify-send + sox</strong> on Linux.<br><br>Configurable work and break durations, automatic long break every N sessions, live countdown display, session counter, and graceful <strong>Ctrl+C exit</strong> with a focus time summary.',
     'desc-hidepw': 'Secure CLI wrapper for <strong>PWPush</strong> — share passwords via one-time URLs that expire by time or view count. The password is passed as a <strong>JSON body via stdin</strong> to curl, never as a process argument, making it safe against <strong>ps aux</strong> snooping.<br><br>Supports self-hosted PWPush instances, optional notes, recipient delete, numeric validation, and dependency checking. Password can be passed via flag, environment variable, or <strong>stdin pipe</strong>.',
@@ -1126,6 +1184,10 @@ const i18n = {
     'stack-writeups': 'Tópicos',
     'stack-disc': 'Plataformas',
     'desc-bss': '<strong>ORUAM BSS</strong> (Basic Security Suite) é um firmware personalizado para o <strong>M5Cardputer ADV</strong> que transforma o dispositivo em uma ferramenta compacta e portátil de reconhecimento de segurança. O projeto explora os limites reais do que um dispositivo <strong>baseado em ESP32-S3</strong> pode fazer na área de segurança de redes e sem fio — sem Linux, sem SBCs externos, C++ embarcado puro.<br><br>O nome tem duplo significado: <strong>ORUAM</strong> é o codinome de segurança do autor, e <strong>BSS</strong> (Basic Security Suite) é também uma referência ao termo 802.11 <strong>Basic Service Set</strong> — uma alusão à natureza intensamente focada em WiFi da ferramenta.',
+    'badge-wip-palm': '⟳ Em Andamento',
+    'modules-palm': 'Status',
+    'stack-palm': 'Tecnologias',
+    'desc-palm': 'Um <strong>cliente LoRa mesh MeshCore</strong> rodando em um <strong>Palm IIIe</strong> dos anos 90 — Motorola 68K a 16MHz, 2MB de RAM, display monocromático 160×160. O Palm se conecta a um <strong>nó LoRa Heltec V3</strong> via cradle HotSync RS-232, através de um <strong>conversor de nível MAX3232</strong>, e entra na rede mesh sem internet, sem nuvem, sem Bluetooth.<br><br>Construído do zero em <strong>C para Palm OS 3.1</strong> com <strong>prc-tools-remix</strong>, <strong>PilRC</strong> e o Palm OS SDK 3.5. Um experimento nostálgico mas funcional de levar hardware vintage para comunicações off-grid modernas.',
     'desc-meshcore': 'Desenvolvimento ativo e expansão da rede mesh descentralizada <strong>MeshCore</strong> no Brasil, com foco na interconexão de cidades no estado de São Paulo — Santo André, Jundiaí, Sorocaba e Campinas.<br><br>O projeto constrói uma malha de comunicação resiliente e de baixo custo, completamente independente de infraestrutura de telecomunicações tradicional — <strong>totalmente off-grid</strong>, alimentada por <strong>tecnologia de rádio LoRa</strong>. LoRa (Long Range) é um protocolo sem fio de baixo consumo capaz de transmitir dados por dezenas de quilômetros sem internet ou sinal celular, ideal para comunicações de emergência e áreas remotas. Os nós são alimentados por baterias carregadas por energia solar, permitindo operação autônoma permanente.',
     'desc-pomodoro': '<strong>Timer Pomodoro</strong> para terminal no macOS e Linux sem dependências externas. Detecta o sistema operacional automaticamente e usa notificações e áudio nativos em cada plataforma — <strong>osascript + afplay</strong> no macOS, <strong>notify-send + sox</strong> no Linux.<br><br>Durações configuráveis de trabalho e pausa, pausa longa automática a cada N sessões, contagem regressiva ao vivo, contador de sessões e <strong>saída via Ctrl+C</strong> com resumo do tempo de foco.',
     'desc-hidepw': 'Wrapper CLI seguro para o <strong>PWPush</strong> — compartilhe senhas via URLs de uso único que expiram por tempo ou contagem de visualizações. A senha é enviada como <strong>corpo JSON via stdin</strong> ao curl, nunca como argumento de processo, tornando-a segura contra espionagem via <strong>ps aux</strong>.<br><br>Suporta instâncias auto-hospedadas do PWPush, notas opcionais, exclusão por destinatário, validação numérica e verificação de dependências. A senha pode ser passada via flag, variável de ambiente ou <strong>pipe stdin</strong>.',
@@ -1164,6 +1226,10 @@ const i18n = {
     'stack-disc': 'De\'mey',
     'stack-wiki': 'De\'mey',
     'desc-bss': '<strong>ORUAM BSS</strong> — M5Cardputer ADV firmware. <strong>ESP32-S3</strong> De\'wI\' lo\'bogh QaD Qu\' — Linux ghobe\', SBC ghobe\', C++ neH. <strong>ORUAM</strong> = QaD pong; <strong>BSS</strong> = Basic Security Suite = 802.11 Basic Service Set.',
+    'badge-wip-palm': '⟳ ta\'taH',
+    'modules-palm': 'ta\'mey',
+    'stack-palm': 'De\'mey',
+    'desc-palm': '<strong>Palm IIIe</strong> — MeshCore LoRa mesh. Motorola 68K, 16MHz, 2MB. RS-232 HotSync — MAX3232 — Heltec V3 LoRa. internet pagh. C Palm OS 3.1 lo\' — prc-tools-remix, PilRC, SDK 3.5.',
     'desc-meshcore': '<strong>MeshCore</strong> Brazil — mesh network chenmoH. São Paulo — Santo André, Jundiaí, Sorocaba, Campinas. <strong>off-grid</strong> — <strong>LoRa radio</strong> lo\'. internet pagh. qib-Dung HoS lo\'.',
     'desc-pomodoro': '<strong>Pomodoro</strong> timer terminal macOS \'ej Linux — dependencies pagh. OS tu\' \'ej notifications lo\'. <strong>osascript + afplay</strong> macOS, <strong>notify-send + sox</strong> Linux.',
     'desc-hidepw': '<strong>PWPush</strong> CLI QaD — pegh ngeD URL lo\'. pegh <strong>JSON stdin</strong> curl — ps aux DaleghQo\'. self-hosted, notes, \'ej stdin pipe.',
