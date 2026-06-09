@@ -1059,7 +1059,7 @@ body.piqad-active [data-i18n] {
 
     <div class="header-main">
       <div>
-        <h1>JULIO MAURO</h1>
+        <h1 id="hero-name">JULIO MAURO</h1>
         <p class="subtitle" data-i18n="subtitle"><span>Head of Infrastructure, Cloud &amp; Security</span><br>+25 years managing critical environments<br>São Paulo, Brazil</p>
         <div class="header-links">
           <a href="https://github.com/juliomauro" target="_blank" class="link-pill">⌥ GitHub</a>
@@ -1680,6 +1680,20 @@ function toggleTheme() {
 
 (function() {
   var CODE = 'IDDQD', buf = '';
+  // 5 taps on the name → matrix easter egg (mobile)
+  (function() {
+    var taps = 0, timer = null;
+    var el = document.getElementById('hero-name');
+    if (!el) return;
+    el.addEventListener('touchend', function(e) {
+      e.preventDefault();
+      taps++;
+      clearTimeout(timer);
+      if (taps >= 5) { taps = 0; showMatrixMsg(); return; }
+      timer = setTimeout(function() { taps = 0; }, 3000);
+    }, { passive: false });
+  })();
+
   var IDKFA_BUF = '', HACKER_BUF = '', MATRIX_BUF = '', NEO_BUF = '';
   document.addEventListener('keydown', function(e) {
     IDKFA_BUF  = (IDKFA_BUF  + e.key.toUpperCase()).slice(-5);
