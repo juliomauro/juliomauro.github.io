@@ -898,6 +898,30 @@ body.piqad-active [data-i18n] {
 }
 #godmode-text .gm-line { display: block; margin-bottom: 14px; }
 
+/* ── MATRIX MESSAGE ── */
+#matrix-msg {
+  position: fixed; inset: 0; z-index: 800;
+  display: none; align-items: center; justify-content: center;
+  background: #000300;
+  font-family: 'Share Tech Mono', monospace;
+}
+#matrix-msg.active { display: flex; }
+#matrix-msg-rain {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  opacity: 0.18; pointer-events: none;
+}
+#matrix-msg-text {
+  position: relative; z-index: 1;
+  font-size: clamp(36px, 6vw, 80px);
+  color: #00ff41;
+  text-shadow: 0 0 18px #00ff41, 0 0 50px rgba(0,255,65,0.5);
+  letter-spacing: 3px; text-align: center; white-space: nowrap;
+}
+#matrix-msg-text .cur {
+  animation: mcur 0.7s step-end infinite;
+}
+@keyframes mcur { 50% { opacity: 0; } }
+
 /* ── CRT DOOM MONITOR ── */
 #doom-overlay {
   position: fixed;
@@ -1003,6 +1027,10 @@ body.piqad-active [data-i18n] {
 <body>
 
 <canvas id="matrix-canvas"></canvas>
+<div id="matrix-msg">
+  <canvas id="matrix-msg-rain"></canvas>
+  <div id="matrix-msg-text"></div>
+</div>
 <div id="godmode-overlay"><div id="godmode-text"></div></div>
 <div id="doom-overlay">
   <div id="crt-monitor">
@@ -1652,12 +1680,16 @@ function toggleTheme() {
 
 (function() {
   var CODE = 'IDDQD', buf = '';
-  var IDKFA_BUF = '', HACKER_BUF = '';
+  var IDKFA_BUF = '', HACKER_BUF = '', MATRIX_BUF = '', NEO_BUF = '';
   document.addEventListener('keydown', function(e) {
     IDKFA_BUF  = (IDKFA_BUF  + e.key.toUpperCase()).slice(-5);
     HACKER_BUF = (HACKER_BUF + e.key.toUpperCase()).slice(-6);
+    MATRIX_BUF = (MATRIX_BUF + e.key.toUpperCase()).slice(-6);
+    NEO_BUF    = (NEO_BUF    + e.key.toUpperCase()).slice(-3);
     if (IDKFA_BUF  === 'IDKFA')  { IDKFA_BUF  = ''; openDoom(); }
     if (HACKER_BUF === 'HACKER') { HACKER_BUF = ''; window.location.href = '/hacker/'; }
+    if (MATRIX_BUF === 'MATRIX') { MATRIX_BUF = ''; NEO_BUF = ''; showMatrixMsg(); }
+    if (NEO_BUF    === 'NEO')    { NEO_BUF    = ''; MATRIX_BUF = ''; showMatrixMsg(); }
     if (e.key === 'Escape') {
       var doomOverlay = document.getElementById('doom-overlay');
       if (doomOverlay && doomOverlay.classList.contains('active')) closeDoom();
@@ -1741,6 +1773,144 @@ function openDoom() {
 function closeDoom() {
   document.getElementById('doom-overlay').classList.remove('active');
 }
+
+// ── MATRIX MESSAGE ──
+(function() {
+  var GLYPHS = 'ｦｧｨｩｪｫｬｭｮｯｰｱｲｳｴｵｶｷｸｹｺｻｼｽｾｿﾀﾁﾂﾃﾄﾅﾆﾇﾈﾉﾊﾋﾌﾍﾎﾏﾐﾑﾒﾓﾔﾕﾖﾗﾘﾙﾚﾛﾜﾝ01';
+  var TARGET  = 'The Matrix has you';
+  var active  = false;
+  var rafId   = null;
+
+  // Mini matrix rain for the overlay canvas
+  var rainCtx, rainDrops;
+  function initRain() {
+    var c = document.getElementById('matrix-msg-rain');
+    c.width  = window.innerWidth;
+    c.height = window.innerHeight;
+    rainCtx  = c.getContext('2d');
+    var cols = Math.floor(c.width / 20);
+    rainDrops = Array.from({length: cols}, function() { return Math.random() * -50 | 0; });
+  }
+  function drawRain() {
+    if (!rainCtx) return;
+    rainCtx.fillStyle = 'rgba(0,3,0,0.05)';
+    rainCtx.fillRect(0, 0, rainCtx.canvas.width, rainCtx.canvas.height);
+    rainCtx.fillStyle = '#00ff41';
+    rainCtx.font = '16px Share Tech Mono, monospace';
+    rainDrops.forEach(function(y, i) {
+      rainCtx.fillText(GLYPHS[Math.random() * GLYPHS.length | 0], i * 20, y * 20);
+      rainDrops[i] = (y > rainCtx.canvas.height / 20 + Math.random() * 10) ? 0 : y + 1;
+    });
+  }
+
+  function matrixAudio() {
+    var snd = new Audio('sound/matrix-theme.mp3');
+    snd.volume = 0.82;
+    snd.play().catch(function(e){ console.error('[matrix audio]', e); });
+    return {
+      tick: function() {},
+      stop: function() {
+        snd.pause();
+        snd.currentTime = 0;
+      }
+    };
+  }
+
+
+  window.showMatrixMsg = function() {
+    if (active) return;
+    active = true;
+    initRain();
+
+    var audio   = matrixAudio();
+    var overlay = document.getElementById('matrix-msg');
+    var textEl  = document.getElementById('matrix-msg-text');
+    overlay.classList.add('active');
+
+    var len     = TARGET.length;
+    var locked  = new Array(len).fill(false);
+    var display = new Array(len).fill(' ');
+    var lockIdx = 0;
+
+    function rnd() { return GLYPHS[Math.random() * GLYPHS.length | 0]; }
+
+    function render() {
+      var html = display.map(function(ch, i) {
+        return locked[i] ? ch : (TARGET[i] === ' ' ? ' ' : '<span style="color:#00cc33">' + rnd() + '</span>');
+      }).join('');
+      // blinking cursor after last char
+      textEl.innerHTML = html + '<span class="cur">_</span>';
+    }
+
+    // Phase 1: scramble only (400ms)
+    var scrambleOnly = setInterval(function() { render(); }, 50);
+
+    setTimeout(function() {
+      // Phase 2: lock chars left-to-right while still scrambling
+      var lockTimer = setInterval(function() {
+        if (lockIdx >= len) { clearInterval(lockTimer); return; }
+        locked[lockIdx] = true;
+        display[lockIdx] = TARGET[lockIdx];
+        lockIdx++;
+        audio.tick();
+      }, 75);
+
+      var rainTimer = setInterval(drawRain, 40);
+      var holdTimer = null;
+      var exiting   = false;
+
+      function doExit() {
+        if (exiting) return;
+        exiting = true;
+        clearTimeout(holdTimer);
+        document.removeEventListener('keydown', escListener);
+
+        var uIdx = len - 1;
+        var unlockTimer = setInterval(function() {
+          if (uIdx < 0) {
+            clearInterval(unlockTimer);
+            audio.stop();
+            overlay.style.transition = 'opacity 0.5s';
+            overlay.style.opacity    = '0';
+            setTimeout(function() {
+              overlay.classList.remove('active');
+              overlay.style.opacity    = '';
+              overlay.style.transition = '';
+              textEl.innerHTML = '';
+              clearInterval(rainTimer);
+              active = false;
+            }, 500);
+            return;
+          }
+          locked[uIdx] = false;
+          display[uIdx] = ' ';
+          uIdx--;
+        }, 55);
+
+        var exitScramble = setInterval(function() {
+          if (!active) { clearInterval(exitScramble); return; }
+          render();
+        }, 50);
+      }
+
+      function escListener(e) {
+        if (e.key === 'Escape') doExit();
+      }
+      document.addEventListener('keydown', escListener);
+
+      // Phase 3: hold once all locked
+      var holdCheck = setInterval(function() {
+        if (lockIdx < len) return;
+        clearInterval(holdCheck);
+        clearInterval(scrambleOnly);
+        render();
+
+        holdTimer = setTimeout(doExit, 17760);
+
+      }, 100);
+    }, 400);
+  };
+})();
 </script>
 </body>
 </html>
