@@ -21,6 +21,24 @@ body::after {
   pointer-events: none; z-index: 999;
 }
 
+/* ── CRT POWER-ON ── */
+#crt-poweron {
+  position: fixed; inset: 0; z-index: 600;
+  display: flex; flex-direction: column;
+  pointer-events: none;
+}
+#crt-top, #crt-bottom {
+  background: #000300;
+  height: 50%;
+  transition: height 1.1s cubic-bezier(0.4, 0, 0.2, 1);
+}
+#crt-scanline {
+  height: 4px; flex-shrink: 0;
+  background: linear-gradient(90deg, transparent 0%, rgba(0,255,65,0.3) 20%, #afffbe 48%, #00ff41 50%, #afffbe 52%, rgba(0,255,65,0.3) 80%, transparent 100%);
+  box-shadow: 0 0 10px #00ff41, 0 0 30px rgba(0,255,65,0.8), 0 0 70px rgba(0,255,65,0.5), 0 0 120px rgba(0,255,65,0.2);
+  transition: opacity 0.5s ease-out;
+}
+
 /* ── BOOT ── */
 #boot-screen {
   position: fixed; inset: 0; background: #000300; z-index: 500;
@@ -245,7 +263,13 @@ body::after {
 
 <canvas id="matrix-canvas"></canvas>
 
-<div id="boot-screen"><div id="boot-lines"></div></div>
+<div id="crt-poweron">
+  <div id="crt-top"></div>
+  <div id="crt-scanline"></div>
+  <div id="crt-bottom"></div>
+</div>
+
+<div id="boot-screen" style="display:none"><div id="boot-lines"></div></div>
 
 <div id="terminal" style="display:none">
   <div id="term-header">
@@ -465,19 +489,58 @@ let writingCursor = 0;
 let projectsCursor = 0;
 let experienceCursor = 0;
 
+// ── CRT POWER-ON ──
+function runCRTPowerOn(cb) {
+  const canvas   = document.getElementById('matrix-canvas');
+  const top      = document.getElementById('crt-top');
+  const bottom   = document.getElementById('crt-bottom');
+  const scanline = document.getElementById('crt-scanline');
+
+  // Boost matrix opacity so phosphor glow is visible as curtains open
+  canvas.style.transition = 'opacity 1.2s ease-out';
+  canvas.style.opacity    = '0.28';
+
+  // Hold for scan line to glow, then retract curtains
+  setTimeout(() => {
+    top.style.height    = '0%';
+    bottom.style.height = '0%';
+
+    // Curtains done — fade the scan line
+    setTimeout(() => {
+      scanline.style.opacity = '0';
+
+      // Remove CRT overlay, let matrix breathe alone briefly
+      setTimeout(() => {
+        document.getElementById('crt-poweron').style.display = 'none';
+
+        // Matrix rain at full phosphor glow for 5s, then fade and boot
+        setTimeout(() => {
+          canvas.style.opacity = '0.04';
+          cb();
+        }, 2000);
+      }, 500);
+    }, 1100);
+  }, 400);
+}
+
 // ── BOOT ──
 const BOOT_LINES = [
-  '> BIOS v2026.06 — oruam.cloud terminal',
+  '> BIOS v1980.09 — oruam.cloud terminal',
   '> Checking RAM... <span class="boot-ok">640K OK</span>',
   '> Loading kernel modules... <span class="boot-ok">[ OK ]</span>',
   '> Mounting /home/juliomauro... <span class="boot-ok">[ OK ]</span>',
   '> Reading profile... <span class="boot-ok">[ OK ]</span>',
+  '> Initializing netfilter... <span class="boot-ok">[ 47 RULES ACTIVE ]</span>',
   '> Security clearance... <span class="boot-warn">[ CHECKING ]</span>',
+  '> Scanning for rootkits... <span class="boot-ok">[ NONE DETECTED ]</span>',
   '> Authentication: <span class="boot-ok">GRANTED</span>',
+  '> CVE database: 2026-06 <span class="boot-ok">[ SYNCED ]</span>',
   '> Starting terminal interface...',
 ];
 
 function runBoot() {
+  const bs = document.getElementById('boot-screen');
+  bs.removeAttribute('style');
   const container = document.getElementById('boot-lines');
   let i = 0;
   function next() {
@@ -940,7 +1003,7 @@ document.addEventListener('keypress', e => {
   if (typedBuf === 'exit') doExit();
 });
 
-runBoot();
+runCRTPowerOn(runBoot);
 </script>
 </body>
 </html>
