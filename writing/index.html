@@ -17,7 +17,7 @@
 <meta name="twitter:image" content="https://oruam.cloud/preview.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
-<script>(function(){var t=localStorage.getItem('theme');if(t==='green'||t==='amber')document.documentElement.dataset.theme=t;})();</script>
+<script>(function(){var t=localStorage.getItem('theme');if(t==='green'||t==='amber'||t==='light')document.documentElement.dataset.theme=t;})();</script>
 <style>
 :root {
   --bg:          #000308;
@@ -62,6 +62,26 @@
   --glow-strong: 0 0 8px #ff8c00, 0 0 20px #ff8c0088, 0 0 40px #ff8c0044;
 }
 [data-theme="amber"] nav { background: rgba(2,1,0,0.95); }
+
+[data-theme="light"] {
+  --bg:          #f5f2eb;
+  --surface:     #eae6db;
+  --border:      #b0a888;
+  --green:       #1a5c3a;
+  --green-mid:   #2a7a50;
+  --green-dim:   rgba(26,92,58,0.1);
+  --text:        #1a3a28;
+  --text-dim:    #5a7a68;
+  --white:       #0a1a10;
+  --glow:        none;
+  --glow-strong: none;
+}
+[data-theme="light"] body           { background: #f5f2eb; }
+[data-theme="light"] nav            { background: rgba(245,242,235,0.95); }
+[data-theme="light"] body::after    { background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.04) 2px, rgba(0,0,0,0.04) 4px); }
+[data-theme="light"] body::before   { background: radial-gradient(ellipse at center, transparent 60%, rgba(0,0,0,0.08) 100%); }
+[data-theme="light"] h1             { animation: none; color: var(--green); text-shadow: none; }
+[data-theme="light"] #matrix-canvas { opacity: 0.035; }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html { scroll-behavior: smooth; }
@@ -642,9 +662,9 @@ function init() {
 }
 function draw() {
   const theme = document.documentElement.dataset.theme;
-  ctx.fillStyle = theme === 'green' ? 'rgba(0,3,0,0.04)' : theme === 'amber' ? 'rgba(2,1,0,0.04)' : 'rgba(0,3,8,0.04)';
+  ctx.fillStyle = theme === 'green' ? 'rgba(0,3,0,0.04)' : theme === 'amber' ? 'rgba(2,1,0,0.04)' : theme === 'light' ? 'rgba(245,242,235,0.06)' : 'rgba(0,3,8,0.04)';
   ctx.fillRect(0, 0, canvas.width, canvas.height);
-  ctx.fillStyle = theme === 'green' ? '#00ff41' : theme === 'amber' ? '#ff8c00' : '#00b4ff';
+  ctx.fillStyle = theme === 'green' ? '#00ff41' : theme === 'amber' ? '#ff8c00' : theme === 'light' ? '#1a5c3a' : '#00b4ff';
   ctx.font = fontSize + 'px Share Tech Mono';
   for (let i = 0; i < drops.length; i++) {
     const char = chars[Math.floor(Math.random() * chars.length)];
@@ -742,14 +762,14 @@ const i18n = {
 };
 
 const themeNames = {
-  en:  { green: '◈ Green', amber: '◈ Amber', blue: '◈ Blue'  },
-  pt:  { green: '◈ Verde', amber: '◈ Âmbar', blue: '◈ Azul'  },
-  tlh: { green: '◈ SuD',   amber: '◈ Doq',   blue: '◈ SuD'   },
+  en:  { green: '◈ Green', amber: '◈ Amber', blue: '◈ Blue', light: '◈ Light' },
+  pt:  { green: '◈ Verde', amber: '◈ Âmbar', blue: '◈ Azul', light: '◈ Claro' },
+  tlh: { green: '◈ SuD',   amber: '◈ Doq',   blue: '◈ SuD',  light: '◈ wov'   },
 };
 function updateThemeBtn(currentTheme) {
   const btn = document.getElementById('theme-btn');
   if (!btn) return;
-  const next = currentTheme === 'blue' ? 'green' : currentTheme === 'green' ? 'amber' : 'blue';
+  const next = currentTheme === 'blue' ? 'green' : currentTheme === 'green' ? 'amber' : currentTheme === 'amber' ? 'light' : 'blue';
   btn.textContent = (themeNames[localStorage.getItem('lang') || 'en'] || themeNames.en)[next];
 }
 
@@ -815,7 +835,7 @@ function toggleLang() {
 function toggleTheme() {
   const html = document.documentElement;
   const cur = html.dataset.theme || 'blue';
-  const next = cur === 'blue' ? 'green' : cur === 'green' ? 'amber' : 'blue';
+  const next = cur === 'blue' ? 'green' : cur === 'green' ? 'amber' : cur === 'amber' ? 'light' : 'blue';
   html.dataset.theme = next === 'blue' ? '' : next;
   localStorage.setItem('theme', next);
   updateThemeBtn(next);

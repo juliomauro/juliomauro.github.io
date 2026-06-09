@@ -1,0 +1,946 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TERM — oruam.cloud</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' fill='%23000300'/><text x='4' y='23' font-size='20' fill='%2300ff41' font-family='monospace'>$</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; background: #000300; color: #00dd33; font-family: 'Share Tech Mono', monospace; overflow: hidden; }
+
+#matrix-canvas {
+  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+  z-index: 0; opacity: 0.04; pointer-events: none;
+}
+body::after {
+  content: ''; position: fixed; inset: 0;
+  background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.1) 2px, rgba(0,0,0,0.1) 4px);
+  pointer-events: none; z-index: 999;
+}
+
+/* ── BOOT ── */
+#boot-screen {
+  position: fixed; inset: 0; background: #000300; z-index: 500;
+  display: flex; flex-direction: column; justify-content: center;
+  padding: 10vw;
+}
+#boot-screen.hidden { display: none; }
+.boot-line { font-size: 21px; letter-spacing: 1px; color: #00aa22; margin-bottom: 5px; opacity: 0; }
+.boot-line.show { animation: bfade 0.15s forwards; }
+.boot-ok   { color: #00ff41; }
+.boot-warn { color: #ffaa00; }
+@keyframes bfade { to { opacity: 1; } }
+
+/* ── SHELL ── */
+#terminal {
+  position: relative; z-index: 10;
+  display: flex; flex-direction: column;
+  height: 100vh;
+  max-width: 960px; margin: 0 auto;
+}
+#term-header {
+  padding: 9px 28px;
+  border-bottom: 1px solid #003300;
+  display: flex; justify-content: space-between; align-items: center;
+  font-size: 19px; letter-spacing: 2px; color: #007722;
+  flex-shrink: 0;
+}
+#term-header .hl { color: #00ff41; }
+#prompt-area {
+  padding: 10px 28px 2px;
+  font-size: 21px; color: #00aa22;
+  flex-shrink: 0; line-height: 1.4;
+}
+#prompt-cmd { color: #00ff41; }
+#cursor-blink {
+  display: inline-block; width: 8px; height: 14px;
+  background: #00ff41; vertical-align: middle;
+  animation: cur 0.8s step-end infinite; margin-left: 1px;
+}
+@keyframes cur { 50% { opacity: 0; } }
+#content-area {
+  flex: 1; overflow-y: auto; overflow-x: hidden;
+  padding: 6px 28px 20px;
+  scrollbar-width: thin; scrollbar-color: #004400 transparent;
+}
+#content-area::-webkit-scrollbar { width: 4px; }
+#content-area::-webkit-scrollbar-thumb { background: #004400; border-radius: 2px; }
+#status-bar {
+  padding: 7px 28px;
+  border-top: 1px solid #003300;
+  display: flex; gap: 20px; flex-wrap: wrap;
+  font-size: 19px; color: #006622; letter-spacing: 1px;
+  flex-shrink: 0;
+}
+.kbd { color: #00aa22; border: 1px solid #004400; padding: 1px 5px; font-size: 18px; font-family: 'Share Tech Mono', monospace; }
+
+/* ── LISTING ── */
+#listing { margin-top: 6px; }
+.ls-row {
+  display: flex; align-items: baseline;
+  padding: 5px 6px; font-size: 21px; letter-spacing: 1px;
+  border-left: 2px solid transparent; cursor: pointer;
+  user-select: none; transition: background 0.08s;
+}
+.ls-row.active { border-left-color: transparent; background: #00ff41; color: #000a00; }
+.ls-row.active .ls-arrow { color: #000a00; }
+.ls-row.active .ls-perms { color: #004400; }
+.ls-row.active .ls-name  { color: #000a00; }
+.ls-row.active .ls-desc  { color: #005500; }
+.ls-arrow { width: 16px; color: #00ff41; flex-shrink: 0; font-size: 11px; }
+.ls-perms { color: #004400; font-size: 19px; margin-right: 12px; }
+.ls-name  { color: #00cc33; min-width: 200px; }
+.ls-desc  { color: #006622; font-size: 20px; }
+
+/* ── SECTION CONTENT ── */
+#section-view { display: none; font-size: 21px; line-height: 1.85; }
+
+.sv-head {
+  color: #00ff41; font-size: 19px; letter-spacing: 3px; text-transform: uppercase;
+  margin: 10px 0 12px; display: flex; align-items: center; gap: 14px;
+}
+.sv-head::after { content: ''; flex: 1; height: 1px; background: #003300; }
+
+/* text / summary */
+.sv-text  { color: #00bb33; max-width: 700px; margin-bottom: 2px; }
+.sv-blank { height: 8px; }
+
+/* skills */
+.sv-skill-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0 40px;
+  margin-top: 6px;
+}
+.sv-skill { color: #00bb33; padding: 4px 0; }
+.sv-skill::before { content: '  > '; color: #005500; }
+@media (max-width: 640px) { .sv-skill-grid { grid-template-columns: 1fr; } }
+
+/* experience */
+.sv-company { color: #00ff41; font-size: 22px; letter-spacing: 2px; margin: 14px 0 1px; }
+.sv-meta    { color: #006622; font-size: 19px; letter-spacing: 1px; margin-bottom: 8px; }
+.sv-role    { color: #00aa22; margin: 8px 0 3px; }
+.sv-bullet  { color: #009922; padding-left: 14px; margin-bottom: 1px; }
+.sv-bullet::before { content: '> '; color: #005500; }
+.sv-divider { border: none; border-top: 1px solid #002200; margin: 14px 0; }
+
+/* education */
+.sv-edu { color: #00bb33; margin-bottom: 6px; }
+.sv-edu::before { content: '■ '; color: #00ff41; font-size: 12px; }
+.sv-edu .school  { color: #00ff41; }
+.sv-edu .period  { color: #006622; font-size: 13px; margin-left: 10px; }
+
+/* certs */
+.sv-cert { font-size: 20px; color: #00993a; margin-bottom: 4px; }
+.sv-cert::before { content: '✓ '; color: #009933; }
+.sv-cert .issuer { color: #006622; margin-left: 8px; font-size: 19px; }
+
+/* projects */
+.sv-proj { margin-bottom: 18px; }
+.sv-proj-title {
+  color: #00ff41; font-size: 15px; letter-spacing: 1px;
+  margin-bottom: 2px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+}
+.sv-proj-num    { color: #005500; font-size: 18px; }
+.sv-proj-status { font-size: 17px; letter-spacing: 2px; padding: 1px 6px; border: 1px solid; }
+.status-wip     { color: #ffaa00; border-color: #554400; }
+.status-active  { color: #00ff41; border-color: #005500; }
+.status-done    { color: #00aa22; border-color: #004400; }
+.status-growing { color: #00ccff; border-color: #004455; }
+.sv-proj-meta   { color: #006622; font-size: 19px; letter-spacing: 1px; margin-bottom: 5px; }
+.sv-proj-desc   { color: #009922; padding-left: 14px; font-size: 20px; max-width: 680px; }
+.sv-proj-desc::before { content: '> '; color: #005500; }
+.sv-proj-url    { color: #0088aa; font-size: 19px; padding-left: 14px; margin-top: 3px; }
+.sv-proj-url::before { content: '↗ '; }
+
+/* ── EXPERIENCE LIST (navigable) ── */
+.exp-row {
+  display: flex; align-items: baseline; gap: 12px;
+  padding: 5px 6px; font-size: 21px;
+  border-left: 2px solid transparent; cursor: pointer; user-select: none;
+}
+.exp-row.active { border-left-color: transparent; background: #00ff41; color: #000a00; }
+.exp-arrow   { width: 16px; color: #00ff41; flex-shrink: 0; font-size: 13px; }
+.exp-row.active .exp-arrow { color: #000a00; }
+.exp-company { color: #00cc33; flex: 1; }
+.exp-row.active .exp-company { color: #000a00; }
+.exp-period  { color: #005500; font-size: 17px; flex-shrink: 0; }
+.exp-row.active .exp-period  { color: #003300; }
+
+/* ── WRITING LIST (navigable) ── */
+.wr-row {
+  display: flex; align-items: baseline;
+  padding: 5px 6px; font-size: 21px;
+  border-left: 2px solid transparent; cursor: pointer; user-select: none;
+}
+.wr-row.active { border-left-color: transparent; background: #00ff41; color: #000a00; }
+.wr-arrow { width: 16px; color: #00ff41; flex-shrink: 0; font-size: 13px; }
+.wr-row.active .wr-arrow { color: #000a00; }
+.wr-tag   { color: #005500; font-size: 17px; min-width: 130px; flex-shrink: 0; }
+.wr-row.active .wr-tag { color: #003300; }
+.wr-title { color: #00cc33; }
+.wr-row.active .wr-title { color: #000a00; }
+.wr-level { color: #004400; font-size: 17px; margin-left: 14px; flex-shrink: 0; }
+.wr-row.active .wr-level { color: #003a00; }
+
+/* ── PROJECTS LIST (navigable) ── */
+.pr-row {
+  display: flex; align-items: baseline; gap: 12px;
+  padding: 5px 6px; font-size: 21px;
+  border-left: 2px solid transparent; cursor: pointer; user-select: none;
+}
+.pr-row.active { border-left-color: transparent; background: #00ff41; color: #000a00; }
+.pr-arrow  { width: 16px; color: #00ff41; flex-shrink: 0; font-size: 13px; }
+.pr-row.active .pr-arrow { color: #000a00; }
+.pr-num    { color: #005500; font-size: 17px; flex-shrink: 0; min-width: 50px; }
+.pr-row.active .pr-num { color: #003300; }
+.pr-title  { color: #00cc33; flex: 1; }
+.pr-row.active .pr-title { color: #000a00; }
+.pr-badge  { font-size: 15px; letter-spacing: 1px; padding: 0 5px; border: 1px solid; flex-shrink: 0; }
+.pr-row.active .pr-badge { border-color: #005500; }
+.pr-url    { color: #0088aa; font-size: 17px; padding: 2px 6px 2px 34px; }
+.pr-row.active .pr-url { color: #003a00; }
+
+/* ── ARTICLE CONTENT ── */
+.art-h1  { color: #00ff41; font-size: 24px; letter-spacing: 2px; margin: 10px 0 6px; }
+.art-h2  { color: #00ee44; font-size: 21px; letter-spacing: 1px; margin: 16px 0 4px; padding-bottom: 3px; border-bottom: 1px solid #003300; }
+.art-h3  { color: #00cc33; font-size: 19px; margin: 12px 0 3px; }
+.art-p   { color: #00aa22; max-width: 760px; margin-bottom: 7px; line-height: 1.75; }
+.art-li  { color: #009922; padding-left: 20px; margin-bottom: 2px; }
+.art-li::before { content: '  > '; color: #005500; }
+.art-oli { color: #009922; padding-left: 20px; margin-bottom: 2px; }
+.art-oli::before { content: attr(data-n) '.  '; color: #005500; }
+.art-blockquote { color: #006622; border-left: 2px solid #004400; padding-left: 16px; margin: 6px 0; font-style: normal; }
+.art-code-block {
+  color: #00dd99; background: rgba(0,255,65,0.03);
+  border-left: 2px solid #005500;
+  padding: 8px 16px; margin: 10px 0;
+  white-space: pre-wrap; word-break: break-all; font-size: 18px;
+}
+.art-hr     { border: none; border-top: 1px solid #003300; margin: 14px 0; }
+.art-blank  { height: 6px; }
+.art-loading { color: #005500; letter-spacing: 2px; margin-top: 20px; animation: pulse 1s ease infinite; }
+.art-error   { color: #884400; margin-top: 20px; }
+
+/* scroll hint */
+.scroll-hint {
+  font-size: 19px; color: #004400; letter-spacing: 1px;
+  text-align: center; padding: 14px 0 4px;
+  animation: pulse 2s ease infinite;
+}
+@keyframes pulse { 0%,100%{opacity:0.4} 50%{opacity:1} }
+
+@media (max-width: 640px) {
+  #term-header, #prompt-area, #content-area, #status-bar { padding-left: 16px; padding-right: 16px; }
+  .ls-perms { display: none; }
+  .ls-desc  { display: none; }
+  #status-bar { gap: 12px; }
+}
+</style>
+</head>
+<body>
+
+<canvas id="matrix-canvas"></canvas>
+
+<div id="boot-screen"><div id="boot-lines"></div></div>
+
+<div id="terminal" style="display:none">
+  <div id="term-header">
+    <span>ORUAM_OLIUJ &nbsp;·&nbsp; <span class="hl">TERM/64</span> &nbsp;·&nbsp; pts/0</span>
+    <span id="term-path" class="hl">~</span>
+    <span id="term-clock"></span>
+  </div>
+  <div id="prompt-area">
+    <span style="color:#005500">oruam</span><span style="color:#003300">@</span><span style="color:#00882a">oruam.cloud</span>:<span id="prompt-path" style="color:#00ff41">~</span>$&nbsp;<span id="prompt-cmd"></span><span id="cursor-blink"></span>
+  </div>
+  <div id="content-area">
+    <div id="listing"></div>
+    <div id="section-view"></div>
+  </div>
+  <div id="status-bar">
+    <span><span class="kbd">↑</span><span class="kbd">↓</span> move</span>
+    <span><span class="kbd">Enter</span> open</span>
+    <span><span class="kbd">Esc</span> back</span>
+    <span><span class="kbd">q</span> quit</span>
+  </div>
+</div>
+
+<script>
+// ── MATRIX RAIN ──
+const canvas = document.getElementById('matrix-canvas');
+const ctx    = canvas.getContext('2d');
+canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+window.addEventListener('resize', () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; initMx(); });
+const MX_CHARS = 'アイウエオカキクケコ0123456789ABCDEF$#@%&';
+const MX_FZ = 16; let mxCols, mxDrops;
+function initMx() { mxCols = Math.floor(canvas.width / MX_FZ); mxDrops = Array(mxCols).fill(1); }
+function drawMx() {
+  ctx.fillStyle = 'rgba(0,3,0,0.04)'; ctx.fillRect(0, 0, canvas.width, canvas.height);
+  ctx.fillStyle = '#00ff41'; ctx.font = MX_FZ + 'px Share Tech Mono';
+  for (let i = 0; i < mxDrops.length; i++) {
+    ctx.fillText(MX_CHARS[Math.floor(Math.random() * MX_CHARS.length)], i * MX_FZ, mxDrops[i] * MX_FZ);
+    if (mxDrops[i] * MX_FZ > canvas.height && Math.random() > 0.975) mxDrops[i] = 0;
+    mxDrops[i]++;
+  }
+}
+initMx(); setInterval(drawMx, 45);
+
+// ── CLOCK ──
+function tickClock() {
+  document.getElementById('term-clock').textContent =
+    new Date().toISOString().slice(0, 19).replace('T', ' ') + ' UTC';
+}
+setInterval(tickClock, 1000); tickClock();
+
+// ── MENU ──
+const MENU = [
+  { id: 'summary',    perms: '-rw-r--r--', name: 'summary.txt',  desc: 'Profile summary',      type: 'text'     },
+  { id: 'skills',     perms: 'drwxr-xr-x', name: 'skills/',      desc: 'Core competencies',    type: 'tags'     },
+  { id: 'experience', perms: 'drwxr-xr-x', name: 'experience/',  desc: 'Professional history', type: 'timeline' },
+  { id: 'education',  perms: 'drwxr-xr-x', name: 'education/',   desc: 'Academic background',  type: 'edu'      },
+  { id: 'certs',      perms: 'drwxr-xr-x', name: 'certs/',       desc: 'Certifications',       type: 'certs'    },
+  { id: 'projects',   perms: 'drwxr-xr-x', name: 'projects/',    desc: 'Open source projects', type: 'projects' },
+  { id: 'writing',    perms: 'drwxr-xr-x', name: 'writing/',     desc: 'Technical articles',   type: 'writing'  },
+];
+
+// ── DATA ──
+const DATA = {
+  summary: [
+    'With over 25 years in Information Technology, I lead infrastructure,',
+    'information security, and cloud environments. Career built managing',
+    'critical operations, ensuring high availability, optimizing hybrid',
+    'environments and leading technical teams to deliver strategic',
+    'solutions aligned with business goals.',
+    '',
+    'Led initiatives at major companies in communications, tourism and',
+    'technology sectors — combining technical expertise with business-',
+    'driven results. Strong track record building multidisciplinary teams,',
+    'promoting innovation, agility and technological resilience.',
+  ],
+
+  skills: [
+    'IT Team Leadership',          'Infrastructure Strategy',
+    'Incident Response & Forensics','Threat Intelligence',
+    'Security Operations (SecOps)', 'Vulnerability Management',
+    'Cloud Security · AWS · GCP',  'Zero Trust Architecture',
+    'Terraform · Ansible',         'SIEM · EDR · XDR',
+    'Penetration Testing',         'DevSecOps',
+    'IT Governance & Compliance',  'Cloud Cost Optimization',
+  ],
+
+  experience: [
+    { company: 'Sinch', meta: 'Stockholm, Sweden  ·  2019–Now', roles: [
+      { title: 'IT Security Specialist  ·  2023–Present', bullets: [
+        'Global VMP leader — strategy, governance, full lifecycle',
+        'Cross-functional security across on-prem and multi-cloud',
+        'Deep technical CVE analysis, false positive triage, risk assessment',
+        'Incident investigations with EDR and forensic techniques',
+        'Security automation via scripting/API  —  ~40% less manual effort',
+        'Attack surface reduction and public asset exposure governance',
+      ]},
+      { title: 'IT Infrastructure Specialist  ·  2019–2023', bullets: [
+        'Critical IT infrastructure across multi-cloud and on-prem DCs',
+        'SLA 99.998% availability maintained',
+        'M&A IT integration and cloud cost optimization',
+      ]},
+    ]},
+    { company: 'CVC Corp', meta: 'Santo André, Brazil  ·  2015–2019', roles: [
+      { title: 'IT Infrastructure Coordinator', bullets: [
+        'Systems modernization and cloud adoption (AWS)',
+        'ERP implementation: JDE + Weblogic + Oracle + MongoDB',
+        'Infrastructure relocation during HQ move',
+      ]},
+    ]},
+    { company: 'Folha S.Paulo', meta: 'São Paulo, Brazil  ·  2013–2015', roles: [
+      { title: 'IT Coordinator', bullets: [
+        'VMware migration and redesign of web portals and mobile apps',
+        '2014 Brazilian Elections and FIFA World Cup coverage support',
+      ]},
+    ]},
+    { company: 'Estadão', meta: 'São Paulo, Brazil  ·  2009–2012', roles: [
+      { title: 'VMware Specialist & Sr Linux Consultant', bullets: [
+        'Server consolidation: VMware vSphere + HP P4000 iSCSI',
+        'HA with Varnish load balancers and Akamai CDN',
+      ]},
+    ]},
+    { company: 'Sterling Commerce', meta: 'SP & Curitiba, Brazil  ·  2005–2009', roles: [
+      { title: 'GIS & Unix Senior Consultant', bullets: [
+        'File exchange for Itaú, HSBC, Banco Votorantim, CEMIG',
+        'HA Linux, Unix, Solaris environments for banking operations',
+      ]},
+    ]},
+    { company: 'Interdotnet', meta: 'São Paulo, Brazil  ·  1998–2005', roles: [
+      { title: 'Linux Analyst', bullets: [
+        'Internal network management, Windows → Linux migration',
+        'SLA-based support for dedicated link clients',
+      ]},
+    ]},
+  ],
+
+  education: [
+    { school: 'FASP',   degree: "Bachelor's in Computer Engineering",      period: '2002–2007' },
+    { school: 'Kaplan', degree: 'Intensive English Program · Toronto, CA',  period: '2017'      },
+    { school: 'FECAP',  degree: 'Technical Degree in Data Processing',     period: '1995–1997' },
+  ],
+
+  certs: [
+    { name: 'Cybersecurity Training',                 issuer: 'Alura'                     },
+    { name: 'Offensive Security Training',            issuer: 'Alura'                     },
+    { name: 'Defensive Security Training',            issuer: 'Alura'                     },
+    { name: 'AWS Certified Solutions Architect',      issuer: 'Amazon Web Services · 2017'},
+    { name: 'AWS Expert',                             issuer: 'LINUXtips'                 },
+    { name: 'AWS Certification: Solutions Architect', issuer: 'Alura'                     },
+    { name: 'AWS SQS: Messaging & System Decoupling', issuer: 'Alura'                     },
+    { name: 'Leadership: Mission and Purpose',        issuer: 'Alura'                     },
+    { name: 'IT Governance: Service Demand Mgmt',     issuer: 'Alura'                     },
+  ],
+
+  projects: [
+    { num: '#001', year: '2026',      status: 'wip',     title: 'ORUAM BSS',
+      meta: 'M5Cardputer ADV  ·  C++ · PlatformIO',
+      desc: 'Custom firmware for M5Cardputer ADV — ESP32-S3 handheld security tool. No Linux, pure embedded C++. WiFi scanner, BLE, port scanner, banner grabber and more.',
+      url:  'github.com/juliomauro/oruam-BSS' },
+    { num: '#002', year: '2025–Now',  status: 'active',  title: 'MESHCORE BRASIL',
+      meta: 'LoRa · Off-Grid  ·  RF · Hardware',
+      desc: 'Decentralized LoRa mesh network expansion in Brazil. Interconnecting São Paulo, Santo André, Jundiaí, Sorocaba and Campinas. Solar-powered nodes, no internet.',
+      url:  'meshcore.com.br' },
+    { num: '#008', year: '2026',      status: 'wip',     title: 'MESHCORE PALM',
+      meta: 'Palm IIIe · Palm OS 3.1  ·  C · m68k',
+      desc: 'MeshCore LoRa mesh client running on a 1990s Palm IIIe. Motorola 68K at 16MHz. RS-232 HotSync → MAX3232 → Heltec V3. Pure C, no internet, no cloud.',
+      url:  'github.com/juliomauro/meshcore-palmos' },
+    { num: '#004', year: '2026',      status: 'done',    title: 'POMODORO',
+      meta: 'macOS · Linux  ·  Bash',
+      desc: 'Terminal Pomodoro timer, zero external dependencies. Auto OS detection — osascript+afplay on macOS, notify-send+sox on Linux. Configurable cycles, live countdown.',
+      url:  'github.com/juliomauro/pomodoro' },
+    { num: '#005', year: '2021',      status: 'done',    title: 'HIDEPWPUSH',
+      meta: 'macOS · Linux  ·  Bash · Security',
+      desc: 'Secure CLI wrapper for PWPush. Password passed as JSON body via stdin to curl — never exposed to ps aux. Self-hosted support, expiry by views or days.',
+      url:  'github.com/juliomauro/HidePWPushPassword' },
+    { num: '#006', year: '2026',      status: 'growing', title: 'SEC WRITEUPS',
+      meta: 'Real-World · Hackathons  ·  Security Research',
+      desc: 'Security case writeups: Linux privesc, cloud IAM abuse, container escape, K8s RBAC, lateral movement. Full exploitation chains with root cause. No CVE dependency.',
+      url:  'github.com/juliomauro/sec-writeups' },
+    { num: '#003', year: '2019–Now',  status: 'active',  title: 'DISCONECTA',
+      meta: 'Music · Writing  ·  Podcast · Editorial',
+      desc: 'Contributing author at Disconecta (BR music portal). Italian Progressive Rock specialist. Author of "Rock Progressivo Italiano" on Amazon. Co-host: Redação Disconecta podcast.',
+      url:  'disconecta.com.br/author/julio-mauro/' },
+    { num: '#007', year: '2014–Now',  status: 'active',  title: 'WIKIMEDIA',
+      meta: 'Volunteer · Editorial  ·  PT-BR · EN',
+      desc: 'Wikipedia volunteer editor since 2014. Article review, content editing, and PT↔EN translation. Accuracy, neutrality and quality across the collaborative encyclopedia.',
+      url:  '' },
+  ],
+
+  writing: [
+    { tag: 'Cloud', level: 'Practitioner',
+      title: "Your Container's Identity Is Worth More Than Root",
+      path: 'cloud/your-container-identity-is-worth-more-than-root.md' },
+    { tag: 'Cloud', level: 'Advanced',
+      title: 'One Wildcard in a Trust Policy',
+      path: 'cloud/one-wildcard-in-a-trust-policy.md' },
+    { tag: 'Linux', level: 'Practitioner',
+      title: 'The Header That Opened the Network',
+      path: 'linux/the-header-that-opened-the-network.md' },
+    { tag: 'Linux', level: 'Practitioner',
+      title: 'systemd as an Attack Surface',
+      path: 'linux/systemd-as-an-attack-surface.md' },
+    { tag: 'Kubernetes', level: 'Advanced',
+      title: 'RBAC: When No Single Permission Seems Critical',
+      path: 'kubernetes/rbac-when-no-single-permission-seems-critical.md' },
+    { tag: 'Networking', level: 'Foundational',
+      title: 'MeshCore Brazil: Decentralized Communication Without Infrastructure',
+      path: 'networking/meshcore-brazil.md' },
+    { tag: 'Security', level: 'Foundational',
+      title: 'The Hidden Danger of Judging by Appearances',
+      path: 'security/the-hidden-danger-of-judging-by-appearances.md' },
+  ],
+};
+
+// ── STATE ──
+let mode = 'listing'; // listing | section | exp-list | exp-detail | projects-list | writing-list | article
+let cursor = 0;
+let writingCursor = 0;
+let projectsCursor = 0;
+let experienceCursor = 0;
+
+// ── BOOT ──
+const BOOT_LINES = [
+  '> BIOS v2026.06 — oruam.cloud terminal',
+  '> Checking RAM... <span class="boot-ok">640K OK</span>',
+  '> Loading kernel modules... <span class="boot-ok">[ OK ]</span>',
+  '> Mounting /home/juliomauro... <span class="boot-ok">[ OK ]</span>',
+  '> Reading profile... <span class="boot-ok">[ OK ]</span>',
+  '> Security clearance... <span class="boot-warn">[ CHECKING ]</span>',
+  '> Authentication: <span class="boot-ok">GRANTED</span>',
+  '> Starting terminal interface...',
+];
+
+function runBoot() {
+  const container = document.getElementById('boot-lines');
+  let i = 0;
+  function next() {
+    if (i >= BOOT_LINES.length) {
+      setTimeout(() => {
+        document.getElementById('boot-screen').classList.add('hidden');
+        document.getElementById('terminal').style.display = 'flex';
+        renderListing();
+        typePrompt('ls');
+      }, 350);
+      return;
+    }
+    const d = document.createElement('div');
+    d.className = 'boot-line';
+    d.innerHTML = BOOT_LINES[i];
+    container.appendChild(d);
+    requestAnimationFrame(() => d.classList.add('show'));
+    i++;
+    setTimeout(next, 140 + Math.random() * 100);
+  }
+  next();
+}
+
+// ── PROMPT ──
+function typePrompt(cmd, cb) {
+  const el = document.getElementById('prompt-cmd');
+  el.textContent = '';
+  let i = 0;
+  (function tick() {
+    if (i >= cmd.length) { if (cb) cb(); return; }
+    el.textContent += cmd[i++];
+    setTimeout(tick, 50 + Math.random() * 35);
+  })();
+}
+
+function setPath(p) {
+  document.getElementById('prompt-path').textContent = p;
+  document.getElementById('term-path').textContent   = p;
+}
+
+// ── LISTING ──
+function renderListing() {
+  mode = 'listing';
+  setPath('~');
+  document.getElementById('section-view').style.display = 'none';
+  const listing = document.getElementById('listing');
+  listing.style.display = 'block';
+  listing.innerHTML = '';
+  MENU.forEach((item, i) => {
+    const row = document.createElement('div');
+    row.className = 'ls-row' + (i === cursor ? ' active' : '');
+    row.innerHTML =
+      `<span class="ls-arrow">${i === cursor ? '▶' : ' '}</span>` +
+      `<span class="ls-perms">${item.perms}</span>` +
+      `<span class="ls-name">${item.name}</span>` +
+      `<span class="ls-desc">&nbsp;&nbsp;${item.desc}</span>`;
+    row.addEventListener('click', () => { cursor = i; refreshCursor(); openItem(MENU[cursor]); });
+    listing.appendChild(row);
+  });
+}
+
+function refreshCursor() {
+  document.querySelectorAll('.ls-row').forEach((row, i) => {
+    const on = i === cursor;
+    row.classList.toggle('active', on);
+    row.querySelector('.ls-arrow').textContent = on ? '▶' : ' ';
+    if (on) row.scrollIntoView({ block: 'nearest' });
+  });
+}
+
+// ── OPEN ──
+function openItem(item) {
+  if (item.type === 'writing') {
+    writingCursor = 0;
+    mode = 'writing-list';
+    typePrompt('ls ' + item.name);
+    setPath('~/writing');
+    document.getElementById('listing').style.display = 'none';
+    const sv = document.getElementById('section-view');
+    sv.style.display = 'block';
+    sv.innerHTML = '';
+    renderWritingList(sv);
+    document.getElementById('content-area').scrollTop = 0;
+    return;
+  }
+  if (item.type === 'timeline') {
+    experienceCursor = 0;
+    mode = 'exp-list';
+    typePrompt('ls ' + item.name);
+    setPath('~/experience');
+    document.getElementById('listing').style.display = 'none';
+    const sv = document.getElementById('section-view');
+    sv.style.display = 'block';
+    sv.innerHTML = '';
+    renderExperienceList(sv);
+    document.getElementById('content-area').scrollTop = 0;
+    return;
+  }
+  if (item.type === 'projects') {
+    projectsCursor = 0;
+    mode = 'projects-list';
+    typePrompt('ls ' + item.name);
+    setPath('~/projects');
+    document.getElementById('listing').style.display = 'none';
+    const sv = document.getElementById('section-view');
+    sv.style.display = 'block';
+    sv.innerHTML = '';
+    renderProjectsList(sv);
+    document.getElementById('content-area').scrollTop = 0;
+    return;
+  }
+  mode = 'section';
+  const cmd = item.type === 'text' ? 'cat ' + item.name : 'ls ' + item.name;
+  typePrompt(cmd);
+  setPath('~/' + item.id);
+  document.getElementById('listing').style.display = 'none';
+  const sv = document.getElementById('section-view');
+  sv.style.display = 'block';
+  sv.innerHTML = '';
+  renderSection(item, sv);
+  document.getElementById('content-area').scrollTop = 0;
+}
+
+// ── RENDER SECTION ──
+function renderSection(item, el) {
+  const h = mk('div', 'sv-head'); h.textContent = item.name; el.appendChild(h);
+
+  if (item.type === 'text') {
+    DATA.summary.forEach(line => {
+      if (!line) { el.appendChild(mk('div', 'sv-blank')); return; }
+      const d = mk('div', 'sv-text'); d.textContent = line; el.appendChild(d);
+    });
+
+  } else if (item.type === 'tags') {
+    const grid = mk('div', 'sv-skill-grid');
+    DATA.skills.forEach(s => { const d = mk('div', 'sv-skill'); d.textContent = s; grid.appendChild(d); });
+    el.appendChild(grid);
+
+  } else if (item.type === 'timeline') {
+    DATA.experience.forEach(job => {
+      const c = mk('div', 'sv-company'); c.textContent = job.company; el.appendChild(c);
+      const m = mk('div', 'sv-meta');    m.textContent = job.meta;    el.appendChild(m);
+      job.roles.forEach(role => {
+        const r = mk('div', 'sv-role'); r.textContent = '[' + role.title + ']'; el.appendChild(r);
+        role.bullets.forEach(b => { const d = mk('div', 'sv-bullet'); d.textContent = b; el.appendChild(d); });
+      });
+      el.appendChild(mk('hr', 'sv-divider'));
+    });
+
+  } else if (item.type === 'edu') {
+    DATA.education.forEach(e => {
+      const d = mk('div', 'sv-edu');
+      d.innerHTML = `<span class="school">${e.school}</span>  —  ${e.degree}<span class="period">${e.period}</span>`;
+      el.appendChild(d);
+    });
+
+  } else if (item.type === 'certs') {
+    DATA.certs.forEach(c => {
+      const d = mk('div', 'sv-cert');
+      d.innerHTML = `${c.name}<span class="issuer">${c.issuer}</span>`;
+      el.appendChild(d);
+    });
+
+  } else if (item.type === 'projects') {
+    const STATUS = { wip:'WIP', active:'ACTIVE', done:'DONE', growing:'GROWING' };
+    DATA.projects.forEach(p => {
+      const wrap = mk('div', 'sv-proj');
+      const titleRow = mk('div', 'sv-proj-title');
+      const num  = mk('span', 'sv-proj-num');   num.textContent  = p.num + '  ·  ' + p.year;
+      const name = mk('span', '');              name.textContent = p.title;
+      name.style.cssText = 'color:#00ff41;letter-spacing:2px;';
+      const badge = mk('span', 'sv-proj-status status-' + p.status);
+      badge.textContent = STATUS[p.status];
+      titleRow.appendChild(num); titleRow.appendChild(name); titleRow.appendChild(badge);
+      const meta = mk('div', 'sv-proj-meta'); meta.textContent = p.meta;
+      const desc = mk('div', 'sv-proj-desc'); desc.textContent = p.desc;
+      wrap.appendChild(titleRow); wrap.appendChild(meta); wrap.appendChild(desc);
+      if (p.url) {
+        const url = mk('div', 'sv-proj-url'); url.textContent = p.url; wrap.appendChild(url);
+      }
+      el.appendChild(wrap);
+    });
+
+  }
+
+  const hint = mk('div', 'scroll-hint');
+  hint.textContent = '↑↓ scroll  ·  Esc back  ·  q quit';
+  el.appendChild(hint);
+}
+
+// ── WRITING LIST ──
+function renderWritingList(el) {
+  el.innerHTML = '';
+  const head = mk('div', 'sv-head'); head.textContent = 'writing/'; el.appendChild(head);
+  DATA.writing.forEach((a, i) => {
+    const row = mk('div', 'wr-row' + (i === writingCursor ? ' active' : ''));
+    row.innerHTML =
+      `<span class="wr-arrow">${i === writingCursor ? '▶' : ' '}</span>` +
+      `<span class="wr-tag">[${a.tag}]</span>` +
+      `<span class="wr-title">${a.title}</span>` +
+      `<span class="wr-level">// ${a.level}</span>`;
+    row.addEventListener('click', () => { writingCursor = i; refreshWritingCursor(el); openArticle(DATA.writing[writingCursor]); });
+    el.appendChild(row);
+  });
+  const hint = mk('div', 'scroll-hint'); hint.textContent = '↑↓ move  ·  Enter open  ·  Esc back'; el.appendChild(hint);
+}
+
+function refreshWritingCursor(el) {
+  el.querySelectorAll('.wr-row').forEach((row, i) => {
+    const on = i === writingCursor;
+    row.classList.toggle('active', on);
+    row.querySelector('.wr-arrow').textContent = on ? '▶' : ' ';
+    if (on) row.scrollIntoView({ block: 'nearest' });
+  });
+}
+
+// ── OPEN ARTICLE ──
+function openArticle(article) {
+  mode = 'article';
+  const fname = article.path.split('/').pop();
+  typePrompt('cat ' + fname);
+  setPath('~/writing/' + fname.replace('.md', ''));
+
+  const sv = document.getElementById('section-view');
+  sv.innerHTML = '';
+  document.getElementById('content-area').scrollTop = 0;
+
+  const loading = mk('div', 'art-loading'); loading.textContent = '> fetching ' + article.path + '...'; sv.appendChild(loading);
+
+  const RAW = 'https://raw.githubusercontent.com/juliomauro/sec-notes/main/';
+  fetch(RAW + article.path)
+    .then(r => { if (!r.ok) throw new Error(r.status); return r.text(); })
+    .then(md => { sv.innerHTML = ''; renderMarkdown(md, sv); })
+    .catch(() => {
+      sv.innerHTML = '';
+      const e = mk('div', 'art-error'); e.textContent = '> fetch failed — check connection or try github.com/juliomauro/sec-notes'; sv.appendChild(e);
+    });
+}
+
+// ── MARKDOWN → TERMINAL ──
+function renderMarkdown(md, el) {
+  const lines = md.split('\n');
+  let inCode = false, codeBuf = [], olCount = 0;
+
+  function flushCode() {
+    if (!codeBuf.length) return;
+    const d = mk('div', 'art-code-block'); d.textContent = codeBuf.join('\n'); el.appendChild(d);
+    codeBuf = [];
+  }
+
+  // inline: **bold**, *em*, `code`
+  function inline(text) {
+    return text
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/\*\*(.+?)\*\*/g, '<span style="color:#00ff41">$1</span>')
+      .replace(/\*(.+?)\*/g,     '<span style="color:#00cc44">$1</span>')
+      .replace(/`([^`]+)`/g,     '<span style="color:#00ddaa;background:rgba(0,255,65,0.06);padding:0 3px">$1</span>');
+  }
+
+  lines.forEach(raw => {
+    const line = raw.trimEnd();
+
+    if (line.startsWith('```')) {
+      if (inCode) { flushCode(); inCode = false; }
+      else        { inCode = true; }
+      return;
+    }
+    if (inCode) { codeBuf.push(line); return; }
+
+    if (!line.trim()) { el.appendChild(mk('div', 'art-blank')); olCount = 0; return; }
+    if (/^---+$/.test(line)) { el.appendChild(mk('hr', 'art-hr')); return; }
+    if (line.startsWith('# '))   { const d = mk('div','art-h1'); d.innerHTML = inline(line.slice(2));  el.appendChild(d); return; }
+    if (line.startsWith('## '))  { const d = mk('div','art-h2'); d.innerHTML = inline(line.slice(3));  el.appendChild(d); return; }
+    if (line.startsWith('### ')) { const d = mk('div','art-h3'); d.innerHTML = inline(line.slice(4));  el.appendChild(d); return; }
+    if (line.startsWith('> '))   { const d = mk('div','art-blockquote'); d.innerHTML = inline(line.slice(2)); el.appendChild(d); return; }
+    if (/^[-*] /.test(line))     { const d = mk('div','art-li'); d.innerHTML = inline(line.slice(2));  el.appendChild(d); return; }
+    if (/^\d+\. /.test(line)) {
+      olCount++;
+      const d = mk('div','art-oli'); d.setAttribute('data-n', olCount); d.innerHTML = inline(line.replace(/^\d+\. /,'')); el.appendChild(d); return;
+    }
+    const d = mk('div','art-p'); d.innerHTML = inline(line); el.appendChild(d);
+  });
+  flushCode();
+
+  const hint = mk('div', 'scroll-hint'); hint.textContent = '↑↓ scroll  ·  Esc back  ·  q quit'; el.appendChild(hint);
+}
+
+function mk(tag, cls) {
+  const el = document.createElement(tag);
+  if (cls) el.className = cls;
+  return el;
+}
+
+// ── KEYBOARD ──
+document.addEventListener('keydown', e => {
+  if (mode === 'listing') {
+    if      (e.key === 'ArrowUp')   { e.preventDefault(); cursor = (cursor - 1 + MENU.length) % MENU.length; refreshCursor(); }
+    else if (e.key === 'ArrowDown') { e.preventDefault(); cursor = (cursor + 1) % MENU.length; refreshCursor(); }
+    else if (e.key === 'Enter')     { openItem(MENU[cursor]); }
+    else if (e.key === 'q' || e.key === 'Q') { doExit(); }
+  } else if (mode === 'exp-list') {
+    const sv = document.getElementById('section-view');
+    if      (e.key === 'ArrowUp')   { e.preventDefault(); experienceCursor = (experienceCursor - 1 + DATA.experience.length) % DATA.experience.length; refreshExperienceCursor(sv); }
+    else if (e.key === 'ArrowDown') { e.preventDefault(); experienceCursor = (experienceCursor + 1) % DATA.experience.length; refreshExperienceCursor(sv); }
+    else if (e.key === 'Enter')     { openExperienceDetail(DATA.experience[experienceCursor]); }
+    else if (e.key === 'Escape')    { goBack(); }
+    else if (e.key === 'q' || e.key === 'Q') { doExit(); }
+  } else if (mode === 'exp-detail') {
+    const ca = document.getElementById('content-area');
+    if      (e.key === 'ArrowDown') { e.preventDefault(); ca.scrollBy({ top:  45, behavior: 'smooth' }); }
+    else if (e.key === 'ArrowUp')   { e.preventDefault(); ca.scrollBy({ top: -45, behavior: 'smooth' }); }
+    else if (e.key === 'Escape')    { goBackToExperience(); }
+    else if (e.key === 'q' || e.key === 'Q') { doExit(); }
+  } else if (mode === 'projects-list') {
+    const sv = document.getElementById('section-view');
+    if      (e.key === 'ArrowUp')   { e.preventDefault(); projectsCursor = (projectsCursor - 1 + DATA.projects.length) % DATA.projects.length; refreshProjectsCursor(sv); }
+    else if (e.key === 'ArrowDown') { e.preventDefault(); projectsCursor = (projectsCursor + 1) % DATA.projects.length; refreshProjectsCursor(sv); }
+    else if (e.key === 'Enter')     { openProject(DATA.projects[projectsCursor]); }
+    else if (e.key === 'Escape')    { goBack(); }
+    else if (e.key === 'q' || e.key === 'Q') { doExit(); }
+  } else if (mode === 'writing-list') {
+    const sv = document.getElementById('section-view');
+    if      (e.key === 'ArrowUp')   { e.preventDefault(); writingCursor = (writingCursor - 1 + DATA.writing.length) % DATA.writing.length; refreshWritingCursor(sv); }
+    else if (e.key === 'ArrowDown') { e.preventDefault(); writingCursor = (writingCursor + 1) % DATA.writing.length; refreshWritingCursor(sv); }
+    else if (e.key === 'Enter')     { openArticle(DATA.writing[writingCursor]); }
+    else if (e.key === 'Escape')    { goBack(); }
+    else if (e.key === 'q' || e.key === 'Q') { doExit(); }
+  } else if (mode === 'article') {
+    const ca = document.getElementById('content-area');
+    if      (e.key === 'ArrowDown') { e.preventDefault(); ca.scrollBy({ top:  45, behavior: 'smooth' }); }
+    else if (e.key === 'ArrowUp')   { e.preventDefault(); ca.scrollBy({ top: -45, behavior: 'smooth' }); }
+    else if (e.key === 'Escape')    { goBackToWriting(); }
+    else if (e.key === 'q' || e.key === 'Q') { doExit(); }
+  } else {
+    const ca = document.getElementById('content-area');
+    if      (e.key === 'ArrowDown') { e.preventDefault(); ca.scrollBy({ top:  45, behavior: 'smooth' }); }
+    else if (e.key === 'ArrowUp')   { e.preventDefault(); ca.scrollBy({ top: -45, behavior: 'smooth' }); }
+    else if (e.key === 'Escape')    { goBack(); }
+    else if (e.key === 'q' || e.key === 'Q') { doExit(); }
+  }
+});
+
+// ── EXPERIENCE LIST ──
+function renderExperienceList(el) {
+  el.innerHTML = '';
+  const head = mk('div', 'sv-head'); head.textContent = 'experience/'; el.appendChild(head);
+  DATA.experience.forEach((job, i) => {
+    const period = job.meta.split('·').pop().trim();
+    const row = mk('div', 'exp-row' + (i === experienceCursor ? ' active' : ''));
+    row.innerHTML =
+      `<span class="exp-arrow">${i === experienceCursor ? '▶' : ' '}</span>` +
+      `<span class="exp-company">${job.company}</span>` +
+      `<span class="exp-period">${period}</span>`;
+    row.addEventListener('click', () => { experienceCursor = i; refreshExperienceCursor(el); openExperienceDetail(DATA.experience[experienceCursor]); });
+    el.appendChild(row);
+  });
+  const hint = mk('div', 'scroll-hint'); hint.textContent = '↑↓ move  ·  Enter open  ·  Esc back'; el.appendChild(hint);
+}
+
+function refreshExperienceCursor(el) {
+  el.querySelectorAll('.exp-row').forEach((row, i) => {
+    const on = i === experienceCursor;
+    row.classList.toggle('active', on);
+    row.querySelector('.exp-arrow').textContent = on ? '▶' : ' ';
+    if (on) row.scrollIntoView({ block: 'nearest' });
+  });
+}
+
+function openExperienceDetail(job) {
+  mode = 'exp-detail';
+  typePrompt('cat ' + job.company.toLowerCase().replace(/\s+/g, '-') + '.txt');
+  setPath('~/experience/' + job.company.toLowerCase().replace(/\s+/g, '-'));
+  const sv = document.getElementById('section-view');
+  sv.innerHTML = '';
+  document.getElementById('content-area').scrollTop = 0;
+
+  const c = mk('div', 'sv-company'); c.textContent = job.company; sv.appendChild(c);
+  const m = mk('div', 'sv-meta');    m.textContent = job.meta;    sv.appendChild(m);
+  sv.appendChild(mk('hr', 'sv-divider'));
+  job.roles.forEach(role => {
+    const r = mk('div', 'sv-role'); r.textContent = '[' + role.title + ']'; sv.appendChild(r);
+    role.bullets.forEach(b => { const d = mk('div', 'sv-bullet'); d.textContent = b; sv.appendChild(d); });
+    sv.appendChild(mk('div', 'sv-blank'));
+  });
+  const hint = mk('div', 'scroll-hint'); hint.textContent = '↑↓ scroll  ·  Esc back  ·  q quit'; sv.appendChild(hint);
+}
+
+function goBackToExperience() {
+  mode = 'exp-list';
+  typePrompt('cd ..');
+  setPath('~/experience');
+  const sv = document.getElementById('section-view');
+  sv.innerHTML = '';
+  renderExperienceList(sv);
+  document.getElementById('content-area').scrollTop = 0;
+  typePrompt('ls experience/');
+}
+
+// ── PROJECTS LIST ──
+const STATUS_LABEL = { wip: 'WIP', active: 'ACTIVE', done: 'DONE', growing: 'GROWING' };
+const STATUS_COLOR = { wip: '#ffaa00', active: '#00ff41', done: '#00aa22', growing: '#00ccff' };
+
+function renderProjectsList(el) {
+  el.innerHTML = '';
+  const head = mk('div', 'sv-head'); head.textContent = 'projects/'; el.appendChild(head);
+  DATA.projects.forEach((p, i) => {
+    const row = mk('div', 'pr-row' + (i === projectsCursor ? ' active' : ''));
+    const badge = `<span class="pr-badge status-${p.status}" style="color:${STATUS_COLOR[p.status]};border-color:${STATUS_COLOR[p.status]}44">${STATUS_LABEL[p.status]}</span>`;
+    row.innerHTML =
+      `<span class="pr-arrow">${i === projectsCursor ? '▶' : ' '}</span>` +
+      `<span class="pr-num">${p.num}</span>` +
+      `<span class="pr-title">${p.title}</span>` +
+      badge;
+    row.addEventListener('click', () => { projectsCursor = i; refreshProjectsCursor(el); openProject(DATA.projects[projectsCursor]); });
+    el.appendChild(row);
+  });
+  const hint = mk('div', 'scroll-hint'); hint.textContent = '↑↓ move  ·  Enter open link  ·  Esc back'; el.appendChild(hint);
+}
+
+function refreshProjectsCursor(el) {
+  el.querySelectorAll('.pr-row').forEach((row, i) => {
+    const on = i === projectsCursor;
+    row.classList.toggle('active', on);
+    row.querySelector('.pr-arrow').textContent = on ? '▶' : ' ';
+    if (on) row.scrollIntoView({ block: 'nearest' });
+  });
+}
+
+function openProject(p) {
+  if (!p.url) return;
+  const url = p.url.startsWith('http') ? p.url : 'https://' + p.url;
+  typePrompt('open ' + url);
+  window.open(url, '_blank');
+}
+
+function goBack() {
+  typePrompt('cd ..');
+  renderListing();
+  typePrompt('ls');
+}
+
+function goBackToWriting() {
+  mode = 'writing-list';
+  typePrompt('cd ..');
+  setPath('~/writing');
+  const sv = document.getElementById('section-view');
+  sv.innerHTML = '';
+  renderWritingList(sv);
+  document.getElementById('content-area').scrollTop = 0;
+  typePrompt('ls writing/');
+}
+
+function doExit() {
+  typePrompt('exit', () => setTimeout(() => window.location.href = '/', 500));
+}
+
+let typedBuf = '';
+document.addEventListener('keypress', e => {
+  typedBuf = (typedBuf + e.key).slice(-4);
+  if (typedBuf === 'exit') doExit();
+});
+
+runBoot();
+</script>
+</body>
+</html>
