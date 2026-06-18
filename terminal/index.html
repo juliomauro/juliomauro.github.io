@@ -1468,8 +1468,10 @@ function showDoom() {
   }, lines.length * 400 + 1500);
 }
 
-// ── GAME LAUNCHER (js-dos direct embed) ──
-let dosboxInstance = null;
+// ── GAME LAUNCHER (js-dos 6.22) ──
+const JSDOS_JS   = 'https://cdn.jsdelivr.net/npm/js-dos@6.22.60/dist/js-dos.js';
+const JSDOS_WASM = 'https://cdn.jsdelivr.net/npm/js-dos@6.22.60/dist/wdosbox.js';
+let dosCI = null;
 
 function launchGame(title, bundleUrl, exe) {
   const overlay   = document.getElementById('game-overlay');
@@ -1480,33 +1482,39 @@ function launchGame(title, bundleUrl, exe) {
   container.innerHTML = '';
   overlay.style.display = 'flex';
 
+  const canvas = document.createElement('canvas');
+  canvas.style.cssText = 'width:100%;height:100%;display:block;image-rendering:pixelated;';
+  container.appendChild(canvas);
+  container.focus();
+
+  function showErr(msg) {
+    container.innerHTML =
+      `<div style="color:#ff4400;padding:24px;font-size:14px;text-align:center;line-height:2">${msg}</div>`;
+  }
+
   function boot() {
     try {
-      dosboxInstance = new Dosbox({
-        id: 'dos-canvas',
-        onload: () => { container.focus(); },
-        onrun:  () => {},
-      });
-      dosboxInstance.run(bundleUrl, exe);
+      canvas.width  = container.clientWidth  || 640;
+      canvas.height = container.clientHeight || 400;
+
+      dosCI = Dos(canvas, { wdosboxUrl: JSDOS_WASM })
+        .ready((fs, main) => {
+          fs.extract(bundleUrl)
+            .then(() => main(['-c', exe.replace(/^\//, '')]))
+            .catch(err => showErr('Bundle load failed:<br>' + err));
+        });
     } catch(err) {
-      container.innerHTML =
-        '<div style="color:#ff4400;padding:24px;font-size:14px;text-align:center">' +
-        'Emulator failed to initialize.<br><br>' +
-        '<span style="color:#666">Try opening in a new tab instead.</span></div>';
+      showErr('Emulator error:<br>' + (err.message || err));
     }
   }
 
-  if (window.Dosbox) {
+  if (window.Dos) {
     boot();
   } else {
     const s = document.createElement('script');
-    s.src = 'https://js-dos.com/cdn/js-dos-api.js';
-    s.onload = boot;
-    s.onerror = () => {
-      container.innerHTML =
-        '<div style="color:#ff4400;padding:24px;font-size:14px;text-align:center">' +
-        'Could not load js-dos API.</div>';
-    };
+    s.src = JSDOS_JS;
+    s.onload  = boot;
+    s.onerror = () => showErr('Could not load js-dos 6.22 from CDN.');
     document.head.appendChild(s);
   }
 }
@@ -1516,7 +1524,8 @@ function closeGame() {
   const container = document.getElementById('dos-canvas');
   overlay.style.display = 'none';
   container.innerHTML = '';
-  dosboxInstance = null;
+  if (dosCI && dosCI.exit) dosCI.exit();
+  dosCI = null;
 }
 
 // Esc closes game overlay (capture phase to intercept before the game sees it)
