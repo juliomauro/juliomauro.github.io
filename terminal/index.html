@@ -1344,7 +1344,7 @@ function executeCmd(raw) {
       setTimeout(() => launchGame(
         'DUKE NUKEM 3D  ·  js-dos',
         'https://js-dos.com/cdn/upload/Duke%20Nukem%203d-%40digitalwalt.zip',
-        '/DUKE3D.EXE'
+        ['CD DUKE3D', 'DUKE3D.EXE']
       ), 1200);
       break;
 
@@ -1500,7 +1500,12 @@ function launchGame(title, bundleUrl, exe) {
       dosCI = Dos(canvas, { wdosboxUrl: JSDOS_WASM })
         .ready((fs, main) => {
           fs.extract(bundleUrl)
-            .then(() => main(['-c', exe.replace(/^\//, '')]))
+            .then(() => {
+              const cmds = Array.isArray(exe)
+                ? exe.flatMap(c => ['-c', c])
+                : ['-c', exe.replace(/^\//, '')];
+              main(cmds);
+            })
             .catch(err => showErr('Bundle load failed:<br>' + err));
         });
     } catch(err) {
