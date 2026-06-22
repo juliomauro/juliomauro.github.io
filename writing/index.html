@@ -204,25 +204,6 @@ nav a.nav-link:hover {
   background: var(--green-dim);
 }
 
-.nav-status {
-  margin-left: auto;
-  font-size: 10px;
-  color: var(--text-dim);
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.status-dot {
-  width: 6px; height: 6px;
-  border-radius: 50%;
-  background: var(--green);
-  box-shadow: var(--glow);
-  animation: blink 2s ease infinite;
-}
-
-@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.2} }
-
 /* ── HEADER ── */
 header {
   padding: 64px 0 48px;
@@ -318,6 +299,7 @@ h1 {
   text-decoration: none;
   display: block;
   color: inherit;
+  cursor: pointer;
 }
 
 .article-item::before {
@@ -423,6 +405,153 @@ h1 {
   background: linear-gradient(90deg, var(--border), transparent);
 }
 
+/* ── ARTICLE VIEW ── */
+#article-view {
+  display: none;
+  padding: 40px 0 80px;
+}
+
+.art-back {
+  margin-bottom: 40px;
+}
+
+.back-btn {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 12px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  background: none;
+  border: 1px solid var(--border);
+  padding: 6px 16px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.back-btn:hover {
+  color: var(--green);
+  border-color: var(--green-mid);
+  background: var(--green-dim);
+  box-shadow: var(--glow);
+}
+
+.art-body {
+  max-width: 760px;
+}
+
+.art-body h1 {
+  font-family: 'Orbitron', monospace;
+  font-size: clamp(20px, 3vw, 30px);
+  font-weight: 900;
+  color: var(--green);
+  text-shadow: var(--glow-strong);
+  letter-spacing: 1px;
+  margin: 0 0 28px;
+  animation: none;
+  line-height: 1.3;
+}
+
+.art-body h2 {
+  font-family: 'Orbitron', monospace;
+  font-size: clamp(14px, 2vw, 18px);
+  font-weight: 700;
+  color: var(--green);
+  letter-spacing: 1px;
+  margin: 40px 0 14px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+}
+
+.art-body h3 {
+  font-size: 15px;
+  color: var(--text);
+  letter-spacing: 1px;
+  margin: 28px 0 10px;
+}
+
+.art-body p {
+  font-size: 15px;
+  color: var(--white);
+  line-height: 1.85;
+  margin-bottom: 16px;
+}
+
+.art-body ul, .art-body ol {
+  margin: 0 0 16px 24px;
+}
+
+.art-body li {
+  font-size: 15px;
+  color: var(--white);
+  line-height: 1.85;
+  margin-bottom: 6px;
+}
+
+.art-body li::marker { color: var(--green-mid); }
+
+.art-body blockquote {
+  border-left: 3px solid var(--green-mid);
+  padding: 8px 20px;
+  margin: 20px 0;
+  background: var(--surface);
+  color: var(--text-dim);
+  font-size: 14px;
+}
+
+.art-body pre {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--green-mid);
+  padding: 16px 20px;
+  margin: 20px 0;
+  overflow-x: auto;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.art-body pre code {
+  color: var(--text);
+  background: none;
+  padding: 0;
+  font-family: 'Share Tech Mono', monospace;
+}
+
+.art-body code {
+  color: var(--green);
+  background: var(--green-dim);
+  padding: 2px 6px;
+  font-size: 13px;
+  font-family: 'Share Tech Mono', monospace;
+}
+
+.art-body a {
+  color: var(--green-mid);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  transition: color 0.15s;
+}
+.art-body a:hover { color: var(--green); }
+
+.art-body hr {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 36px 0;
+}
+
+.art-loading {
+  font-size: 14px;
+  color: var(--text-dim);
+  letter-spacing: 2px;
+  margin-top: 40px;
+  animation: pulse 1s ease infinite;
+}
+@keyframes pulse { 0%,100%{opacity:0.4} 50%{opacity:1} }
+
+.art-fetch-error {
+  font-size: 14px;
+  color: #884400;
+  margin-top: 40px;
+}
+
 /* ── FOOTER ── */
 footer {
   padding: 40px 0;
@@ -457,7 +586,6 @@ footer {
   .wrap { padding: 0 16px; }
   .article-inner { grid-template-columns: 1fr; }
   .article-arrow { display: none; }
-  .nav-status { display: none; }
   .nav-inner { gap: 8px; }
   .nav-home { font-size: 10px; letter-spacing: 1px; }
   nav a.nav-link { font-size: 10px; }
@@ -494,8 +622,8 @@ body.piqad-active [data-i18n] {
 
 <div class="wrap">
 
-  <header>
-    <div class="header-tag" data-i18n="header-tag">Oruam Oliuj · Security & Infrastructure</div>
+  <header id="list-header">
+    <div class="header-tag" data-i18n="header-tag">Oruam Oliuj · Security &amp; Infrastructure</div>
     <h1>WRITING</h1>
     <p class="header-sub" data-i18n="header-sub">> Technical notes from real incidents, exercises and daily work in cloud security_</p>
 
@@ -511,11 +639,27 @@ body.piqad-active [data-i18n] {
 
   <div class="articles" id="article-list">
 
+    <div class="section-label" data-i18n="section-latest">Latest</div>
+
+    <div class="article-item" data-tag="security"
+         data-path="security/misantropia-Security-Incident-and-the-Brazillian-National-Alert-System-Failure.md">
+      <div class="article-inner">
+        <div>
+          <div class="article-meta">
+            <span class="article-tag security">Security · Incident Analysis</span>
+            <span class="article-level">// Foundational</span>
+          </div>
+          <div class="article-title" data-i18n="title-misantropia">The "Misantropia" Incident: Brazil's National Alert System Failure</div>
+          <div class="article-desc" data-i18n="desc-misantropia">How a teenager with five-year-old leaked credentials shut down Brazil's national emergency alert system — and what the exposed debug mode, SQL injection, and missing MFA say about critical public infrastructure security.</div>
+        </div>
+        <div class="article-arrow">→</div>
+      </div>
+    </div>
+
     <div class="section-label">Cloud</div>
 
-    <a class="article-item" data-tag="cloud"
-       href="https://github.com/juliomauro/sec-notes/blob/main/cloud/your-container-identity-is-worth-more-than-root.md"
-       target="_blank">
+    <div class="article-item" data-tag="cloud"
+         data-path="cloud/your-container-identity-is-worth-more-than-root.md">
       <div class="article-inner">
         <div>
           <div class="article-meta">
@@ -527,11 +671,10 @@ body.piqad-active [data-i18n] {
         </div>
         <div class="article-arrow">→</div>
       </div>
-    </a>
+    </div>
 
-    <a class="article-item" data-tag="cloud"
-       href="https://github.com/juliomauro/sec-notes/blob/main/cloud/one-wildcard-in-a-trust-policy.md"
-       target="_blank">
+    <div class="article-item" data-tag="cloud"
+         data-path="cloud/one-wildcard-in-a-trust-policy.md">
       <div class="article-inner">
         <div>
           <div class="article-meta">
@@ -543,13 +686,12 @@ body.piqad-active [data-i18n] {
         </div>
         <div class="article-arrow">→</div>
       </div>
-    </a>
+    </div>
 
     <div class="section-label">Linux</div>
 
-    <a class="article-item" data-tag="linux"
-       href="https://github.com/juliomauro/sec-notes/blob/main/linux/the-header-that-opened-the-network.md"
-       target="_blank">
+    <div class="article-item" data-tag="linux"
+         data-path="linux/the-header-that-opened-the-network.md">
       <div class="article-inner">
         <div>
           <div class="article-meta">
@@ -561,11 +703,10 @@ body.piqad-active [data-i18n] {
         </div>
         <div class="article-arrow">→</div>
       </div>
-    </a>
+    </div>
 
-    <a class="article-item" data-tag="linux"
-       href="https://github.com/juliomauro/sec-notes/blob/main/linux/systemd-as-an-attack-surface.md"
-       target="_blank">
+    <div class="article-item" data-tag="linux"
+         data-path="linux/systemd-as-an-attack-surface.md">
       <div class="article-inner">
         <div>
           <div class="article-meta">
@@ -577,13 +718,12 @@ body.piqad-active [data-i18n] {
         </div>
         <div class="article-arrow">→</div>
       </div>
-    </a>
+    </div>
 
     <div class="section-label">Kubernetes</div>
 
-    <a class="article-item" data-tag="kubernetes"
-       href="https://github.com/juliomauro/sec-notes/blob/main/kubernetes/rbac-when-no-single-permission-seems-critical.md"
-       target="_blank">
+    <div class="article-item" data-tag="kubernetes"
+         data-path="kubernetes/rbac-when-no-single-permission-seems-critical.md">
       <div class="article-inner">
         <div>
           <div class="article-meta">
@@ -595,13 +735,12 @@ body.piqad-active [data-i18n] {
         </div>
         <div class="article-arrow">→</div>
       </div>
-    </a>
+    </div>
 
     <div class="section-label" data-i18n="section-networking">Networking</div>
 
-    <a class="article-item" data-tag="networking"
-       href="https://github.com/juliomauro/sec-notes/blob/main/networking/meshcore-brazil.md"
-       target="_blank">
+    <div class="article-item" data-tag="networking"
+         data-path="networking/meshcore-brazil.md">
       <div class="article-inner">
         <div>
           <div class="article-meta">
@@ -613,13 +752,12 @@ body.piqad-active [data-i18n] {
         </div>
         <div class="article-arrow">→</div>
       </div>
-    </a>
+    </div>
 
     <div class="section-label" data-i18n="section-security">Security</div>
 
-    <a class="article-item" data-tag="security"
-       href="https://github.com/juliomauro/sec-notes/blob/main/security/the-hidden-danger-of-judging-by-appearances.md"
-       target="_blank">
+    <div class="article-item" data-tag="security"
+         data-path="security/the-hidden-danger-of-judging-by-appearances.md">
       <div class="article-inner">
         <div>
           <div class="article-meta">
@@ -631,8 +769,16 @@ body.piqad-active [data-i18n] {
         </div>
         <div class="article-arrow">→</div>
       </div>
-    </a>
+    </div>
 
+  </div><!-- /#article-list -->
+
+  <!-- ── ARTICLE INLINE VIEW ── -->
+  <div id="article-view">
+    <div class="art-back">
+      <button class="back-btn" onclick="closeArticle()" data-i18n="back-btn">← Writing</button>
+    </div>
+    <div id="article-content" class="art-body"></div>
   </div>
 
   <footer>
@@ -689,6 +835,12 @@ const i18n = {
     'filter-security':  'Security',
     'section-networking':'Networking',
     'section-security': 'Security',
+    'back-btn':         '← Writing',
+    'art-loading':      '> fetching article...',
+    'art-error':        '> fetch failed — check connection or try github.com/juliomauro/sec-notes',
+    'section-latest':   'Latest',
+    'title-misantropia':'The "Misantropia" Incident: Brazil\'s National Alert System Failure',
+    'desc-misantropia': 'How a teenager with five-year-old leaked credentials shut down Brazil\'s national emergency alert system — and what the exposed debug mode, SQL injection, and missing MFA say about critical public infrastructure security.',
     'title-container':  "Your Container's Identity Is Worth More Than Root",
     'title-wildcard':   'One Wildcard in a Trust Policy',
     'title-header':     'The Header That Opened the Network',
@@ -716,6 +868,12 @@ const i18n = {
     'filter-security':  'Segurança',
     'section-networking':'Redes',
     'section-security': 'Segurança',
+    'back-btn':         '← Textos',
+    'art-loading':      '> carregando artigo...',
+    'art-error':        '> falha ao carregar — verifique a conexão ou acesse github.com/juliomauro/sec-notes',
+    'section-latest':   'Recente',
+    'title-misantropia':'O Incidente "Misantropia": A Falha no Sistema Nacional de Alertas',
+    'desc-misantropia': 'Como um adolescente com credenciais vazadas há cinco anos derrubou o sistema nacional de alertas de emergência do Brasil — e o que o debug mode exposto, SQL injection e ausência de MFA dizem sobre a segurança de infraestrutura pública crítica.',
     'title-container':  'A Identidade do Seu Container Vale Mais Que Root',
     'title-wildcard':   'Um Wildcard em uma Trust Policy',
     'title-header':     'O Header Que Abriu a Rede',
@@ -743,6 +901,12 @@ const i18n = {
     'filter-security':  'QaD',
     'section-networking':'network',
     'section-security': 'QaD',
+    'back-btn':         '← ghItlh',
+    'art-loading':      '> De\' ngeD...',
+    'art-error':        '> Qagh — github.com/juliomauro/sec-notes yIlegh',
+    'section-latest':   'chu\'',
+    'title-misantropia':'\'Misantropia\' — Brazil QaD pat Qagh',
+    'desc-misantropia': 'wa\' loD De\' ngeD lo\' — Brazil QaD pat HoHmoH. debug mode, SQL injection, MFA pagh.',
     'title-container':  'De\'wI\' ngeD ghaH law\' root ghaH puS',
     'title-wildcard':   'wa\' Hoch voq nab',
     'title-header':     'network poSmoH HoS',
@@ -761,6 +925,747 @@ const i18n = {
   }
 };
 
+// ── PT-BR ARTICLE TRANSLATIONS ──
+const PT_ARTICLES = {
+  misantropia: `# O Incidente "Misantropia": A Falha no Sistema Nacional de Alertas de Emergência
+
+> **Categoria:** Segurança · Análise de Incidente
+> **Nível:** Fundacional
+
+---
+
+Entre a noite de 19 de junho e a madrugada de 20 de junho de 2026, o sistema nacional de alertas de emergência do Brasil (Defesa Civil Alerta) sofreu um comprometimento crítico de segurança. O incidente resultou no envio de alertas falsos de emergência extrema para dispositivos móveis em dez estados, incluindo as principais regiões metropolitanas de São Paulo, Rio de Janeiro e Paraná.
+
+A intrusão forçou o desligamento completo da plataforma às 1h30 da manhã pelo Ministério da Integração e Desenvolvimento Regional (MIDR) para conter a transmissão maliciosa. Embora a interrupção operacional imediata tenha sido evidente, o impacto de longo prazo envolve uma perda severa de confiança pública em um sistema crítico de segurança.
+
+A seguir, uma análise detalhada do incidente, das vulnerabilidades subjacentes do sistema, das evidências encontradas na aplicação e das repercussões sistêmicas da violação.
+
+---
+
+## Vetor de Ataque e Perfil do Agente de Ameaça
+
+A violação de segurança não foi resultado de uma cadeia de exploits sofisticada ou de uma vulnerabilidade zero-day avançada. Em vez disso, foi executada por um indivíduo menor de idade e inexperiente cujo nick era "Misantropo" e que usava "Misantropia Z" nas redes sociais. O incidente ficou conhecido publicamente como "Misantropia" — derivado da palavra que o atacante repetidamente embutiu nos alertas falsos, incluindo a variação "misantropi4". O agente de ameaça utilizou credenciais vazadas que estavam disponíveis publicamente na internet há aproximadamente cinco anos.
+
+O atacante comprometeu as contas de três bombeiros militares da Coordenação de Defesa Civil do Pará. A conta mais impactante pertencia a um 2º Sargento, cujos privilégios administrativos permitiam a transmissão de alertas para oito estados diferentes.
+
+O processo de intrusão foi trivial:
+
+* **Entrada por Autenticação:** O atacante acessou o portal web da Interface de Divulgação de Alertas Públicos (Idap) e inseriu as credenciais comprometidas dos militares.
+* **Bypass do Gatekeeper:** A única barreira presente era um captcha matemático básico pedindo ao usuário que resolvesse uma equação simples (como "2+2"). Isso não oferecia nenhuma resistência contra um atacante manual.
+* **Ausência de Defesa Perimetral:** O painel de administração estava diretamente exposto à internet pública. Não exigia conexão VPN corporativa nem utilizava whitelist de IPs, permitindo acesso de qualquer rede externa. Uma vez dentro, o adolescente tinha total liberdade para redigir e disparar o texto da notificação.
+
+---
+
+## Vulnerabilidades Críticas do Sistema e Evidências Encontradas
+
+Uma revisão técnica pós-incidente da plataforma Idap expôs a ausência completa de higiene básica de software e princípios de segurança by design. Especialistas identificaram múltiplas falhas críticas na infraestrutura que poderiam ter sido exploradas por agentes de ameaça mais sofisticados para destruir ou exfiltrar dados.
+
+### 1. Credenciais Fracas e Expostas
+
+As contas comprometidas usavam senhas altamente previsíveis, incluindo os seis primeiros dígitos do CPF, datas de nascimento explícitas ou abreviações simples de nomes. Além disso, essas credenciais haviam sido vazadas em texto plano anos antes, indicando que o banco de dados de origem armazenava senhas sem funções de hash adequadas (como bcrypt ou Argon2) ou havia sido comprometido e descriptografado anteriormente.
+
+### 2. Ausência de Autenticação Multifator (MFA)
+
+A plataforma dependia inteiramente de autenticação de fator único. Não havia etapa de verificação secundária, como uma senha de uso único baseada em tempo (TOTP) ou token de hardware, para validar a identidade do usuário após a inserção da senha.
+
+### 3. Debug Mode Exposto em Produção
+
+A aplicação estava rodando com debug mode ativo no ambiente de produção. Essa configuração representava uma vulnerabilidade massiva de divulgação de informações, vazando detalhes críticos de infraestrutura, incluindo trechos de código-fonte, variáveis de ambiente e estruturas brutas de queries SQL.
+
+### 4. Falhas Generalizadas de Injeção de Código
+
+Devido aos dados de debug expostos e à ausência total de sanitização de entrada, a aplicação continha vulnerabilidades generalizadas de SQL Injection (SQLi) e Cross-Site Scripting (XSS) em praticamente todos os parâmetros do site.
+
+### 5. Vazamentos de Infraestrutura no Client-Side
+
+Os arquivos JavaScript do lado do cliente expunham listas completas de endpoints internos de API e estruturas detalhadas de diretórios do servidor Linux subjacente. A inspeção do código revelou caminhos locais exatos dentro dos diretórios home de usuários, como \`home/fabricadeve\`.
+
+---
+
+## Repercussões Imediatas e de Longo Prazo
+
+As consequências deste incidente vão muito além de uma interrupção temporária de TI, impactando a segurança pública e a credibilidade institucional.
+
+### Alarme Público e Motivação
+
+O atacante enviou mensagens no meio da noite contendo o termo "misantropia" junto com referências a uma falsa "invasão alienígena". Sua motivação foi totalmente amadora e movida pela curiosidade, declarando nas redes sociais que simplesmente queria "se sentir hacker" e ver o que aconteceria. No entanto, os alertas sonoros de alta intensidade causaram pânico generalizado entre os cidadãos durante a madrugada.
+
+### Indisponibilidade Completa do Sistema
+
+A resposta imediata exigiu que o MIDR retirasse todo o sistema do ar. Entidades locais, como a Defesa Civil de São Paulo, também desativaram proativamente suas ferramentas locais. A plataforma permanece offline sem data prevista de retorno, deixando o país vulnerável e sem sua principal ferramenta de notificação em massa durante emergências climáticas ou civis reais.
+
+### O Efeito "O Menino que Gritou Lobo"
+
+A consequência de longo prazo mais crítica é a erosão da confiança pública. Quando um sistema crítico de segurança entrega mensagens absurdas e falsas, os cidadãos perdem a fé na validade de alertas futuros. Esse ceticismo pode levar indivíduos a ignorar avisos reais de evacuação durante enchentes ou deslizamentos de terra.
+
+### Desativação de Alertas nos Dispositivos
+
+Frustrados com a perturbação noturna, um número significativo de usuários buscou ativamente instruções sobre como desativar permanentemente as transmissões de emergência nas configurações de seus dispositivos. Essa desativação em massa reduz significativamente o alcance estatístico da ferramenta, o que significa que alertas legítimos que salvam vidas não chegarão a uma parcela da população.
+
+### Dano Reputacional Institucional
+
+O incidente expôs negligência grave em relação à segurança da informação em sistemas governamentais. A exposição pública de senhas não hasheadas, debug modes ativos, certificados SSL expirados e ausência de MFA danifica a reputação das instituições responsáveis pela segurança nacional e proteção de dados.
+
+---
+
+## Lições Aprendidas e Ações Preventivas
+
+Este incidente evidencia que infraestruturas críticas para a segurança pública não podem depender apenas de autenticação básica por senha.
+
+### O Que Deveria Ter Sido Feito Antes do Deploy
+
+* **Testes de Penetração Rigorosos:** Auditorias de segurança e pentests de rotina teriam detectado o debug mode ativo e as falhas generalizadas de injeção antes de o sistema entrar em produção.
+* **Controle de Acesso Reforçado:** Interfaces administrativas para infraestrutura nacional devem ser restritas atrás de uma VPN segura e limitadas a endereços IP verificados.
+* **Gestão Rigorosa de Identidade:** Senhas devem seguir padrões modernos de complexidade, excluindo informações pessoais, e devem ser armazenadas usando hashes criptográficos fortes.
+
+### Remediação Pós-Incidente
+
+* **Revogação de Credenciais:** Entidades governamentais devem monitorar proativamente violações de dados públicos e fóruns da dark web para invalidar contas administrativas comprometidas antes que sejam exploradas.
+* **Suspensão e Auditoria do Sistema:** A plataforma deve permanecer offline até que uma revisão completa de código, remediação de vulnerabilidades e implementação de MFA sejam concluídas.
+* **Restauração da Confiança Pública:** Uma campanha de comunicação transparente é necessária para explicar as correções técnicas e garantir que os cidadãos não desativem as notificações de emergência em seus dispositivos, o que pode colocar vidas em risco durante desastres reais.`,
+
+  container: `# A Identidade do Seu Container Vale Mais Que Root
+
+> **Categoria:** Cloud · IAM · Containers
+> **Nível:** Praticante
+
+---
+
+Existe um modelo mental persistente na segurança de infraestrutura que enquadra privilégio como algo binário: ou você tem root, ou não tem. Em ambientes cloud, esse modelo é perigosamente incompleto.
+
+Um container rodando como usuário não-root, sem shell, sem ferramentas e com acesso limitado de leitura a arquivos, ainda pode ser o ponto de partida para um comprometimento total entre contas — se a identidade de workload associada a ele tiver as permissões erradas.
+
+## O Endpoint de Metadados
+
+Cada grande provedor de cloud expõe um serviço de metadados em um endereço link-local (tipicamente \`169.254.169.254\`). Esse endpoint é acessível por qualquer processo rodando no host ou dentro de um container, a menos que seja explicitamente bloqueado. Ele fornece:
+
+- Documentos de identidade da instância
+- Credenciais IAM temporárias
+- User data (frequentemente contém segredos de bootstrap)
+
+Consultá-lo requer apenas uma requisição HTTP:
+
+\`\`\`bash
+curl http://169.254.169.254/latest/meta-data/iam/security-credentials/
+# Retorna: my-app-role
+
+curl http://169.254.169.254/latest/meta-data/iam/security-credentials/my-app-role
+# Retorna: AccessKeyId, SecretAccessKey, Token, Expiration
+\`\`\`
+
+Se uma vulnerabilidade na aplicação permite qualquer forma de requisição HTTP de saída ou leitura de arquivo, esse endpoint é alcançável. SSRF, path traversal, vulnerabilidades em dependências — qualquer um desses pode ser o ponto de entrada.
+
+## O Que Acontece Depois
+
+As credenciais retornadas são temporárias, mas totalmente funcionais — são credenciais AWS vinculadas à role IAM associada ao workload. O raio de blast depende inteiramente do que essa role tem permissão de fazer.
+
+Em um exercício real, uma role que não conseguia listar todos os buckets, não conseguia criar instâncias e não tinha acesso administrativo óbvio ainda permitiu:
+
+- Listar imagens em um repositório ECR específico
+- Ler objetos de um bucket S3 específico
+
+Isso foi suficiente. Uma imagem de container antiga no registry tinha um arquivo \`.env\` embutido em uma de suas camadas. O \`.env\` tinha credenciais para outro serviço. Esse serviço tinha uma relação de confiança cross-account. A cadeia terminou em uma conta de produção.
+
+## O Problema do Histórico de Camadas
+
+Imagens de container são construídas em camadas. Cada instrução \`RUN\`, \`COPY\` e \`ADD\` cria uma nova camada. Quando um segredo é adicionado em uma camada e deletado em uma camada posterior, ele **não é removido da imagem** — apenas fica oculto da visão final do filesystem. A camada contendo o segredo ainda existe no manifesto da imagem e pode ser extraída:
+
+\`\`\`bash
+docker save my-image | tar -x
+# Cada camada é um arquivo tar — extraia e inspecione
+find . -name "*.env" -o -name "*.key" -o -name "credentials"
+\`\`\`
+
+Ferramentas como \`trufflehog\`, \`dive\` e \`trivy\` conseguem varrer o histórico da imagem automaticamente.
+
+## Bloqueando o Caminho
+
+**Restringir o acesso aos metadados:**
+
+Para AWS, force o IMDSv2 (modo com token obrigatório) e defina o hop limit para 1 na instância. Isso impede que containers acessem o endpoint de metadados na maioria das configurações:
+
+\`\`\`bash
+aws ec2 modify-instance-metadata-options \\
+  --instance-id i-xxx \\
+  --http-tokens required \\
+  --http-put-response-hop-limit 1
+\`\`\`
+
+Para containers que não precisam de metadados da instância, bloqueie o endpoint via network policy ou iptables.
+
+**Aplique least-privilege às roles de workload:**
+
+A role IAM associada a um container deve ter exatamente as permissões que a aplicação precisa — nada mais. Se o app lê de um bucket S3, a policy da role deve nomear exatamente aquele bucket e permitir apenas \`s3:GetObject\`.
+
+**Escaneie as camadas de imagem antes de fazer push:**
+
+Inclua o escaneamento de imagens no pipeline de CI. Qualquer imagem com segredos no histórico deve reprovar o build, não apenas ser sinalizada.
+
+## O Insight Principal
+
+Em cloud, a identidade do workload frequentemente vale mais do que root no host. Um container rodando como uid 1000 sem sudo e com filesystem read-only ainda pode ser o ponto de pivot para uma conta de produção se a role IAM associada a ele tiver permissões que nunca foram revisadas adequadamente.
+
+A pergunta a se fazer sobre cada workload não é "como qual usuário esse container roda?" mas "o que a identidade associada a esse workload pode fazer — e o que ela consegue alcançar?"
+
+---
+
+*Relacionado: [Case 02 — Container Metadata Abuse and IAM Escalation](https://github.com/juliomauro/sec-writeups/tree/main/cases/02-container-metadata)*`,
+
+  wildcard: `# Um Wildcard em uma Trust Policy
+
+> **Categoria:** Cloud · IAM · Escalada de Privilégios
+> **Nível:** Avançado
+
+---
+
+Escalada de privilégios IAM em ambientes cloud raramente envolve uma chave de admin vazada. Na maioria das vezes, trata-se de uma relação de confiança criada com boas intenções e um único caractere que a tornou mais ampla do que o pretendido.
+
+Esta nota é sobre um dos padrões mais comuns: a condição \`StringLike\` com wildcard em uma trust policy de role.
+
+## Como Trust Policies Funcionam
+
+Quando uma role é criada na AWS, ela tem dois tipos de policies associadas:
+
+1. **Permission policy** — o que a role pode fazer
+2. **Trust policy** — quem pode assumir a role
+
+A trust policy controla a ação \`sts:AssumeRole\`. Uma trust policy típica pode dizer: "apenas a role do pipeline de CI/CD pode me assumir."
+
+\`\`\`json
+{
+  "Statement": [{
+    "Effect": "Allow",
+    "Principal": {"AWS": "arn:aws:iam::111111111111:role/deploy-prod"},
+    "Action": "sts:AssumeRole"
+  }]
+}
+\`\`\`
+
+Isso é específico e seguro. O problema começa quando condições são usadas em vez de um principal exato.
+
+## O Padrão Vulnerável
+
+\`\`\`json
+{
+  "Statement": [{
+    "Effect": "Allow",
+    "Principal": {"AWS": "*"},
+    "Action": "sts:AssumeRole",
+    "Condition": {
+      "StringLike": {
+        "aws:PrincipalArn": "arn:aws:iam::111111111111:assumed-role/deploy-*/*"
+      }
+    }
+  }]
+}
+\`\`\`
+
+A intenção: apenas roles cujo nome começa com \`deploy-\` podem assumir esta role.
+
+O problema: \`StringLike\` com \`*\` é correspondência de padrão, não correspondência exata. Qualquer role na conta cujo nome começa com \`deploy-\` satisfaz essa condição — incluindo \`deploy-readonly\`, \`deploy-staging\`, \`deploy-old-2022\`, ou qualquer role futura criada com esse prefixo.
+
+## A Escalada na Prática
+
+Identidade inicial: \`app-reader\` — permissões somente leitura, sem caminho óbvio para escalada.
+
+Passo 1: enumerar trust policies usando \`iam:GetRole\`:
+
+\`\`\`bash
+aws iam get-role --role-name automation-deploy \\
+  --query 'Role.AssumeRolePolicyDocument'
+\`\`\`
+
+Passo 2: identificar uma role que satisfaz o padrão que \`app-reader\` pode assumir:
+
+\`\`\`bash
+aws iam list-roles --query 'Roles[?starts_with(RoleName, \`deploy-\`)].RoleName'
+# deploy-readonly
+\`\`\`
+
+Passo 3: assumir \`deploy-readonly\`:
+
+\`\`\`bash
+aws sts assume-role \\
+  --role-arn arn:aws:iam::111111111111:role/deploy-readonly \\
+  --role-session-name pivot
+\`\`\`
+
+ARN do caller agora: \`arn:aws:iam::111111111111:assumed-role/deploy-readonly/pivot\`
+
+Isso satisfaz o padrão \`deploy-*/*\`. A condição em \`automation-deploy\` está satisfeita.
+
+Passo 4: assumir \`automation-deploy\`:
+
+\`\`\`bash
+aws sts assume-role \\
+  --role-arn arn:aws:iam::111111111111:role/automation-deploy \\
+  --role-session-name escalated
+\`\`\`
+
+Permissões completas de automação adquiridas. Duas chamadas de API a partir de um ponto de partida somente leitura.
+
+## A Correção
+
+**Use \`StringEquals\` com um ARN específico:**
+
+\`\`\`json
+"Condition": {
+  "StringEquals": {
+    "aws:PrincipalArn": "arn:aws:iam::111111111111:assumed-role/deploy-prod/session"
+  }
+}
+\`\`\`
+
+Ou, melhor — use um principal nomeado diretamente sem condições:
+
+\`\`\`json
+"Principal": {
+  "AWS": "arn:aws:iam::111111111111:role/deploy-prod"
+}
+\`\`\`
+
+**Limite \`iam:GetRole\` e \`iam:ListRoles\`:**
+
+Essas permissões permitem enumeração completa de relações de confiança. Uma identidade com poucos privilégios não deveria ler a trust policy de todas as roles na conta.
+
+**Use o IAM Access Analyzer:**
+
+O AWS IAM Access Analyzer avalia continuamente as trust policies e sinaliza acesso externo e condições excessivamente permissivas. Ative-o em cada conta e revise seus findings regularmente.
+
+**Faça auditoria com uma mentalidade de grafo:**
+
+Trust policies não podem ser revisadas isoladamente. A pergunta não é "quem pode assumir essa role?" mas "partindo de qualquer identidade nessa conta, alguém consegue chegar a essa role por uma cadeia de assumptions?" Ferramentas como PMapper constroem esse grafo automaticamente.
+
+## Um Caractere, Um Operador
+
+A diferença entre uma trust policy segura e a vulnerável acima é \`StringEquals\` vs \`StringLike\`. Uma diferença no nome do operador. O wildcard no padrão de ARN torna-se inerte com \`StringEquals\` — ele corresponde literalmente, não como glob.
+
+Essa é a classe de misconfiguration que não aparece em scanners de vulnerabilidades, não tem CVE, e é invisível para quem revisa a policy sem entender como \`StringLike\` funciona nesse contexto. Ela só se torna visível quando você pensa na policy como parte de um grafo de permissões — não como um documento isolado.
+
+---
+
+*Relacionado: [Case 05 — Cloud IAM Trust Policy and Role Chaining](https://github.com/juliomauro/sec-writeups/tree/main/cases/05-cloud-iam-trust)*`,
+
+  header: `# O Header Que Abriu a Rede
+
+> **Categoria:** Linux · Web · Movimentação Lateral
+> **Nível:** Praticante
+
+---
+
+Existe uma classe de misconfiguration que aparece em toda infraestrutura moderna e é consistentemente subestimada: **confiar em headers HTTP controlados pelo cliente para decisões de controle de acesso**.
+
+O cenário é comum. Um servidor público roda Nginx como proxy reverso na frente de uma aplicação interna. A aplicação tem um painel de administração que deveria ser acessível apenas a partir do localhost. Alguém decide reforçar isso verificando o IP de origem da requisição. O problema está em onde verificam.
+
+## O Erro
+
+\`\`\`nginx
+location /admin {
+    if ($http_x_forwarded_for != "127.0.0.1") {
+        return 403;
+    }
+    proxy_pass http://127.0.0.1:8080;
+}
+\`\`\`
+
+\`$http_x_forwarded_for\` é o valor do header \`X-Forwarded-For\`. Esse header é definido pelo **cliente**. Qualquer usuário externo pode enviar:
+
+\`\`\`http
+GET /admin/diagnostics HTTP/1.1
+X-Forwarded-For: 127.0.0.1
+\`\`\`
+
+E a verificação passa. O painel de administração agora é acessível de qualquer lugar na internet.
+
+## Por Que Isso Acontece
+
+A confusão vem de como o \`X-Forwarded-For\` deveria funcionar. Em uma stack bem configurada, o header é definido por um proxy upstream confiável — não pelo cliente. A aplicação interna o lê para saber o IP real do cliente após passar por load balancers.
+
+Mas quando o Nginx é o **primeiro ponto de contato** (a camada voltada para a internet), ele está recebendo headers de clientes não confiáveis. Confiar nesses headers para decisões de segurança é equivalente a pedir um documento a alguém e aceitar qualquer coisa que ele escrever num papel.
+
+## A Abordagem Correta
+
+**No nível do Nginx** — use \`$remote_addr\` (o IP real da conexão TCP) em vez do header encaminhado:
+
+\`\`\`nginx
+location /admin {
+    allow 127.0.0.1;
+    deny all;
+    proxy_pass http://127.0.0.1:8080;
+}
+\`\`\`
+
+Isso não pode ser falsificado. As diretivas \`allow/deny\` operam na camada de rede real.
+
+**No nível da aplicação** — nunca tome decisões de autorização baseadas apenas no \`X-Forwarded-For\`. Se a aplicação precisa do IP real, configure o Nginx para definir um header confiável usando \`$remote_addr\`:
+
+\`\`\`nginx
+proxy_set_header X-Real-IP $remote_addr;
+proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+\`\`\`
+
+E remova qualquer versão fornecida pelo cliente desses headers antes de encaminhar:
+
+\`\`\`nginx
+proxy_set_header X-Forwarded-For "";
+\`\`\`
+
+## A Cascata
+
+O motivo pelo qual isso vale a pena documentar não é a misconfiguration em si — é o que veio depois em um exercício real. O painel acessível expôs diagnósticos do sistema. Os diagnósticos expuseram fragmentos de log. Os logs expuseram um caminho de chave SSH temporária. A chave deu acesso a um segmento de rede interna.
+
+**Um header errado. Acesso completo à rede interna.**
+
+A superfície parecia pequena. Duas portas públicas, nenhum formulário de login óbvio, nenhum CMS. A fraqueza era invisível a um scan passivo. Ela só apareceu quando se prestou atenção em como o proxy se comportava sob diferentes entradas.
+
+## Conclusões
+
+- Nunca use \`X-Forwarded-For\` ou \`X-Real-IP\` para controle de acesso na camada de borda — eles são controlados pelo cliente
+- Restrinja caminhos sensíveis usando controles de camada de rede (\`allow/deny\`, regras de firewall), não verificações de header
+- Endpoints de administração não deveriam estar no mesmo listener que a aplicação pública
+- Endpoints de diagnóstico verbosos são um risco significativo — limite o que expõem e quem pode acessá-los
+- Uma superfície de ataque pequena em um port scan não é o mesmo que uma superfície de ataque pequena na prática
+
+---
+
+*Relacionado: [Case 01 — Linux Pivot via Reverse Proxy Misconfiguration](https://github.com/juliomauro/sec-writeups/tree/main/cases/01-linux-pivot)*`,
+
+  systemd: `# systemd como Superfície de Ataque
+
+> **Categoria:** Linux · Escalada de Privilégios · Internals do Sistema
+> **Nível:** Praticante
+
+---
+
+A maioria dos checklists de escalada de privilégios cobre os caminhos óbvios: binários SUID, misconfigurations de sudo, \`/etc/passwd\` com permissão de escrita, cron jobs rodando como root. Esses são bem documentados e a maioria dos sistemas com hardening os tem sob controle.
+
+O que recebe menos atenção é o modelo de execução de serviços introduzido pelo systemd — especificamente, a combinação de serviços rodando como root que carregam ou executam arquivos em caminhos influenciáveis pelo usuário.
+
+## A Configuração
+
+O systemd gerencia serviços através de unit files. Um serviço de aplicação típico pode ser assim:
+
+\`\`\`ini
+[Service]
+User=root
+ExecStart=/opt/app/scripts/start.sh
+\`\`\`
+
+O script em \`/opt/app/scripts/start.sh\` roda como root. Se esse script carrega um arquivo de configuração, executa um helper, ou itera sobre um diretório — e qualquer parte desse caminho é gravável por um usuário não-root — então escalada de privilégios é possível sem acionar um CVE.
+
+## O Padrão
+
+Em um exercício real, a cadeia ficou assim:
+
+1. Um serviço systemd rodava como root a cada 5 minutos via timer
+2. O serviço chamava um script que carregava arquivos de \`/opt/app/config/checks.d/\`
+3. O diretório \`checks.d/\` era gravável para o grupo \`appops\`
+4. O usuário comprometido não estava em \`appops\` — mas tinha acesso de escrita a um subdiretório por permissões herdadas de um script de deploy anterior
+5. Um arquivo colocado nesse subdiretório era carregado pelo script root no próximo tick do timer
+
+A escalada não requereu exploit algum. Apenas uma escrita de arquivo e aguardar 5 minutos.
+
+## Encontrando
+
+A enumeração que revela isso:
+
+\`\`\`bash
+# Listar todos os timers e seus serviços associados
+systemctl list-timers --all
+
+# Inspecionar um unit de serviço
+systemctl cat <nome-do-servico>
+
+# Rastrear o caminho de execução
+cat /caminho/para/script/chamado
+
+# Verificar cada arquivo e diretório no caminho de execução
+ls -la /opt/app/scripts/
+ls -la /opt/app/config/
+ls -la /opt/app/config/checks.d/
+
+# Encontrar o que o seu usuário pode escrever
+find /opt/app -writable 2>/dev/null
+\`\`\`
+
+O passo-chave que a maioria pula: verificar as **permissões de subdiretórios recursivamente**, não apenas o caminho de nível superior mencionado no unit file.
+
+## O Ambiente de Execução Importa
+
+Serviços systemd não rodam no mesmo ambiente de um shell interativo. \`PATH\`, \`HOME\` e outras variáveis podem ser diferentes ou ausentes. O script pode se comportar diferentemente de quando executado manualmente. Isso importa ao criar um payload — um reverse shell pode falhar porque \`bash\` não está no caminho esperado. Escrever em um arquivo ou definir um bit SUID é mais confiável.
+
+\`\`\`bash
+# Payload confiável para execução root não-interativa
+cp /bin/bash /tmp/rootbash
+chmod +s /tmp/rootbash
+
+# Após o timer disparar:
+/tmp/rootbash -p
+\`\`\`
+
+## Hardening
+
+O systemd fornece várias diretivas para limitar o que um serviço pode fazer:
+
+\`\`\`ini
+[Service]
+User=appuser                    # Não rode como root se não for necessário
+NoNewPrivileges=true            # Impede escalada de privilégios
+ProtectSystem=strict            # Torna a maioria do filesystem somente leitura
+ProtectHome=true                # Sem acesso a /home, /root
+ReadOnlyPaths=/opt/app/scripts  # Bloqueia o próprio script
+ReadWritePaths=/opt/app/logs    # Permite escrita apenas em caminhos específicos
+PrivateTmp=true                 # /tmp isolado
+\`\`\`
+
+Essas diretivas não requerem mudanças na aplicação — são aplicadas no nível do unit file e restringem o que o serviço pode fazer independentemente do que o script faz.
+
+## O Ponto Mais Amplo
+
+A vulnerabilidade não estava em um pacote, uma versão de kernel, ou um CVE. Estava no modelo de permissões de uma árvore de diretórios que ninguém auditou após um script de deploy rodar e definir permissões muito amplamente.
+
+Escalada de privilégios em sistemas Linux modernos cada vez mais se parece com isso: nenhum exploit, nenhum bug de kernel — apenas um serviço rodando como root com um arquivo gravável em algum lugar em seu caminho de execução, esperando um timer disparar.
+
+---
+
+*Relacionado: [Case 03 — systemd Service Abuse and Privilege Escalation](https://github.com/juliomauro/sec-writeups/tree/main/cases/03-linux-privesc-systemd)*`,
+
+  rbac: `# Kubernetes RBAC: Quando Nenhuma Permissão Parece Crítica Sozinha
+
+> **Categoria:** Kubernetes · Cloud Security · Movimentação Lateral
+> **Nível:** Avançado
+
+---
+
+O RBAC do Kubernetes é um daqueles controles que as organizações implementam e então consideram resolvido. Roles são criadas, service accounts são vinculadas, e o cluster segue em frente. O que raramente acontece é uma revisão periódica do que cada service account pode realmente fazer — e mais importante, que combinações de permissões criam caminhos não intencionais.
+
+## O Ponto de Partida
+
+Um pod comprometido em um namespace de baixa criticidade. Sem root, sem shell, sem ferramentas. Apenas \`/bin/sh\` e o token padrão da service account montado em:
+
+\`\`\`
+/var/run/secrets/kubernetes.io/serviceaccount/token
+\`\`\`
+
+Com esse token e o endpoint da API do cluster (disponível via variáveis de ambiente), é possível consultar a API do Kubernetes diretamente sem kubectl:
+
+\`\`\`bash
+TOKEN=$(cat /var/run/secrets/kubernetes.io/serviceaccount/token)
+curl -s --cacert /var/run/secrets/kubernetes.io/serviceaccount/ca.crt \\
+  -H "Authorization: Bearer $TOKEN" \\
+  https://\${KUBERNETES_SERVICE_HOST}/api/v1/namespaces/
+\`\`\`
+
+## Enumerando Permissões
+
+O primeiro passo após confirmar acesso à API é entender o que a service account atual pode fazer. A API \`SelfSubjectRulesReview\` retorna exatamente isso:
+
+\`\`\`bash
+curl -s ... -X POST \\
+  -H "Content-Type: application/json" \\
+  -d '{"apiVersion":"authorization.k8s.io/v1","kind":"SelfSubjectRulesReview","spec":{"namespace":"app-dev"}}' \\
+  https://.../apis/authorization.k8s.io/v1/selfsubjectrulesreviews
+\`\`\`
+
+No exercício, a SA atual conseguia:
+- Listar ConfigMaps e Deployments — esperado
+- **Criar Jobs** — inesperado, mas parecia inofensivo
+
+## A Cadeia
+
+A parte perigosa não era a permissão de \`create Jobs\` por si só. Era a combinação:
+
+1. A SA conseguia criar Jobs no namespace
+2. Jobs podem especificar um \`serviceAccountName\` — incluindo outras service accounts no namespace
+3. Outra service account (\`batch-runner\`) tinha permissão para listar e ler Secrets
+4. \`batch-runner\` também tinha acesso a um ConfigMap no namespace de produção
+
+Ao criar um Job que rodava sob a identidade de \`batch-runner\`, o token de \`batch-runner\` ficava acessível no pod desse Job — e com ele, todas as permissões que \`batch-runner\` tinha.
+
+\`\`\`json
+{
+  "spec": {
+    "template": {
+      "spec": {
+        "serviceAccountName": "batch-runner",
+        "containers": [{"name": "r", "image": "busybox",
+          "command": ["sh", "-c", "cat /var/run/secrets/kubernetes.io/serviceaccount/token"]}]
+      }
+    }
+  }
+}
+\`\`\`
+
+A partir daí: listar secrets → obter credenciais de registry → fazer pull de imagem privada → encontrar kubeconfig embutido na camada de imagem → acessar namespace de produção.
+
+## O Que Tornou Cada Passo Possível
+
+| Permissão | Parecia inofensiva | Na verdade era |
+|---|---|---|
+| \`create Jobs\` | Apenas processamento batch | Permite impersonar outras service accounts |
+| \`batch-runner\` lê secrets | Necessário para config da app | Expôs credenciais de registry |
+| Acesso ao registry | Pull de imagem padrão | Expôs histórico com kubeconfig embutido |
+| kubeconfig na camada | Já "deletado" | Ainda presente no histórico da camada |
+
+## Corrigindo
+
+**Restringir criação de Job a service accounts específicas:**
+
+\`\`\`yaml
+# Exemplo de policy Kyverno
+spec:
+  rules:
+  - name: restrict-serviceaccount-in-jobs
+    match:
+      resources:
+        kinds: ["Job"]
+    validate:
+      message: "Jobs devem usar a service account padrão"
+      pattern:
+        spec:
+          template:
+            spec:
+              serviceAccountName: "default"
+\`\`\`
+
+**Audite permissões de service accounts regularmente:**
+
+\`\`\`bash
+kubectl auth can-i --list \\
+  --as=system:serviceaccount:app-dev:batch-runner \\
+  -n app-dev
+\`\`\`
+
+Execute isso para cada service account em cada namespace. Automatize. Inclua o output no seu ciclo de revisão de segurança.
+
+**Escaneie imagens em busca de credenciais embutidas:**
+
+O histórico de camadas sobrevive mesmo quando arquivos são "deletados" em camadas subsequentes. Faça o escaneamento com detecção de segredos (\`trufflehog\`, \`trivy\`) um gate obrigatório no CI.
+
+## O Insight Principal
+
+No Kubernetes, o risco não está em permissões individuais — está em grafos. Uma permissão de leitura aqui, uma permissão de criação lá, e uma service account provisionada de forma muito ampla no trimestre passado se combinam em um caminho de um pod de baixa criticidade até segredos de produção.
+
+A pergunta a fazer sobre cada service account não é "o que ela faz?" mas "o que alguém poderia fazer com esse token se o tivesse?"
+
+---
+
+*Relacionado: [Case 04 — Kubernetes RBAC and Lateral Movement Between Namespaces](https://github.com/juliomauro/sec-writeups/tree/main/cases/04-kubernetes-rbac)*`,
+
+  meshcore: `# MeshCore Brasil: Comunicação Descentralizada Sem Infraestrutura
+
+> **Categoria:** Redes · Comunidade · LoRa
+> **Nível:** Fundacional
+
+---
+
+Nos últimos meses, tenho acompanhado de perto um movimento muito interessante em torno de rádios LoRa e projetos como o MeshCore.
+
+## O Que É LoRa
+
+LoRa é uma tecnologia de rádio de longo alcance e baixo consumo. Com dispositivos relativamente pequenos, é possível trocar mensagens ao longo de vários quilômetros sem depender de internet, redes celulares, Wi-Fi ou qualquer infraestrutura centralizada.
+
+O MeshCore expande isso criando redes mesh descentralizadas. Em vez de depender de uma antena ou provedor central, cada nó pode ajudar a retransmitir mensagens pela rede. Na prática, isso cria uma malha de comunicação impulsionada pela comunidade, onde a cobertura melhora à medida que mais pessoas implantam e posicionam seus dispositivos.
+
+## Por Que Se Destaca
+
+**Independência de infraestrutura**
+A comunicação não depende de provedores de telecom, serviços de internet ou plataformas centralizadas.
+
+**Resiliência**
+Em cenários como quedas de internet, falhas de energia, áreas remotas ou situações de emergência, uma rede mesh pode continuar operando localmente.
+
+**Baixo custo e baixo consumo de energia**
+Dispositivos LoRa são tipicamente acessíveis, compactos e eficientes, frequentemente funcionando por longos períodos com baterias ou fontes de energia simples como solar.
+
+**Aprendizado técnico**
+Reúne rádio, redes, antenas, propagação, segurança, mapeamento e design de infraestrutura.
+
+**Crescimento impulsionado pela comunidade**
+Quanto mais pessoas participam, testam, implantam repetidores e compartilham conhecimento, mais forte e útil a rede se torna.
+
+## O Que Está Acontecendo no Brasil
+
+Isso não está acontecendo apenas fora do Brasil. Comunidades locais estão crescendo aqui também, compartilhando experiências, documentando testes, construindo mapas de cobertura e experimentando as melhores formas de conectar cidades.
+
+Estou participando ativamente do grupo MeshCore Brasil, contribuindo com testes, implantação de repetidores e mapeamento de cidades próximas.
+
+Hoje já conseguimos estabelecer comunicação entre Santo André, Jundiaí e Sorocaba, com Campinas eventualmente também entrando na malha. Ainda é fase inicial — muito teste, ajuste de antenas, posicionamento e experimentação — mas já mostra o potencial quando a comunidade começa a crescer e se organizar.
+
+## O Ponto Mais Amplo
+
+Hoje, a maioria das pessoas associa comunicação apenas à internet, redes móveis e grandes plataformas. Mas projetos como o MeshCore mostram que ainda há espaço para redes de comunicação descentralizadas, comunitárias e independentes.
+
+Do ponto de vista de segurança, independência de infraestrutura também significa resiliência contra censura, interrupções direcionadas e pontos únicos de falha que sistemas centralizados carregam inerentemente. Uma rede que nenhuma entidade única controla não pode ser desligada por uma única decisão.
+
+Ainda é cedo, mas mostra muito potencial.
+
+---
+
+- [meshcore.io](https://meshcore.io)
+- [meshcore.com.br](https://meshcore.com.br)`,
+
+  appearances: `# O Perigo Oculto de Julgar pela Aparência
+
+> **Categoria:** Segurança · Engenharia Social · Comportamento
+> **Nível:** Fundacional
+
+---
+
+Você já julgou a competência ou o caráter de alguém baseado apenas em sua roupa ou aparência física? Esse hábito pode parecer uma opinião inofensiva no dia a dia, mas tecnicamente falando, revela exatamente o tipo de vulnerabilidade que um engenheiro social procura.
+
+## O Mecanismo por Trás da Vulnerabilidade
+
+Entrar em uma situação carregado de preconceitos significa abandonar a análise racional e recorrer a atalhos mentais — vieses cognitivos. O problema central desses atalhos é que eles substituem a verificação de fatos pela intuição. Uma mente enviesada não analisa o cenário de forma limpa; ela parte de um estereótipo e então tenta forçar a realidade a se encaixar nessa narrativa predefinida.
+
+Esse ponto cego é exatamente onde a engenharia social opera.
+
+Ao contrário do que muitos acreditam, engenharia social não é apenas sobre ter boa conversa — é sobre explorar nossos processos mentais. O atacante não precisa ser um gênio; ele só precisa entender qual atalho cognitivo você usa e como acioná-lo.
+
+## Os Gatilhos de Exploração
+
+Os principais sinais de que você passou da análise racional para o "modo vulnerável":
+
+**Senso de Urgência**
+O atacante aciona medo ou pressão para forçar uma decisão rápida e irreflexiva.
+
+**Imposição de Autoridade**
+O uso de crachás, uniformes ou linguagem técnica para intimidar e fazer você cumprir sem questionar.
+
+**Promessa de Vantagem**
+Ofertas de benefícios fáceis projetadas para explorar o gatilho da ganância.
+
+**Manipulação de Estereótipos**
+O atacante adapta seu sotaque, roupa e comportamento para se alinhar exatamente com o que você considera "confiável" ou "superior".
+
+## A Armadilha da Aparência
+
+Quando a estética se torna seu mecanismo principal de filtragem, um atacante moderadamente habilidoso já sabe como contornar suas defesas: ele se veste da forma que você respeita, e ataca enquanto você está olhando para o outro lado.
+
+O viés não melhora a percepção de risco — ele a piora dramaticamente. Ele substitui prova por impressão e verificação por embalagem.
+
+Muitas pessoas que se orgulham de "ler pessoas" com base em aparências estão, na verdade, entregando ao atacante um mapa de exatamente qual botão emocional apertar.
+
+## A Regra
+
+Em segurança, a regra é clara: nenhuma ferramenta substitui comportamento, e nenhuma impressão substitui evidência.
+
+Em suas decisões — seja no trabalho ou na vida pessoal — você está exigindo prova e fatos, ou se contentando com a embalagem?`
+};
+
+const ART_KEY = {
+  'security/misantropia-Security-Incident-and-the-Brazillian-National-Alert-System-Failure.md': 'misantropia',
+  'cloud/your-container-identity-is-worth-more-than-root.md': 'container',
+  'cloud/one-wildcard-in-a-trust-policy.md':                  'wildcard',
+  'linux/the-header-that-opened-the-network.md':              'header',
+  'linux/systemd-as-an-attack-surface.md':                    'systemd',
+  'kubernetes/rbac-when-no-single-permission-seems-critical.md': 'rbac',
+  'networking/meshcore-brazil.md':                            'meshcore',
+  'security/the-hidden-danger-of-judging-by-appearances.md':  'appearances',
+};
+
+let currentPath = null;
+
 const themeNames = {
   en:  { green: '◈ Green', amber: '◈ Amber', blue: '◈ Blue', light: '◈ Light' },
   pt:  { green: '◈ Verde', amber: '◈ Âmbar', blue: '◈ Azul', light: '◈ Claro' },
@@ -774,16 +1679,16 @@ function updateThemeBtn(currentTheme) {
 }
 
 var pIqaDmap = [
-  ['tlh',''],['ch',''],['gh',''],['ng',''],
-  ['a',''],['b',''],['D',''],['e',''],
-  ['H',''],['I',''],['j',''],['l',''],
-  ['m',''],['n',''],['o',''],['p',''],
-  ['q',''],['Q',''],['r',''],['S',''],
-  ['t',''],['u',''],['v',''],['w',''],
-  ['y',''],["'",''],
-  ['0',''],['1',''],['2',''],['3',''],
-  ['4',''],['5',''],['6',''],['7',''],
-  ['8',''],['9','']
+  ['tlh',''],['ch',''],['gh',''],['ng',''],
+  ['a',''],['b',''],['D',''],['e',''],
+  ['H',''],['I',''],['j',''],['l',''],
+  ['m',''],['n',''],['o',''],['p',''],
+  ['q',''],['Q',''],['r',''],['S',''],
+  ['t',''],['u',''],['v',''],['w',''],
+  ['y',''],["'",''],
+  ['0',''],['1',''],['2',''],['3',''],
+  ['4',''],['5',''],['6',''],['7',''],
+  ['8',''],['9','']
 ];
 function toPlqaD(str) {
   var out = '', i = 0;
@@ -819,6 +1724,7 @@ function applyLang(lang) {
   if (btn) btn.textContent = lang === 'en' ? '◈ PT-BR' : lang === 'pt' ? '◈ Klingon' : '◈ English';
   localStorage.setItem('lang', lang);
   updateThemeBtn(document.documentElement.dataset.theme || 'blue');
+  if (currentPath) openArticle(currentPath);
 }
 
 function toggleLang() {
@@ -853,6 +1759,152 @@ function filter(tag) {
     const next = label.nextElementSibling;
     label.style.display = (next && next.style.display !== 'none') ? 'flex' : 'none';
   });
+}
+
+// ── ARTICLE INLINE VIEW ──
+const RAW = 'https://raw.githubusercontent.com/juliomauro/sec-notes/main/';
+
+document.getElementById('article-list').addEventListener('click', e => {
+  const item = e.target.closest('.article-item');
+  if (!item || !item.dataset.path) return;
+  openArticle(item.dataset.path);
+});
+
+function renderArticle(md, lang) {
+  const content = document.getElementById('article-content');
+  content.innerHTML = '';
+  renderMarkdownWeb(md, content);
+  if (lang === 'tlh') pIqaDwalk(content);
+}
+
+function openArticle(path) {
+  currentPath = path;
+  const slug = path.replace(/\.md$/, '');
+
+  if (!window.location.hash || window.location.hash.slice(1) !== slug) {
+    history.pushState({ path }, '', '#' + slug);
+  }
+
+  document.getElementById('list-header').style.display = 'none';
+  document.getElementById('article-list').style.display = 'none';
+  document.getElementById('article-view').style.display = 'block';
+
+  const lang = localStorage.getItem('lang') || 'en';
+  const content = document.getElementById('article-content');
+  content.innerHTML = '';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+
+  const key = ART_KEY[path];
+
+  // PT-BR: use embedded translation
+  if (lang === 'pt' && key && PT_ARTICLES[key]) {
+    renderArticle(PT_ARTICLES[key], lang);
+    return;
+  }
+
+  // EN or TLH: fetch from GitHub (tlh = English text + pIqaD font)
+  const loading = document.createElement('div');
+  loading.className = 'art-loading';
+  loading.textContent = (i18n[lang] || i18n.en)['art-loading'];
+  content.appendChild(loading);
+
+  fetch(RAW + path)
+    .then(r => { if (!r.ok) throw new Error(r.status); return r.text(); })
+    .then(md => { renderArticle(md, lang); })
+    .catch(() => {
+      content.innerHTML = '';
+      const err = document.createElement('div');
+      err.className = 'art-fetch-error';
+      err.textContent = (i18n[lang] || i18n.en)['art-error'];
+      content.appendChild(err);
+    });
+}
+
+function closeArticle() {
+  currentPath = null;
+  history.pushState(null, '', window.location.pathname);
+  document.getElementById('list-header').style.display = '';
+  document.getElementById('article-list').style.display = '';
+  document.getElementById('article-view').style.display = 'none';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+window.addEventListener('popstate', () => {
+  const hash = window.location.hash.slice(1);
+  if (hash) {
+    openArticle(hash + '.md');
+  } else {
+    currentPath = null;
+    document.getElementById('list-header').style.display = '';
+    document.getElementById('article-list').style.display = '';
+    document.getElementById('article-view').style.display = 'none';
+  }
+});
+
+// Open article from hash on direct load
+(function() {
+  const hash = window.location.hash.slice(1);
+  if (hash) openArticle(hash + '.md');
+})();
+
+// ── MARKDOWN RENDERER ──
+function renderMarkdownWeb(md, el) {
+  const lines = md.split('\n');
+  let inCode = false, codeBuf = [], codeLang = '', olCount = 0;
+
+  function flushCode() {
+    if (!codeBuf.length) return;
+    const pre = document.createElement('pre');
+    const code = document.createElement('code');
+    code.textContent = codeBuf.join('\n');
+    pre.appendChild(code);
+    el.appendChild(pre);
+    codeBuf = []; codeLang = '';
+  }
+
+  function inline(text) {
+    return text
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+      .replace(/\*(.+?)\*/g,     '<em>$1</em>')
+      .replace(/`([^`]+)`/g,     '<code>$1</code>')
+      .replace(/\[(.+?)\]\((.+?)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>');
+  }
+
+  lines.forEach(raw => {
+    const line = raw.trimEnd();
+    if (line.startsWith('```')) {
+      if (inCode) { flushCode(); inCode = false; }
+      else { inCode = true; codeLang = line.slice(3).trim(); }
+      return;
+    }
+    if (inCode) { codeBuf.push(line); return; }
+
+    if (!line.trim()) {
+      el.appendChild(document.createElement('div')).style.height = '12px';
+      olCount = 0;
+      return;
+    }
+    if (/^---+$/.test(line)) { el.appendChild(document.createElement('hr')); return; }
+    if (line.startsWith('# '))   { const h = document.createElement('h1'); h.innerHTML = inline(line.slice(2));  el.appendChild(h); return; }
+    if (line.startsWith('## '))  { const h = document.createElement('h2'); h.innerHTML = inline(line.slice(3));  el.appendChild(h); return; }
+    if (line.startsWith('### ')) { const h = document.createElement('h3'); h.innerHTML = inline(line.slice(4));  el.appendChild(h); return; }
+    if (line.startsWith('> '))   { const bq = document.createElement('blockquote'); bq.innerHTML = inline(line.slice(2)); el.appendChild(bq); return; }
+    if (/^[-*] /.test(line)) {
+      let ul = el.lastElementChild;
+      if (!ul || ul.tagName !== 'UL') { ul = document.createElement('ul'); el.appendChild(ul); }
+      const li = document.createElement('li'); li.innerHTML = inline(line.slice(2)); ul.appendChild(li);
+      return;
+    }
+    if (/^\d+\. /.test(line)) {
+      let ol = el.lastElementChild;
+      if (!ol || ol.tagName !== 'OL') { olCount = 0; ol = document.createElement('ol'); el.appendChild(ol); }
+      const li = document.createElement('li'); li.innerHTML = inline(line.replace(/^\d+\. /, '')); ol.appendChild(li);
+      return;
+    }
+    const p = document.createElement('p'); p.innerHTML = inline(line); el.appendChild(p);
+  });
+  flushCode();
 }
 </script>
 </body>
