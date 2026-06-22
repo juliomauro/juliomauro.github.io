@@ -1782,8 +1782,11 @@ function toggleLang() {
 }
 
 (function() {
-  const lang = localStorage.getItem('lang');
-  if (lang === 'pt' || lang === 'tlh') applyLang(lang);
+  const qp = new URLSearchParams(window.location.search);
+  const hp = new URLSearchParams(window.location.hash.includes('?') ? window.location.hash.split('?')[1] : '');
+  const urlLang = qp.get('lang') || hp.get('lang');
+  const lang = urlLang || localStorage.getItem('lang');
+  if (lang === 'en' || lang === 'pt' || lang === 'tlh') applyLang(lang);
 })();
 
 // ── THEME ──
