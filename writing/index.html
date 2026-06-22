@@ -1709,13 +1709,61 @@ function pIqaDwalk(el) {
     else if (n.nodeType === 1) pIqaDwalk(n);
   });
 }
+// Full pIqaD map — built at runtime from pIqaDmap so values are guaranteed correct.
+// The pIqaD font only has glyphs for U+F8D0–U+F8FF (KLI CSUR private-use area).
+// Every unmapped English letter is routed to the nearest Klingon phoneme glyph.
+var pIqaDmapFull = (function() {
+  var m = {};
+  pIqaDmap.forEach(function(p) { m[p[0]] = p[1]; });
+  return [
+    ['tlh',m.tlh],['ch',m.ch],['gh',m.gh],['ng',m.ng],
+    ['Ch',m.ch],['CH',m.ch],['Gh',m.gh],['GH',m.gh],
+    ['Ng',m.ng],['NG',m.ng],['Tlh',m.tlh],['TLH',m.tlh],
+    ['a',m.a],['b',m.b],['D',m.D],['e',m.e],
+    ['H',m.H],['I',m.I],['j',m.j],['l',m.l],
+    ['m',m.m],['n',m.n],['o',m.o],['p',m.p],
+    ['q',m.q],['Q',m.Q],['r',m.r],['S',m.S],
+    ['t',m.t],['u',m.u],['v',m.v],['w',m.w],
+    ['y',m.y],["'",m["'"]],
+    ['c',m.S],['d',m.D],['f',m.v],['g',m.gh],
+    ['h',m.H],['i',m.I],['k',m.q],['s',m.S],
+    ['x',m.ng],['z',m.S],
+    ['A',m.a],['B',m.b],['C',m.ch],['E',m.e],
+    ['F',m.v],['G',m.gh],['J',m.j],['K',m.q],
+    ['L',m.l],['M',m.m],['N',m.n],['O',m.o],
+    ['P',m.p],['R',m.r],['T',m.t],['U',m.u],
+    ['V',m.v],['W',m.w],['X',m.ng],['Y',m.y],
+    ['Z',m.S],
+    ['0',m['0']],['1',m['1']],['2',m['2']],['3',m['3']],
+    ['4',m['4']],['5',m['5']],['6',m['6']],['7',m['7']],
+    ['8',m['8']],['9',m['9']],
+  ];
+})();
+function toPlqaDfull(str) {
+  var out = '', i = 0;
+  while (i < str.length) {
+    var hit = false;
+    for (var j = 0; j < pIqaDmapFull.length; j++) {
+      var k = pIqaDmapFull[j][0];
+      if (str.substr(i, k.length) === k) { out += pIqaDmapFull[j][1]; i += k.length; hit = true; break; }
+    }
+    if (!hit) { out += str[i++]; }
+  }
+  return out;
+}
+function pIqaDwalkFull(el) {
+  el.childNodes.forEach(function(n) {
+    if (n.nodeType === 3) n.nodeValue = toPlqaDfull(n.nodeValue);
+    else if (n.nodeType === 1) pIqaDwalkFull(n);
+  });
+}
 function applyLang(lang) {
   document.querySelectorAll('[data-i18n]').forEach(el => {
     const v = i18n[lang]?.[el.dataset.i18n];
     if (v !== undefined) el.innerHTML = v;
   });
   if (lang === 'tlh') {
-    document.querySelectorAll('[data-i18n]').forEach(function(el) { pIqaDwalk(el); });
+    document.querySelectorAll('[data-i18n]').forEach(function(el) { pIqaDwalkFull(el); });
     document.body.classList.add('piqad-active');
   } else {
     document.body.classList.remove('piqad-active');
@@ -1775,7 +1823,7 @@ function renderArticle(md, lang) {
   const content = document.getElementById('article-content');
   content.innerHTML = '';
   renderMarkdownWeb(md, content);
-  if (lang === 'tlh') pIqaDwalk(content);
+  if (lang === 'tlh') pIqaDwalkFull(content);
 }
 
 function openArticle(path) {
