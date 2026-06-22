@@ -596,7 +596,8 @@ footer {
   font-family: 'pIqaD';
   src: url('/fonts/pIqaD.woff') format('woff');
 }
-body.piqad-active [data-i18n] {
+body.piqad-active [data-i18n],
+body.piqad-active #article-content * {
   font-family: 'pIqaD', monospace;
   letter-spacing: 3px;
 }
@@ -1774,6 +1775,7 @@ function renderArticle(md, lang) {
   const content = document.getElementById('article-content');
   content.innerHTML = '';
   renderMarkdownWeb(md, content);
+  if (lang === 'tlh') pIqaDwalk(content);
 }
 
 function openArticle(path) {
