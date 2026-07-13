@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>O-FILES // SUBJECT DOSSIER — oruam.cloud</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' fill='%23030405'/><text x='6' y='24' font-size='22' fill='%23b3121a' font-family='serif' font-weight='bold'>O</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Oswald:wght@500;600;700&family=Bebas+Neue&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+html, body { background: #030405; }
+body {
+  color: #c7cdd0;
+  font-family: 'Special Elite', 'Courier New', monospace;
+  overflow-x: hidden;
+  position: relative;
+  cursor: default;
+  line-height: 1.7;
+}
+a { color: inherit; }
+[hidden] { display: none !important; }
+
+/* ── AMBIENT FOG / VIGNETTE ── */
+#fog {
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  background:
+    radial-gradient(ellipse 70% 50% at 50% 0%, rgba(20,45,50,0.35) 0%, transparent 60%),
+    radial-gradient(ellipse 90% 70% at 50% 100%, rgba(10,15,20,0.6) 0%, transparent 70%),
+    radial-gradient(ellipse 120% 120% at 50% 50%, transparent 40%, #010202 100%);
+}
+
+/* ── FILM GRAIN ── */
+#grain {
+  position: fixed; inset: -100px; z-index: 3; pointer-events: none;
+  opacity: 0.045; mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  animation: grainShift 0.5s steps(4) infinite;
+}
+@keyframes grainShift {
+  0%   { transform: translate(0,0); }
+  25%  { transform: translate(-2%,1%); }
+  50%  { transform: translate(1%,-2%); }
+  75%  { transform: translate(-1%,-1%); }
+  100% { transform: translate(0,0); }
+}
+
+/* ── SCANLINES ── */
+#scanlines {
+  position: fixed; inset: 0; z-index: 4; pointer-events: none;
+  background: repeating-linear-gradient(
+    180deg, rgba(0,0,0,0.16) 0px, rgba(0,0,0,0.16) 1px,
+    transparent 2px, transparent 3px
+  );
+  opacity: 0.45;
+}
+
+/* ── FLICKER (fluorescent light dying) ── */
+#flicker {
+  position: fixed; inset: 0; z-index: 5; pointer-events: none;
+  background: #000;
+  opacity: 0;
+  animation: flick 7.4s infinite;
+}
+@keyframes flick {
+  0%, 94%, 100% { opacity: 0; }
+  94.5% { opacity: 0.3; }
+  94.8% { opacity: 0; }
+  95.3% { opacity: 0.45; }
+  95.6% { opacity: 0.04; }
+  96%   { opacity: 0.25; }
+  96.4% { opacity: 0; }
+}
+
+/* ── SPOTLIGHT following cursor ── */
+#spot {
+  position: fixed; inset: 0; z-index: 2; pointer-events: none;
+  background: radial-gradient(circle 360px at var(--x,50%) var(--y,30%),
+              rgba(150,180,168,0.16), transparent 70%);
+}
+
+main {
+  position: relative; z-index: 10;
+  max-width: 900px; margin: 0 auto;
+  padding: 8vh 24px 10vh;
+}
+
+/* ── HEADER MARK ── */
+.mark-wrap {
+  display: flex; flex-direction: column; align-items: center;
+  margin-bottom: 5vh; text-align: center; position: relative;
+  padding: 3vh 0;
+}
+.mark-wrap::before {
+  content: ''; position: absolute; inset: -4vh -10vw;
+  background: radial-gradient(ellipse 60% 70% at 50% 40%, rgba(120,140,130,0.08), transparent 70%);
+  pointer-events: none; z-index: -1;
+}
+.show-title {
+  font-family: 'Bebas Neue', 'Oswald', sans-serif; font-weight: 400;
+  font-size: clamp(15px, 2.6vw, 19px);
+  letter-spacing: 10px; color: #7c8b81;
+  margin-bottom: 4px; user-select: none;
+}
+.show-xfiles {
+  display: block;
+  font-family: 'Bebas Neue', 'Oswald', sans-serif; font-weight: 400;
+  font-size: clamp(58px, 13vw, 118px); line-height: 1;
+  color: #9fb0a3;
+  text-shadow: 0 0 12px rgba(159,176,163,0.5), 0 0 40px rgba(159,176,163,0.2);
+  letter-spacing: 10px;
+  animation: markGlitch 7s infinite;
+  user-select: none;
+}
+@keyframes markGlitch {
+  0%, 95%, 100% { transform: translate(0,0); filter: none; opacity: 1; }
+  95.3% { transform: translate(-3px,0); filter: drop-shadow(3px 0 #7a0e12) drop-shadow(-3px 0 #1a4a55); opacity: 0.85; }
+  95.6% { transform: translate(2px,0); opacity: 1; }
+  96%   { transform: translate(0,0); filter: none; }
+  96.2% { opacity: 0.4; }
+  96.4% { opacity: 1; transform: translate(0,0); filter: none; }
+}
+.tagline {
+  margin-top: 20px; font-family: 'Oswald', sans-serif; font-weight: 500;
+  font-size: 13px; letter-spacing: 4px;
+  color: #6b7573; opacity: 0;
+  animation: fadeTag 2s ease 0.8s forwards, tagFlicker 9s ease-in-out 3s infinite;
+}
+@keyframes fadeTag { to { opacity: 1; } }
+@keyframes tagFlicker {
+  0%, 97%, 100% { opacity: 1; } 98% { opacity: 0.2; } 98.5% { opacity: 1; }
+}
+.wordmark {
+  font-family: 'Oswald', sans-serif; font-weight: 600;
+  letter-spacing: 4px; font-size: clamp(10px, 2vw, 12px);
+  color: #4a5153; margin-top: 22px; text-transform: uppercase;
+}
+
+/* ── BRIEFING (typewriter) ── */
+#briefing {
+  border-left: 2px solid #33393b;
+  padding: 4px 0 4px 18px;
+  min-height: 90px;
+  font-size: 14px; line-height: 1.9; color: #a9b0b2;
+  margin-bottom: 5vh;
+}
+#briefing .cursor { display: inline-block; width: 8px; height: 15px; background: #8b9294; animation: blink 1s step-end infinite; vertical-align: -2px; }
+@keyframes blink { 50% { opacity: 0; } }
+
+/* ── QUICK INDEX ── */
+.toc {
+  display: flex; flex-wrap: wrap; gap: 10px 18px;
+  justify-content: center;
+  margin-bottom: 9vh;
+  padding-bottom: 4vh;
+  border-bottom: 1px solid #1c2022;
+}
+.toc a {
+  font-family: 'Oswald', sans-serif; font-size: 11px; letter-spacing: 1.5px;
+  text-transform: uppercase; text-decoration: none; color: #6b7375;
+  border-bottom: 1px solid transparent; transition: color 0.2s, border-color 0.2s;
+}
+.toc a:hover { color: #b3121a; border-color: #b3121a; }
+
+/* ── SECTIONS ── */
+.dossier-section { margin-bottom: 10vh; scroll-margin-top: 30px; }
+.sec-head {
+  display: flex; align-items: baseline; gap: 14px;
+  margin-bottom: 26px;
+}
+.sec-num { font-family: 'Oswald', sans-serif; font-size: 12px; color: #4a5153; letter-spacing: 1px; }
+.sec-title {
+  font-family: 'Oswald', sans-serif; font-weight: 600; font-size: 20px;
+  letter-spacing: 2px; text-transform: uppercase; color: #cfd4d5;
+}
+.sec-rule { flex: 1; height: 1px; background: #1c2022; }
+.sec-intro { font-size: 13.5px; color: #7d8486; margin-bottom: 30px; max-width: 640px; }
+
+.redact {
+  background: #1c2022; color: transparent; border-radius: 1px;
+  box-shadow: 0 0 0 1px #34393b;
+  cursor: help; transition: color 0.15s, background 0.15s, box-shadow 0.15s;
+  padding: 0 3px;
+}
+.redact:hover, .redact.revealed { background: transparent; color: #b3121a; box-shadow: 0 0 0 1px transparent; }
+
+/* ── PROFILE ── */
+.profile-text { font-size: 14.5px; line-height: 1.95; color: #a9b0b2; max-width: 700px; }
+.profile-text p { margin-bottom: 16px; }
+.profile-text strong { color: #cfd4d5; font-weight: normal; border-bottom: 1px dotted #3a4143; }
+
+/* ── CAPABILITY CHIPS ── */
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip {
+  font-family: 'Oswald', sans-serif; font-size: 10.5px; letter-spacing: 1px;
+  text-transform: uppercase; color: #8f9698;
+  border: 1px solid #262b2d; padding: 6px 12px;
+}
+
+/* ── CASE HISTORY ── */
+.case-list { display: flex; flex-direction: column; gap: 18px; }
+.case {
+  position: relative; overflow: hidden;
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.12));
+  border: 1px solid #21262a; padding: 20px 22px;
+}
+.case-top {
+  display: flex; flex-wrap: wrap; gap: 6px 16px; align-items: baseline;
+  margin-bottom: 10px;
+}
+.case-no { font-family: 'Oswald', sans-serif; font-size: 11px; color: #616a6d; letter-spacing: 1.5px; }
+.case-org { font-family: 'Oswald', sans-serif; font-size: 15px; font-weight: 600; color: #cfd4d5; }
+.case-role { font-size: 12.5px; color: #8a9194; }
+.case-period { margin-left: auto; font-family: 'Oswald', sans-serif; font-size: 11px; color: #616a6d; }
+.case-body { font-size: 13.5px; line-height: 1.8; color: #8f9698; }
+.log-tag {
+  display: block; font-family: 'Oswald', sans-serif; font-weight: 600;
+  font-size: 10.5px; letter-spacing: 1.5px; color: #b3121a;
+  margin: 14px 0 4px;
+}
+.log-tag:first-child { margin-top: 0; }
+
+/* ── TRAINING / CREDENTIALS GRID ── */
+.tri-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 32px; }
+.tri-label { font-family: 'Oswald', sans-serif; font-size: 11px; letter-spacing: 2px; color: #616a6d; text-transform: uppercase; margin-bottom: 14px; }
+.tri-item { font-size: 13px; color: #a9b0b2; padding: 8px 0; border-bottom: 1px solid #1c2022; }
+.tri-item:last-child { border-bottom: none; }
+.tri-item .sub { display: block; font-size: 11px; color: #616a6d; margin-top: 3px; }
+
+/* ── ARTIFACT LOCKER ── */
+.locker-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; }
+.artifact {
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.12));
+  border: 1px solid #21262a; padding: 18px 20px;
+  display: flex; flex-direction: column;
+}
+.art-code { font-family: 'Oswald', sans-serif; font-size: 10.5px; color: #616a6d; letter-spacing: 1.5px; }
+.art-title { font-family: 'Oswald', sans-serif; font-size: 15px; font-weight: 600; color: #cfd4d5; margin: 6px 0 10px; }
+.art-body { font-size: 13px; line-height: 1.75; color: #8f9698; flex: 1; margin-bottom: 14px; }
+.art-link {
+  align-self: flex-start; font-family: 'Oswald', sans-serif; font-size: 10.5px; letter-spacing: 1.5px;
+  text-decoration: none; color: #7a0e12; border-bottom: 1px solid #3a1416; padding-bottom: 2px;
+  transition: color 0.2s, border-color 0.2s;
+}
+.art-link:hover { color: #b3121a; border-color: #b3121a; }
+
+/* ── OPEN CASE FILES ── */
+.file-list { display: flex; flex-direction: column; }
+.file-row {
+  display: flex; gap: 18px; align-items: baseline;
+  padding: 16px 4px; border-bottom: 1px solid #1c2022;
+  text-decoration: none; color: inherit; transition: background 0.15s;
+}
+.file-row:hover { background: rgba(179,18,26,0.04); }
+.file-tag { font-family: 'Oswald', sans-serif; font-size: 10px; letter-spacing: 1px; color: #616a6d; text-transform: uppercase; min-width: 110px; }
+.file-main { flex: 1; }
+.file-title { font-family: 'Oswald', sans-serif; font-size: 14px; color: #cfd4d5; margin-bottom: 4px; }
+.file-desc { font-size: 12.5px; color: #7d8486; line-height: 1.6; }
+.file-arrow { color: #4a5153; font-size: 14px; }
+
+/* ── FOOTER ── */
+footer { position: relative; z-index: 10; text-align: center; padding: 4vh 0 8vh; }
+footer a {
+  color: #616a6d; text-decoration: none; font-size: 12px; letter-spacing: 1.5px;
+  border-bottom: 1px dotted #3a4143; padding-bottom: 2px; transition: color 0.2s, border-color 0.2s;
+}
+footer a:hover { color: #b3121a; border-color: #b3121a; }
+.sign-off { font-size: 12.5px; color: #4a5153; margin-bottom: 22px; }
+
+/* ── CORNER HUD ── */
+.rec {
+  position: fixed; top: 18px; left: 20px; z-index: 20;
+  display: flex; align-items: center; gap: 7px;
+  font-family: 'Oswald', sans-serif; font-size: 11px; letter-spacing: 1.5px; color: #8f9698;
+}
+.rec .dot { width: 7px; height: 7px; border-radius: 50%; background: #b3121a; animation: recBlink 1.4s ease-in-out infinite; }
+@keyframes recBlink { 50% { opacity: 0.15; } }
+.tstamp { position: fixed; top: 18px; right: 76px; z-index: 20; font-family: 'Oswald', sans-serif; font-size: 11px; letter-spacing: 1px; color: #4a5153; }
+.lang-toggle {
+  position: fixed; top: 14px; right: 20px; z-index: 20;
+  font-family: 'Oswald', sans-serif; font-size: 10px; letter-spacing: 1.5px;
+  text-transform: uppercase; color: #8f9698; background: none;
+  border: 1px solid #262b2d; padding: 5px 10px; cursor: pointer;
+  transition: all 0.2s;
+}
+.lang-toggle:hover { color: #b3121a; border-color: #7a0e12; }
+
+@media (max-width: 640px) {
+  .tstamp { display: none; }
+  .case-period { margin-left: 0; }
+  .file-row { flex-direction: column; gap: 4px; }
+  .file-tag { min-width: 0; }
+}
+</style>
+</head>
+<body>
+
+<div id="fog"></div>
+<div id="grain"></div>
+<div id="scanlines"></div>
+<div id="flicker"></div>
+<div id="spot"></div>
+
+<audio id="theme-audio" src="/xfiles/audio/xfiles.mp3" preload="none"></audio>
+<div class="rec"><span class="dot"></span>REC</div>
+<div class="tstamp" id="tstamp"></div>
+<button class="lang-toggle" id="lang-btn" onclick="toggleLang()">PT-BR</button>
+
+<main>
+  <div class="mark-wrap">
+    <div class="show-title">THE</div>
+    <div class="show-xfiles">O-FILES</div>
+    <div class="tagline">THE TRUTH IS OUT THERE</div>
+    <div class="wordmark">
+      <span class="en">Federal Bureau · Subject Dossier Division</span>
+      <span class="pt" hidden>Departamento Federal · Divisão de Dossiês de Sujeitos</span>
+    </div>
+  </div>
+
+  <div id="briefing"><span class="cursor"></span></div>
+
+  <nav class="toc">
+    <a href="#profile"><span class="en">Subject Profile</span><span class="pt" hidden>Perfil do Sujeito</span></a>
+    <a href="#capabilities"><span class="en">Capabilities</span><span class="pt" hidden>Capacidades</span></a>
+    <a href="#history"><span class="en">Case History</span><span class="pt" hidden>Histórico de Campo</span></a>
+    <a href="#training"><span class="en">Training &amp; Credentials</span><span class="pt" hidden>Treinamento &amp; Credenciais</span></a>
+    <a href="#locker"><span class="en">Artifact Locker</span><span class="pt" hidden>Cofre de Artefatos</span></a>
+    <a href="#files"><span class="en">Open Case Files</span><span class="pt" hidden>Arquivos Abertos</span></a>
+  </nav>
+
+  <!-- ── SUBJECT PROFILE ── -->
+  <section class="dossier-section" id="profile">
+    <div class="sec-head">
+      <span class="sec-num">01</span>
+      <span class="sec-title"><span class="en">Subject Profile</span><span class="pt" hidden>Perfil do Sujeito</span></span>
+      <span class="sec-rule"></span>
+    </div>
+    <div class="profile-text en">
+      <p><span class="log-tag">PERSONAL LOG</span>Subject: MAURO, Julio (&quot;ORUAM&quot;). Codename on file since <span class="redact" title="[REDACTED]">classified</span>.</p>
+      <p><span class="log-tag">ASSESSMENT</span>Subject presents twenty-five-plus years of embedded IT operations experience, the majority spent earning access from within before converting that same access into a documented audit trail. Current field placement: Sinch, Stockholm division, designation <strong>IT Security Specialist</strong>. Subject maintains sole custody of the organization's global Vulnerability Management Program — detection doctrine, risk governance, and remediation enforcement across a multi-cloud jurisdiction (AWS, GCP).</p>
+      <p><span class="log-tag">FIELD NOTE</span>Subject does not wait for tooling to be issued. Builds it independently. Internal instrumentation observed wired directly into cloud security platform APIs, engineered to compress triage time and isolate confirmed exposure from statistical noise.</p>
+      <p><span class="log-tag">ADDENDUM</span>Field history predates the current assignment by approximately two decades, within Brazil's media and enterprise infrastructure sector. This systems-level vantage point does not appear on any certification on file. It remains, nonetheless, the basis for every risk determination made since.</p>
+    </div>
+    <div class="profile-text pt" hidden>
+      <p><span class="log-tag">REGISTRO PESSOAL</span>Sujeito: MAURO, Julio (&quot;ORUAM&quot;). Codinome em arquivo desde <span class="redact" title="[REDIGIDO]">classificado</span>.</p>
+      <p><span class="log-tag">AVALIAÇÃO</span>Sujeito apresenta mais de vinte e cinco anos de experiência imersa em operações de TI, a maior parte conquistando acesso por dentro antes de transformar esse mesmo acesso em trilha de auditoria documentada. Alocação de campo atual: Sinch, divisão de Estocolmo, designação <strong>Especialista em Segurança de TI</strong>. Sujeito mantém custódia exclusiva do Programa Global de Gestão de Vulnerabilidades da organização — doutrina de detecção, governança de risco e execução de remediação em jurisdição multi-cloud (AWS, GCP).</p>
+      <p><span class="log-tag">NOTA DE CAMPO</span>Sujeito não espera que a ferramenta lhe seja entregue. Constrói por conta própria. Instrumentação interna observada, conectada diretamente às APIs de plataformas de segurança em nuvem, projetada para reduzir o tempo de triagem e isolar exposição confirmada de ruído estatístico.</p>
+      <p><span class="log-tag">ADENDO</span>O histórico de campo antecede a designação atual em aproximadamente duas décadas, dentro do setor de infraestrutura de mídia e empresas no Brasil. Essa visão em nível de sistema não consta em nenhum certificado registrado. Ainda assim, é a base de toda decisão de risco tomada desde então.</p>
+    </div>
+  </section>
+
+  <!-- ── CAPABILITIES ── -->
+  <section class="dossier-section" id="capabilities">
+    <div class="sec-head">
+      <span class="sec-num">02</span>
+      <span class="sec-title"><span class="en">Capabilities on File</span><span class="pt" hidden>Capacidades Registradas</span></span>
+      <span class="sec-rule"></span>
+    </div>
+    <p class="sec-intro en"><span class="log-tag">ASSESSMENT</span>Skills confirmed through direct field observation. No further verification required.</p>
+    <p class="sec-intro pt" hidden><span class="log-tag">AVALIAÇÃO</span>Habilidades confirmadas por observação direta em campo. Nenhuma verificação adicional é necessária.</p>
+    <div class="chips">
+      <span class="chip">IT Team Leadership</span>
+      <span class="chip">Infrastructure Strategy</span>
+      <span class="chip">Incident Response &amp; Forensics</span>
+      <span class="chip">Threat Intelligence</span>
+      <span class="chip">Security Operations (SecOps)</span>
+      <span class="chip">Vulnerability Management</span>
+      <span class="chip">Cloud Security · AWS · GCP</span>
+      <span class="chip">Zero Trust Architecture</span>
+      <span class="chip">Terraform · Ansible</span>
+      <span class="chip">SIEM · EDR · XDR</span>
+      <span class="chip">Cloud Security Posture</span>
+      <span class="chip">DevSecOps</span>
+      <span class="chip">IT Governance &amp; Compliance</span>
+      <span class="chip">Security Automation &amp; APIs</span>
+    </div>
+  </section>
+
+  <!-- ── CASE HISTORY ── -->
+  <section class="dossier-section" id="history">
+    <div class="sec-head">
+      <span class="sec-num">03</span>
+      <span class="sec-title"><span class="en">Case History</span><span class="pt" hidden>Histórico de Campo</span></span>
+      <span class="sec-rule"></span>
+    </div>
+    <p class="sec-intro en"><span class="log-tag">NOTE</span>Field record by agency, presented chronologically in reverse. Each assignment logged with timeframe, scope, and measurable outcome — no embellishment beyond what the record supports.</p>
+    <p class="sec-intro pt" hidden><span class="log-tag">NOTA</span>Registro de campo por agência, apresentado em ordem cronológica reversa. Cada designação registrada com prazo, escopo e resultado mensurável — sem embelezamento além do que o registro sustenta.</p>
+    <div class="case-list">
+
+      <div class="case">
+        <div class="case-top">
+          <span class="case-no">CASE 01</span>
+          <span class="case-org">Sinch</span>
+          <span class="case-role en">IT Security Specialist</span>
+          <span class="case-role pt" hidden>Especialista em Segurança de TI</span>
+          <span class="case-period en">2023 – Present</span>
+          <span class="case-period pt" hidden>2023 – Atual</span>
+        </div>
+        <div class="case-body en"><span class="log-tag">ASSESSMENT</span>Subject holds sole custody of the organization's global Vulnerability Management Program: detection doctrine, risk governance, and remediation tracking across a hybrid, multi-cloud jurisdiction (AWS, GCP). <span class="log-tag">DOCUMENTED</span>In-house tooling wired into cloud security platform APIs reduced manual triage load by approximately 40%. <span class="log-tag">CONFIRMED</span>Full cloud posture sweeps performed regularly: IAM trust policy audits, network exposure mapping, serverless and container risk assessment, CVE risk assessment and false-positive triage, forensic incident response via EDR, attack-surface governance across the public perimeter.</div>
+        <div class="case-body pt" hidden><span class="log-tag">AVALIAÇÃO</span>Sujeito detém custódia exclusiva do Programa Global de Gestão de Vulnerabilidades da organização: doutrina de detecção, governança de risco e acompanhamento de remediação em jurisdição híbrida e multi-cloud (AWS, GCP). <span class="log-tag">DOCUMENTADO</span>Ferramentas internas conectadas às APIs das plataformas de segurança em nuvem reduziram o esforço manual de triagem em cerca de 40%. <span class="log-tag">CONFIRMADO</span>Varreduras completas de postura em nuvem realizadas com regularidade: auditoria de trust policies IAM, mapeamento de exposição de rede, avaliação de risco serverless e de containers, avaliação de risco de CVEs, triagem de falsos positivos, resposta forense a incidentes via EDR e governança de superfície de ataque no perímetro público.</div>
+      </div>
+
+      <div class="case">
+        <div class="case-top">
+          <span class="case-no">CASE 02</span>
+          <span class="case-org">Sinch</span>
+          <span class="case-role en">IT Infrastructure Specialist</span>
+          <span class="case-role pt" hidden>Especialista de Infraestrutura de TI</span>
+          <span class="case-period">2019 – 2023</span>
+        </div>
+        <div class="case-body en"><span class="log-tag">ASSESSMENT</span>Subject designed and operated critical infrastructure across multi-cloud and on-premises data centers. <span class="log-tag">CONFIRMED</span>99.998% uptime sustained throughout tenure. <span class="log-tag">DOCUMENTED</span>IT environments of acquired companies absorbed without SLA degradation; cloud resource spend reduced concurrently.</div>
+        <div class="case-body pt" hidden><span class="log-tag">AVALIAÇÃO</span>Sujeito projetou e operou infraestrutura crítica em data centers multi-cloud e on-premises. <span class="log-tag">CONFIRMADO</span>99,998% de disponibilidade sustentada durante todo o período. <span class="log-tag">DOCUMENTADO</span>Ambientes de TI de empresas adquiridas absorvidos sem degradação de SLA; custo de recursos em nuvem reduzido no mesmo período.</div>
+      </div>
+
+      <div class="case">
+        <div class="case-top">
+          <span class="case-no">CASE 03</span>
+          <span class="case-org">CVC Corp</span>
+          <span class="case-role en">IT Infrastructure Coordinator</span>
+          <span class="case-role pt" hidden>Coordenador de Infraestrutura de TI</span>
+        </div>
+        <div class="case-body en"><span class="log-tag">ASSESSMENT</span>Subject led the modernization of internal systems and migration to AWS, including a full data-center relocation timed to a corporate HQ move. <span class="log-tag">DOCUMENTED</span>ERP rollout coordinated — JDE, Weblogic, Oracle — with MongoDB environments established underneath it.</div>
+        <div class="case-body pt" hidden><span class="log-tag">AVALIAÇÃO</span>Sujeito liderou a modernização de sistemas internos e a migração para AWS, incluindo relocação completa de data center sincronizada com a mudança da sede corporativa. <span class="log-tag">DOCUMENTADO</span>Implantação de ERP coordenada — JDE, Weblogic, Oracle — com ambientes MongoDB estruturados por baixo dele.</div>
+      </div>
+
+      <div class="case">
+        <div class="case-top">
+          <span class="case-no">CASE 04</span>
+          <span class="case-org">Folha de S.Paulo</span>
+          <span class="case-role en">IT Coordinator</span>
+          <span class="case-role pt" hidden>Coordenador de TI</span>
+        </div>
+        <div class="case-body en"><span class="log-tag">ASSESSMENT</span>Subject directed the virtualization migration from XEN to VMware and the redesign of the web portals and mobile apps built on top of it. <span class="log-tag">CONFIRMED</span>Infrastructure held through two of Brazil's highest-traffic events on record: the 2014 general elections and FIFA World Cup coverage.</div>
+        <div class="case-body pt" hidden><span class="log-tag">AVALIAÇÃO</span>Sujeito dirigiu a migração de virtualização de XEN para VMware e o redesenho dos portais web e aplicativos móveis construídos sobre ela. <span class="log-tag">CONFIRMADO</span>Infraestrutura resistiu a dois dos eventos de maior tráfego já registrados no Brasil: as eleições gerais de 2014 e a cobertura da Copa do Mundo FIFA.</div>
+      </div>
+
+      <div class="case">
+        <div class="case-top">
+          <span class="case-no">CASE 05</span>
+          <span class="case-org">Estadão</span>
+          <span class="case-role en">VMware Specialist &amp; Sr. Linux Consultant</span>
+          <span class="case-role pt" hidden>Especialista VMware &amp; Consultor Sênior Linux</span>
+        </div>
+        <div class="case-body en"><span class="log-tag">ASSESSMENT</span>Subject consolidated physical servers onto VMware vSphere backed by HP P4000 iSCSI storage. <span class="log-tag">DOCUMENTED</span>High availability built into the stack via Varnish load balancing with Akamai CDN in front of it.</div>
+        <div class="case-body pt" hidden><span class="log-tag">AVALIAÇÃO</span>Sujeito consolidou servidores físicos em VMware vSphere com storage HP P4000 iSCSI. <span class="log-tag">DOCUMENTADO</span>Alta disponibilidade construída na pilha via load balancing Varnish com CDN Akamai na frente.</div>
+      </div>
+
+      <div class="case">
+        <div class="case-top">
+          <span class="case-no">CASE 06</span>
+          <span class="case-org">Sterling Commerce</span>
+          <span class="case-role en">GIS &amp; Unix Senior Consultant</span>
+          <span class="case-role pt" hidden>Consultor Sênior GIS &amp; Unix</span>
+        </div>
+        <div class="case-body en"><span class="log-tag">ASSESSMENT</span>Subject deployed critical file-exchange infrastructure for Itaú, HSBC, Banco Votorantim, and CEMIG. <span class="log-tag">DOCUMENTED</span>High-availability Linux, Unix, and Solaris environments architected to bank-grade tolerances.</div>
+        <div class="case-body pt" hidden><span class="log-tag">AVALIAÇÃO</span>Sujeito implantou infraestrutura crítica de troca de arquivos para Itaú, HSBC, Banco Votorantim e CEMIG. <span class="log-tag">DOCUMENTADO</span>Ambientes de alta disponibilidade em Linux, Unix e Solaris arquitetados para tolerâncias de nível bancário.</div>
+      </div>
+
+      <div class="case">
+        <div class="case-top">
+          <span class="case-no">CASE 07</span>
+          <span class="case-org">Interdotnet</span>
+          <span class="case-role en">Linux Analyst</span>
+          <span class="case-role pt" hidden>Analista Linux</span>
+        </div>
+        <div class="case-body en"><span class="log-tag">ASSESSMENT</span>Subject managed the internal network and migrated the server fleet from Windows to Linux. <span class="log-tag">CONFIRMED</span>SLA-backed support held for dedicated-link clients throughout the transition.</div>
+        <div class="case-body pt" hidden><span class="log-tag">AVALIAÇÃO</span>Sujeito gerenciou a rede interna e migrou o parque de servidores de Windows para Linux. <span class="log-tag">CONFIRMADO</span>Suporte com SLA mantido para clientes de link dedicado durante toda a transição.</div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ── TRAINING & CREDENTIALS ── -->
+  <section class="dossier-section" id="training">
+    <div class="sec-head">
+      <span class="sec-num">04</span>
+      <span class="sec-title"><span class="en">Training &amp; Credentials</span><span class="pt" hidden>Treinamento &amp; Credenciais</span></span>
+      <span class="sec-rule"></span>
+    </div>
+    <div class="tri-grid">
+      <div>
+        <div class="tri-label en">Training Records</div>
+        <div class="tri-label pt" hidden>Registros de Treinamento</div>
+        <div class="tri-item en">Bachelor's in Computer Engineering</div>
+        <div class="tri-item pt" hidden>Bacharelado em Engenharia da Computação</div>
+        <div class="tri-item en">Intensive English Program <span class="sub">Toronto, Canada</span></div>
+        <div class="tri-item pt" hidden>Programa Intensivo de Inglês <span class="sub">Toronto, Canadá</span></div>
+        <div class="tri-item en">Technical Degree in Data Processing</div>
+        <div class="tri-item pt" hidden>Técnico em Processamento de Dados</div>
+      </div>
+      <div>
+        <div class="tri-label en">Bureau Certifications</div>
+        <div class="tri-label pt" hidden>Certificações da Corporação</div>
+        <div class="tri-item en">Cybersecurity Training</div>
+        <div class="tri-item pt" hidden>Formação Cibersegurança</div>
+        <div class="tri-item en">Offensive Security Training</div>
+        <div class="tri-item pt" hidden>Formação Segurança Ofensiva</div>
+        <div class="tri-item en">Defensive Security Training</div>
+        <div class="tri-item pt" hidden>Formação Segurança Defensiva</div>
+        <div class="tri-item en">AWS SQS: Messaging &amp; System Decoupling</div>
+        <div class="tri-item pt" hidden>AWS SQS: Mensageria e Desacoplamento de Sistemas</div>
+        <div class="tri-item en">Leadership: Mission and Purpose</div>
+        <div class="tri-item pt" hidden>Liderança: Missão e Propósito</div>
+        <div class="tri-item en">IT Governance: Service Demand Management</div>
+        <div class="tri-item pt" hidden>Governança de TI: Gestão de Demandas de Serviços</div>
+      </div>
+      <div>
+        <div class="tri-label en">Linguistic Assessment</div>
+        <div class="tri-label pt" hidden>Avaliação Linguística</div>
+        <div class="tri-item en">Portuguese <span class="sub">Native</span></div>
+        <div class="tri-item pt" hidden>Português <span class="sub">Nativo</span></div>
+        <div class="tri-item en">English <span class="sub">B2 · Advanced · Certified by Lingopass · ID <span class="redact" title="1673770441JM">1673770441JM</span></span></div>
+        <div class="tri-item pt" hidden>Inglês <span class="sub">B2 · Avançado · Certificado pela Lingopass · ID <span class="redact" title="1673770441JM">1673770441JM</span></span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── ARTIFACT LOCKER ── -->
+  <section class="dossier-section" id="locker">
+    <div class="sec-head">
+      <span class="sec-num">05</span>
+      <span class="sec-title"><span class="en">Artifact Locker</span><span class="pt" hidden>Cofre de Artefatos</span></span>
+      <span class="sec-rule"></span>
+    </div>
+    <p class="sec-intro en"><span class="log-tag">NOTE</span>Objects and side projects recovered from the subject during routine review. Not all of them officially sanctioned; all of them independently verifiable.</p>
+    <p class="sec-intro pt" hidden><span class="log-tag">NOTA</span>Objetos e projetos paralelos recuperados do sujeito durante revisão de rotina. Nem todos oficialmente sancionados; todos independentemente verificáveis.</p>
+    <div class="locker-grid">
+
+      <div class="artifact">
+        <div class="art-code">ARTIFACT 001</div>
+        <div class="art-title">ORUAM BSS</div>
+        <div class="art-body en"><span class="log-tag">OBSERVED</span>Custom ESP32-S3 firmware turning a M5Cardputer ADV into a pocket reconnaissance instrument — no Linux, no SBC, pure embedded C++. WiFi scanning already shipped; beacon sniffing, deauth detection, and a full offensive/defensive module stack still in the pipeline.</div>
+        <div class="art-body pt" hidden><span class="log-tag">OBSERVADO</span>Firmware personalizado para ESP32-S3 que transforma um M5Cardputer ADV em um instrumento de reconhecimento de bolso — sem Linux, sem SBC, C++ embarcado puro. Varredura WiFi já funcional; sniffing de beacon, detecção de deauth e uma pilha completa de módulos ofensivos/defensivos ainda no pipeline.</div>
+        <a class="art-link" href="https://github.com/juliomauro/oruam-BSS" target="_blank">⌥ GITHUB REPO</a>
+      </div>
+
+      <div class="artifact">
+        <div class="art-code">ARTIFACT 002</div>
+        <div class="art-title">MeshCore Palm</div>
+        <div class="art-body en"><span class="log-tag">OBSERVED</span>A MeshCore LoRa mesh client running on a Motorola 68K-era Palm IIIe, bridged to a Heltec V3 LoRa node over an RS-232 HotSync cradle and a MAX3232 level shifter. No internet, no cloud, no Bluetooth — 1990s hardware pulled into a modern off-grid mesh, built from scratch in C for Palm OS 3.1.</div>
+        <div class="art-body pt" hidden><span class="log-tag">OBSERVADO</span>Um cliente de mesh LoRa MeshCore rodando em um Palm IIIe da era Motorola 68K, conectado a um nó LoRa Heltec V3 via cradle HotSync RS-232 e um conversor de nível MAX3232. Sem internet, sem nuvem, sem Bluetooth — hardware dos anos 90 puxado para dentro de uma mesh off-grid moderna, construído do zero em C para o Palm OS 3.1.</div>
+        <a class="art-link" href="https://github.com/juliomauro/meshcore-palmos" target="_blank">⌥ GITHUB REPO</a>
+      </div>
+
+      <div class="artifact">
+        <div class="art-code">ARTIFACT 003</div>
+        <div class="art-title">MeshCore Brasil</div>
+        <div class="art-body en"><span class="log-tag">OBSERVED</span>Active build-out of a decentralized, fully off-grid LoRa mesh network across São Paulo state — Santo André, Jundiaí, Sorocaba, Campinas — running on solar-charged nodes with zero dependency on telecom infrastructure.</div>
+        <div class="art-body pt" hidden><span class="log-tag">OBSERVADO</span>Construção ativa de uma rede mesh LoRa descentralizada e totalmente off-grid pelo interior de São Paulo — Santo André, Jundiaí, Sorocaba, Campinas — rodando em nós alimentados por energia solar, sem qualquer dependência de infraestrutura de telecom.</div>
+        <a class="art-link" href="/writing/#meshcore">⌥ FIELD NOTES</a>
+      </div>
+
+      <div class="artifact">
+        <div class="art-code">ARTIFACT 004</div>
+        <div class="art-title">🍅 Pomodoro</div>
+        <div class="art-body en"><span class="log-tag">OBSERVED</span>Dependency-free terminal Pomodoro timer for macOS and Linux, auto-detecting the OS for native notifications and audio, with configurable work/break cycles and a focus-time summary on exit.</div>
+        <div class="art-body pt" hidden><span class="log-tag">OBSERVADO</span>Timer Pomodoro de terminal para macOS e Linux sem dependências externas, detectando o sistema operacional automaticamente para notificações e áudio nativos, com ciclos de trabalho/pausa configuráveis e resumo do tempo de foco ao sair.</div>
+        <a class="art-link" href="https://github.com/juliomauro/pomodoro" target="_blank">⌥ GITHUB REPO</a>
+      </div>
+
+      <div class="artifact">
+        <div class="art-code">ARTIFACT 005</div>
+        <div class="art-title">HidePWPush</div>
+        <div class="art-body en"><span class="log-tag">OBSERVED</span>Secure CLI wrapper around PWPush for one-time, expiring password URLs — the secret travels as a JSON body over stdin, never as a process argument, so it doesn't leak to anyone watching <span class="redact" title="ps aux">ps aux</span>.</div>
+        <div class="art-body pt" hidden><span class="log-tag">OBSERVADO</span>Wrapper CLI seguro para o PWPush, gerando URLs de senha de uso único e prazo determinado — o segredo viaja como corpo JSON via stdin, nunca como argumento de processo, então não vaza para quem estiver observando <span class="redact" title="ps aux">ps aux</span>.</div>
+        <a class="art-link" href="https://github.com/juliomauro/HidePWPushPassword" target="_blank">⌥ GITHUB REPO</a>
+      </div>
+
+      <div class="artifact">
+        <div class="art-code">ARTIFACT 006</div>
+        <div class="art-title">Sec Writeups</div>
+        <div class="art-body en"><span class="log-tag">OBSERVED</span>A running case file of real exploitation chains — Linux privilege escalation, cloud IAM abuse, container escape, Kubernetes RBAC, lateral movement — each documented scenario-to-root-cause. No CVE required, just real misconfigurations.</div>
+        <div class="art-body pt" hidden><span class="log-tag">OBSERVADO</span>Um dossiê contínuo de cadeias de exploração reais — escalada de privilégios em Linux, abuso de IAM em nuvem, escape de container, RBAC do Kubernetes, movimentação lateral — cada cenário documentado do início até a causa raiz. Sem depender de CVE, só configurações erradas reais.</div>
+        <a class="art-link" href="https://github.com/juliomauro/sec-writeups" target="_blank">⌥ GITHUB REPO</a>
+      </div>
+
+      <div class="artifact">
+        <div class="art-code">ARTIFACT 007</div>
+        <div class="art-title">Disconecta</div>
+        <div class="art-body en"><span class="log-tag">NOTED</span>Contributing author since 2019 at a Brazilian classic/progressive rock portal, specializing in Italian Progressive Rock — author of the book <em>Rock Progressivo Italiano</em> and co-host of the Redação Disconecta podcast.</div>
+        <div class="art-body pt" hidden><span class="log-tag">REGISTRADO</span>Autor colaborador desde 2019 em um portal brasileiro de rock clássico e progressivo, especialista em Rock Progressivo Italiano — autor do livro <em>Rock Progressivo Italiano</em> e co-apresentador do podcast Redação Disconecta.</div>
+      </div>
+
+      <div class="artifact">
+        <div class="art-code">ARTIFACT 008</div>
+        <div class="art-title">Wikimedia</div>
+        <div class="art-body en"><span class="log-tag">NOTED</span>Volunteer editor at the Wikimedia Foundation since 2014 — article review, content editing, and PT↔EN translation work in service of the encyclopedia's neutrality and accuracy.</div>
+        <div class="art-body pt" hidden><span class="log-tag">REGISTRADO</span>Editor voluntário na Wikimedia Foundation desde 2014 — revisão de artigos, edição de conteúdo e tradução PT↔EN a serviço da neutralidade e precisão da enciclopédia.</div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ── OPEN CASE FILES ── -->
+  <section class="dossier-section" id="files">
+    <div class="sec-head">
+      <span class="sec-num">06</span>
+      <span class="sec-title"><span class="en">Open Case Files</span><span class="pt" hidden>Arquivos Abertos</span></span>
+      <span class="sec-rule"></span>
+    </div>
+    <p class="sec-intro en"><span class="log-tag">NOTE</span>Public field files, declassified by the subject himself. Each documents a full exploitation chain, from reconnaissance to root cause, with no step omitted.</p>
+    <p class="sec-intro pt" hidden><span class="log-tag">NOTA</span>Arquivos de campo públicos, desclassificados pelo próprio sujeito. Cada um documenta uma cadeia completa de exploração, do reconhecimento até a causa raiz, sem nenhuma etapa omitida.</p>
+    <div class="file-list">
+
+      <a class="file-row" href="/writing/#misantropia">
+        <span class="file-tag">Security</span>
+        <span class="file-main">
+          <span class="file-title en">The &quot;Misantropia&quot; Incident: Brazil's National Alert System Failure</span>
+          <span class="file-title pt" hidden>O Incidente &quot;Misantropia&quot;: A Falha no Sistema Nacional de Alertas</span>
+          <span class="file-desc en">How a teenager with five-year-old leaked credentials shut down Brazil's national emergency alert system.</span>
+          <span class="file-desc pt" hidden>Como um adolescente com credenciais vazadas há cinco anos derrubou o sistema nacional de alertas de emergência do Brasil.</span>
+        </span>
+        <span class="file-arrow">→</span>
+      </a>
+
+      <a class="file-row" href="/writing/#container">
+        <span class="file-tag">Cloud · IAM</span>
+        <span class="file-main">
+          <span class="file-title en">Your Container's Identity Is Worth More Than Root</span>
+          <span class="file-title pt" hidden>A Identidade do Seu Container Vale Mais Que Root</span>
+          <span class="file-desc en">How a non-root container becomes the pivot point for cross-account IAM escalation via the metadata endpoint.</span>
+          <span class="file-desc pt" hidden>Como um container sem root se torna o ponto de pivot para escalada IAM entre contas, via endpoint de metadados.</span>
+        </span>
+        <span class="file-arrow">→</span>
+      </a>
+
+      <a class="file-row" href="/writing/#wildcard">
+        <span class="file-tag">Cloud · IAM</span>
+        <span class="file-main">
+          <span class="file-title en">One Wildcard in a Trust Policy</span>
+          <span class="file-title pt" hidden>Um Wildcard em uma Trust Policy</span>
+          <span class="file-desc en">How StringLike with a glob pattern turns a controlled role assumption into an open path.</span>
+          <span class="file-desc pt" hidden>Como StringLike com padrão glob transforma um assume role controlado em um caminho aberto.</span>
+        </span>
+        <span class="file-arrow">→</span>
+      </a>
+
+      <a class="file-row" href="/writing/#header">
+        <span class="file-tag">Linux · Web</span>
+        <span class="file-main">
+          <span class="file-title en">The Header That Opened the Network</span>
+          <span class="file-title pt" hidden>O Header Que Abriu a Rede</span>
+          <span class="file-desc en">Why X-Forwarded-For should never be used for access control at the edge.</span>
+          <span class="file-desc pt" hidden>Por que X-Forwarded-For nunca deve ser usado para controle de acesso na borda.</span>
+        </span>
+        <span class="file-arrow">→</span>
+      </a>
+
+      <a class="file-row" href="/writing/#systemd">
+        <span class="file-tag">Linux</span>
+        <span class="file-main">
+          <span class="file-title en">systemd as an Attack Surface</span>
+          <span class="file-title pt" hidden>systemd como Superfície de Ataque</span>
+          <span class="file-desc en">Privilege escalation without a CVE — just a timer and a writable directory.</span>
+          <span class="file-desc pt" hidden>Escalada de privilégios sem CVE — apenas um timer e um diretório com permissão de escrita.</span>
+        </span>
+        <span class="file-arrow">→</span>
+      </a>
+
+      <a class="file-row" href="/writing/#rbac">
+        <span class="file-tag">Kubernetes</span>
+        <span class="file-main">
+          <span class="file-title en">RBAC: When No Single Permission Seems Critical</span>
+          <span class="file-title pt" hidden>RBAC: Quando Nenhuma Permissão Parece Crítica Sozinha</span>
+          <span class="file-desc en">Why Kubernetes RBAC must be reviewed as a permission graph, not individual rules.</span>
+          <span class="file-desc pt" hidden>Por que o RBAC do Kubernetes deve ser revisado como um grafo de permissões, não como regras isoladas.</span>
+        </span>
+        <span class="file-arrow">→</span>
+      </a>
+
+      <a class="file-row" href="/writing/#meshcore">
+        <span class="file-tag">Networking</span>
+        <span class="file-main">
+          <span class="file-title en">MeshCore Brazil: Decentralized Communication Without Infrastructure</span>
+          <span class="file-title pt" hidden>MeshCore Brasil: Comunicação Descentralizada Sem Infraestrutura</span>
+          <span class="file-desc en">How LoRa radios enable community-driven communication over dozens of kilometers, off-grid.</span>
+          <span class="file-desc pt" hidden>Como rádios LoRa permitem comunicação comunitária por dezenas de quilômetros, fora da rede.</span>
+        </span>
+        <span class="file-arrow">→</span>
+      </a>
+
+      <a class="file-row" href="/writing/#appearances">
+        <span class="file-tag">Security</span>
+        <span class="file-main">
+          <span class="file-title en">The Hidden Danger of Judging by Appearances</span>
+          <span class="file-title pt" hidden>O Perigo Oculto de Julgar pela Aparência</span>
+          <span class="file-desc en">Why trusting the &quot;packaging&quot; over evidence hands the attacker a map of your weakest point.</span>
+          <span class="file-desc pt" hidden>Por que confiar na &quot;embalagem&quot; em vez de evidências entrega ao atacante o mapa do seu ponto mais fraco.</span>
+        </span>
+        <span class="file-arrow">→</span>
+      </a>
+
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="sign-off en">End of file. Everything above is a matter of public record — nothing was invented for the purposes of this dossier.</div>
+  <div class="sign-off pt" hidden>Fim do arquivo. Tudo acima é de registro público — nada foi inventado para os fins deste dossiê.</div>
+  <a href="/">↩ <span class="en">return to known reality</span><span class="pt" hidden>voltar à realidade conhecida</span></a>
+</footer>
+
+<script>
+(function() {
+  // tap-to-reveal redacted text (hover doesn't exist on touch)
+  document.querySelectorAll('.redact').forEach(function(el) {
+    el.addEventListener('click', function() { el.classList.toggle('revealed'); });
+  });
+
+  // "I WANT TO BELIEVE" keyboard easter egg — toggles the real theme audio
+  var themeAudio = document.getElementById('theme-audio');
+  var BELIEVE = 'IWANTTOBELIEVE';
+  var BELIEVE_BUF = '';
+  function fadeAudio(target, ms) {
+    var start = themeAudio.volume, t0 = performance.now();
+    (function step(t) {
+      var p = Math.min(1, (t - t0) / ms);
+      themeAudio.volume = start + (target - start) * p;
+      if (p < 1) requestAnimationFrame(step);
+    })(t0);
+  }
+  function toggleThemeAudio() {
+    if (themeAudio.paused) {
+      themeAudio.currentTime = 0;
+      themeAudio.volume = 0;
+      themeAudio.play();
+      fadeAudio(0.7, 1500);
+    } else {
+      fadeAudio(0, 600);
+      setTimeout(function() { themeAudio.pause(); }, 650);
+    }
+  }
+  window.addEventListener('keydown', function(e) {
+    if (e.key.length !== 1) return;
+    BELIEVE_BUF = (BELIEVE_BUF + e.key.toUpperCase()).slice(-BELIEVE.length);
+    if (BELIEVE_BUF === BELIEVE) { BELIEVE_BUF = ''; toggleThemeAudio(); }
+  });
+
+  // spotlight follows cursor
+  var spot = document.getElementById('spot');
+  window.addEventListener('pointermove', function(e) {
+    spot.style.setProperty('--x', e.clientX + 'px');
+    spot.style.setProperty('--y', e.clientY + 'px');
+  }, { passive: true });
+
+  // fake ops timestamp, ticking
+  var ts = document.getElementById('tstamp');
+  function pad(n) { return String(n).padStart(2, '0'); }
+  function tick() {
+    var d = new Date();
+    ts.textContent = d.getFullYear() + '.' + pad(d.getMonth()+1) + '.' + pad(d.getDate())
+      + ' — ' + pad(d.getHours()) + ':' + pad(d.getMinutes()) + ':' + pad(d.getSeconds()) + 'Z';
+  }
+  tick(); setInterval(tick, 1000);
+
+  // typewriter briefing
+  var briefingText = {
+    en: 'BRIEFING — What follows is the complete field file on subject ORUAM, compiled from operational records. No redactions withheld out of courtesy. Proceed at your own discretion.',
+    pt: 'BRIEFING — O que segue é o arquivo de campo completo sobre o sujeito ORUAM, compilado a partir de registros operacionais. Nenhuma redação foi retida por cortesia. Prossiga por sua conta e risco.'
+  };
+  var briefing = document.getElementById('briefing');
+  var cursor = briefing.querySelector('.cursor');
+  var typeTimer = null;
+  function typeBriefing(lang) {
+    if (typeTimer) clearTimeout(typeTimer);
+    Array.from(briefing.childNodes).forEach(function(n) { if (n !== cursor) n.remove(); });
+    var text = briefingText[lang] || briefingText.en;
+    var i = 0;
+    function step() {
+      if (i < text.length) {
+        cursor.insertAdjacentText('beforebegin', text[i]);
+        i++;
+        typeTimer = setTimeout(step, 14 + Math.random() * 28);
+      }
+    }
+    step();
+  }
+
+  // language toggle
+  var langBtn = document.getElementById('lang-btn');
+  function setLang(lang) {
+    document.querySelectorAll('.en').forEach(function(el) { el.hidden = (lang !== 'en'); });
+    document.querySelectorAll('.pt').forEach(function(el) { el.hidden = (lang !== 'pt'); });
+    langBtn.textContent = lang === 'en' ? 'PT-BR' : 'ENGLISH';
+    document.documentElement.lang = lang;
+    localStorage.setItem('lang', lang);
+    typeBriefing(lang);
+  }
+  window.toggleLang = function() {
+    var cur = localStorage.getItem('lang') === 'pt' ? 'pt' : 'en';
+    setLang(cur === 'en' ? 'pt' : 'en');
+  };
+  var initial = localStorage.getItem('lang');
+  setLang(initial === 'pt' ? 'pt' : 'en');
+})();
+</script>
+</body>
+</html>
