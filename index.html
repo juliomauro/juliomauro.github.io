@@ -1115,6 +1115,7 @@ body.piqad-active [data-i18n] {
           <a href="https://linkedin.com/in/juliomauro" target="_blank" class="link-pill">⌥ LinkedIn</a>
           <a href="https://t.me/juliomauro" target="_blank" class="link-pill">⌥ Telegram</a>
           <a href="/pgp/juliomauro.asc" target="_blank" class="link-pill" title="ED11 FB06 674E 51FD 0F6D  220D 6AD4 AB5D B66D 1EB5">⌥ PGP Key</a>
+          <a href="/cv/Julio-Mauro-CV-EN.pdf" target="_blank" id="cv-link" class="link-pill" data-i18n="link-cv">⌥ CV (PDF)</a>
         </div>
         <div class="pgp-fingerprint">ED11 FB06 674E 51FD 0F6D&nbsp; 220D 6AD4 AB5D B66D 1EB5</div>
       </div>
@@ -1482,6 +1483,7 @@ const i18n = {
     'lang-en-name': 'English',
     'lang-en-level': 'B2 · Advanced',
     'lang-en-cert': 'Certified by Lingopass · ID: 1673770441JM',
+    'link-cv': '⌥ CV (PDF)',
     'footer-copy': '&gt; 2026_',
     'hint-1': '// static on the line_',
     'hint-2': '// some codes never age — four letters from a very old shooter',
@@ -1555,6 +1557,7 @@ const i18n = {
     'lang-en-name': 'Inglês',
     'lang-en-level': 'B2 · Avançado',
     'lang-en-cert': 'Certificado pela Lingopass · ID: 1673770441JM',
+    'link-cv': '⌥ Currículo (PDF)',
     'footer-copy': '&gt; 2026_',
     'hint-1': '// estática na linha_',
     'hint-2': '// alguns códigos nunca envelhecem — quatro letras de um jogo de tiro bem antigo',
@@ -1684,6 +1687,8 @@ function applyLang(lang) {
     document.body.classList.remove('piqad-active');
   }
   if (i18n[lang]._title) document.title = i18n[lang]._title;
+  const cvLink = document.getElementById('cv-link');
+  if (cvLink) cvLink.href = lang === 'pt' ? '/cv/Julio-Mauro-CV-PT.pdf' : '/cv/Julio-Mauro-CV-EN.pdf';
   const btn = document.getElementById('lang-btn');
   if (btn) btn.textContent = lang === 'en' ? '◈ PT-BR' : lang === 'pt' ? '◈ Klingon' : '◈ English';
   localStorage.setItem('lang', lang);
