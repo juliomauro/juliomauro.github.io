@@ -817,6 +817,18 @@ footer {
   letter-spacing: 2px;
 }
 
+.footer-static {
+  padding: 4px 0 24px;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10.5px;
+  line-height: 2;
+  color: var(--text-dim);
+  opacity: 0.3;
+  transition: opacity 0.4s ease;
+}
+.footer-static:hover { opacity: 0.75; }
+.footer-static div { white-space: pre-wrap; }
+
 /* ── ANIMATIONS ── */
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(8px); }
@@ -922,6 +934,31 @@ body.piqad-active [data-i18n] {
   animation: mcur 0.7s step-end infinite;
 }
 @keyframes mcur { 50% { opacity: 0; } }
+
+/* ── X-FILES TRANSITION ── */
+#xfiles-transition {
+  position: fixed; inset: 0; z-index: 900;
+  background: #000;
+  display: none; align-items: center; justify-content: center;
+  opacity: 0; transition: opacity 0.12s ease;
+  pointer-events: none;
+}
+#xfiles-transition.active { display: flex; opacity: 1; pointer-events: all; }
+#xfiles-static {
+  position: absolute; inset: -50px; opacity: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  mix-blend-mode: screen;
+  transition: opacity 0.05s linear;
+}
+#xfiles-transition-text {
+  position: relative; z-index: 1;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: clamp(13px, 2.4vw, 18px);
+  letter-spacing: 4px; text-transform: uppercase;
+  color: #b3121a;
+  text-shadow: 0 0 10px rgba(179,18,26,0.8), 0 0 26px rgba(179,18,26,0.4);
+  opacity: 0; transition: opacity 0.15s ease;
+}
 
 /* ── CRT DOOM MONITOR ── */
 #doom-overlay {
@@ -1033,6 +1070,7 @@ body.piqad-active [data-i18n] {
   <div id="matrix-msg-text"></div>
 </div>
 <div id="godmode-overlay"><div id="godmode-text"></div></div>
+<div id="xfiles-transition"><div id="xfiles-static"></div><div id="xfiles-transition-text"></div></div>
 <div id="doom-overlay">
   <div id="crt-monitor">
     <button id="doom-close" onclick="closeDoom()">✕</button>
@@ -1308,6 +1346,16 @@ body.piqad-active [data-i18n] {
     </div>
   </section>
 
+  <div class="footer-static">
+    <div data-i18n="hint-1">// static on the line_</div>
+    <div data-i18n="hint-2">// some codes never age — four letters from a very old shooter</div>
+    <div data-i18n="hint-3">// ...its twin carries every weapon</div>
+    <div data-i18n="hint-4">// say what you are, or where you want to go</div>
+    <div data-i18n="hint-5">// follow the white rabbit, or just say his name</div>
+    <div data-i18n="hint-6">// the truth has a folder. type its name.</div>
+    <div data-i18n="hint-7">// tap the name like you mean it. five times.</div>
+  </div>
+
   <!-- FOOTER -->
   <footer>
     <div class="footer-sig">ORUAM.CLOUD</div>
@@ -1423,6 +1471,13 @@ const i18n = {
     'lang-en-level': 'B2 · Advanced',
     'lang-en-cert': 'Certified by Lingopass · ID: 1673770441JM',
     'footer-copy': '&gt; 2026_',
+    'hint-1': '// static on the line_',
+    'hint-2': '// some codes never age — four letters from a very old shooter',
+    'hint-3': '// ...its twin carries every weapon',
+    'hint-4': '// say what you are, or where you want to go',
+    'hint-5': '// follow the white rabbit, or just say his name',
+    'hint-6': '// the truth has a folder. type its name.',
+    'hint-7': '// tap the name like you mean it. five times.',
   },
   pt: {
     '_title': 'Julio Mauro — Segurança de TI & Infraestrutura',
@@ -1489,6 +1544,13 @@ const i18n = {
     'lang-en-level': 'B2 · Avançado',
     'lang-en-cert': 'Certificado pela Lingopass · ID: 1673770441JM',
     'footer-copy': '&gt; 2026_',
+    'hint-1': '// estática na linha_',
+    'hint-2': '// alguns códigos nunca envelhecem — quatro letras de um jogo de tiro bem antigo',
+    'hint-3': '// ...seu gêmeo carrega todas as armas',
+    'hint-4': '// diga o que você é, ou pra onde quer ir',
+    'hint-5': '// siga o coelho branco, ou só diga o nome dele',
+    'hint-6': '// a verdade tem uma pasta. digite o nome dela.',
+    'hint-7': '// toque no nome como se fosse de verdade. cinco vezes.',
   },
   tlh: {
     '_title': 'Julio Mauro — tlhIngan De\'wI\' QaD SuvwI\'',
@@ -1711,7 +1773,7 @@ function toggleTheme() {
     if (TERMINAL_BUF === 'TERMINAL') { TERMINAL_BUF = ''; window.location.href = '/terminal/'; }
     if (MATRIX_BUF   === 'MATRIX')   { MATRIX_BUF   = ''; NEO_BUF = ''; showMatrixMsg(); }
     if (NEO_BUF      === 'NEO')      { NEO_BUF      = ''; MATRIX_BUF = ''; showMatrixMsg(); }
-    if (XFILES_BUF   === 'XFILES')   { XFILES_BUF   = ''; window.location.href = '/xfiles/'; }
+    if (XFILES_BUF   === 'XFILES')   { XFILES_BUF   = ''; xfilesTransition(); }
     if (e.key === 'Escape') {
       var doomOverlay = document.getElementById('doom-overlay');
       if (doomOverlay && doomOverlay.classList.contains('active')) closeDoom();
@@ -1760,6 +1822,33 @@ function toggleTheme() {
     });
   }
 })();
+
+function xfilesTransition() {
+  var overlay  = document.getElementById('xfiles-transition');
+  var staticEl = document.getElementById('xfiles-static');
+  var textEl   = document.getElementById('xfiles-transition-text');
+  textEl.textContent = '';
+  textEl.style.opacity = 0;
+  staticEl.style.opacity = 0;
+  overlay.classList.add('active');
+
+  // interference bursts — irregular flicker, like a channel slowly losing signal
+  var t = 0;
+  [0.6, 0.15, 0.75, 0.1, 0.85, 0.2, 0.9, 0.3, 0.8].forEach(function(level, i) {
+    t += 140 + (i % 3) * 70;
+    setTimeout(function() { staticEl.style.opacity = level; }, t);
+  });
+
+  setTimeout(function() {
+    staticEl.style.opacity = 0.4;
+    textEl.textContent = 'SIGNAL ACQUIRED';
+    textEl.style.opacity = 1;
+  }, t + 500);
+
+  setTimeout(function() {
+    window.location.href = '/xfiles/';
+  }, t + 1900);
+}
 
 function openDoom() {
   var overlay  = document.getElementById('doom-overlay');
