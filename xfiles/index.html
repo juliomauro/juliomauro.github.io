@@ -294,10 +294,30 @@ footer a:hover { color: #b3121a; border-color: #b3121a; }
   .file-row { flex-direction: column; gap: 4px; }
   .file-tag { min-width: 0; }
 }
+
+/* ── ARRIVAL VEIL (direct visits / bookmarks / reloads) ── */
+#arrival-veil {
+  position: fixed; inset: 0; z-index: 999; background: #000;
+  display: flex; align-items: center; justify-content: center;
+  transition: opacity 0.5s ease;
+}
+#arrival-veil.hidden { opacity: 0; pointer-events: none; }
+#arrival-noise {
+  position: absolute; inset: -50px; opacity: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  mix-blend-mode: screen; transition: opacity 0.05s linear;
+}
+#arrival-text {
+  position: relative; z-index: 1;
+  font-family: 'Oswald', sans-serif; font-size: 13px; letter-spacing: 4px; text-transform: uppercase;
+  color: #b3121a; text-shadow: 0 0 10px rgba(179,18,26,0.8), 0 0 26px rgba(179,18,26,0.4);
+  opacity: 0; transition: opacity 0.15s ease;
+}
 </style>
 </head>
 <body>
 
+<div id="arrival-veil"><div id="arrival-noise"></div><div id="arrival-text">SIGNAL ACQUIRED</div></div>
 <div id="fog"></div>
 <div id="grain"></div>
 <div id="scanlines"></div>
@@ -312,7 +332,7 @@ footer a:hover { color: #b3121a; border-color: #b3121a; }
 <main>
   <div class="mark-wrap">
     <div class="show-title">THE</div>
-    <div class="show-xfiles">O-FILES</div>
+    <div class="show-xfiles" id="show-xfiles">O-FILES</div>
     <div class="tagline">THE TRUTH IS OUT THERE</div>
     <div class="wordmark">
       <span class="en">Federal Bureau · Subject Dossier Division</span>
@@ -706,6 +726,33 @@ footer a:hover { color: #b3121a; border-color: #b3121a; }
 
 <script>
 (function() {
+  // arrival static — full effect on direct visits/bookmarks/reloads,
+  // skipped if the home page already played the transition
+  var veil  = document.getElementById('arrival-veil');
+  var noise = document.getElementById('arrival-noise');
+  var text  = document.getElementById('arrival-text');
+  var camefromTransition = sessionStorage.getItem('xfiles-transitioned') === '1';
+  sessionStorage.removeItem('xfiles-transitioned');
+
+  if (camefromTransition) {
+    veil.classList.add('hidden');
+    setTimeout(function() { veil.remove(); }, 550);
+  } else {
+    var t = 0;
+    [0.6, 0.15, 0.75, 0.1, 0.85, 0.2, 0.9].forEach(function(level, i) {
+      t += 90 + (i % 3) * 40;
+      setTimeout(function() { noise.style.opacity = level; }, t);
+    });
+    setTimeout(function() {
+      noise.style.opacity = 0.35;
+      text.style.opacity = 1;
+    }, t + 250);
+    setTimeout(function() { veil.classList.add('hidden'); }, t + 900);
+    setTimeout(function() { veil.remove(); }, t + 1450);
+  }
+})();
+
+(function() {
   // tap-to-reveal redacted text (hover doesn't exist on touch)
   document.querySelectorAll('.redact').forEach(function(el) {
     el.addEventListener('click', function() { el.classList.toggle('revealed'); });
@@ -739,6 +786,20 @@ footer a:hover { color: #b3121a; border-color: #b3121a; }
     BELIEVE_BUF = (BELIEVE_BUF + e.key.toUpperCase()).slice(-BELIEVE.length);
     if (BELIEVE_BUF === BELIEVE) { BELIEVE_BUF = ''; toggleThemeAudio(); }
   });
+
+  // 5 taps on the O-FILES mark → same toggle, for mobile
+  (function() {
+    var taps = 0, timer = null;
+    var mark = document.getElementById('show-xfiles');
+    if (!mark) return;
+    mark.addEventListener('touchend', function(e) {
+      e.preventDefault();
+      taps++;
+      clearTimeout(timer);
+      if (taps >= 5) { taps = 0; toggleThemeAudio(); return; }
+      timer = setTimeout(function() { taps = 0; }, 3000);
+    }, { passive: false });
+  })();
 
   // spotlight follows cursor
   var spot = document.getElementById('spot');

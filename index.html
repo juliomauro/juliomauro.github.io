@@ -1859,6 +1859,7 @@ function xfilesTransition() {
   }, t + 500);
 
   setTimeout(function() {
+    sessionStorage.setItem('xfiles-transitioned', '1');
     window.location.href = '/xfiles/';
   }, t + 1900);
 }
