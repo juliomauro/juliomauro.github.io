@@ -275,6 +275,16 @@ h1 {
 }
 .header-links.go { animation: fadeIn 0.5s ease 0.7s forwards; }
 
+.pgp-fingerprint {
+  margin-top: 10px;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 1px;
+  color: var(--text-dim);
+  opacity: 0;
+}
+.header-links.go + .pgp-fingerprint { animation: fadeIn 0.5s ease 0.9s forwards; }
+
 .link-pill {
   font-size: 11px;
   letter-spacing: 2px;
@@ -1104,7 +1114,9 @@ body.piqad-active [data-i18n] {
           <a href="https://github.com/juliomauro" target="_blank" class="link-pill">⌥ GitHub</a>
           <a href="https://linkedin.com/in/juliomauro" target="_blank" class="link-pill">⌥ LinkedIn</a>
           <a href="https://t.me/juliomauro" target="_blank" class="link-pill">⌥ Telegram</a>
+          <a href="/pgp/juliomauro.asc" target="_blank" class="link-pill" title="ED11 FB06 674E 51FD 0F6D  220D 6AD4 AB5D B66D 1EB5">⌥ PGP Key</a>
         </div>
+        <div class="pgp-fingerprint">ED11 FB06 674E 51FD 0F6D&nbsp; 220D 6AD4 AB5D B66D 1EB5</div>
       </div>
     </div>
   </header>
