@@ -1,0 +1,884 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Your Container's Identity Is Worth More Than Root — Julio Cesar Mauro</title>
+<meta name="description" content="How a non-root container with limited file read access becomes the pivot point for cross-account IAM escalation via the metadata endpoint and image layer history.">
+<link rel="canonical" href="https://oruam.cloud/writing/container/">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' fill='%23000308'/><text x='6' y='23' font-size='20' fill='%2300b4ff' font-family='monospace'>_</text></svg>">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://oruam.cloud/writing/container/">
+<meta property="og:title" content="Your Container's Identity Is Worth More Than Root">
+<meta property="og:description" content="How a non-root container with limited file read access becomes the pivot point for cross-account IAM escalation via the metadata endpoint and image layer history.">
+<meta property="og:image" content="https://oruam.cloud/preview.svg">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Your Container's Identity Is Worth More Than Root">
+<meta name="twitter:description" content="How a non-root container with limited file read access becomes the pivot point for cross-account IAM escalation via the metadata endpoint and image layer history.">
+<meta name="twitter:image" content="https://oruam.cloud/preview.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+<script>(function(){var t=localStorage.getItem('theme');if(t==='green'||t==='amber'||t==='light')document.documentElement.dataset.theme=t;})();</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "Your Container's Identity Is Worth More Than Root",
+  "description": "How a non-root container with limited file read access becomes the pivot point for cross-account IAM escalation via the metadata endpoint and image layer history.",
+  "author": { "@type": "Person", "name": "Julio Cesar Mauro", "alternateName": "Julio Mauro", "url": "https://oruam.cloud" },
+  "publisher": { "@type": "Person", "name": "Julio Cesar Mauro" },
+  "mainEntityOfPage": { "@type": "WebPage", "@id": "https://oruam.cloud/writing/container/" },
+  "image": "https://oruam.cloud/preview.svg",
+  "inLanguage": "en"
+}
+</script>
+<style>
+:root {
+  --bg:          #000308;
+  --surface:     #020810;
+  --border:      #003388;
+  --green:       #00b4ff;
+  --green-mid:   #0088cc;
+  --green-dim:   #00b4ff22;
+  --text:        #00bbee;
+  --text-dim:    #0088bb;
+  --white:       #cce8ff;
+  --glow:        0 0 10px #00b4ff66, 0 0 20px #00b4ff33;
+  --glow-strong: 0 0 8px #00b4ff, 0 0 20px #00b4ff88, 0 0 40px #00b4ff44;
+}
+
+[data-theme="green"] {
+  --bg:          #000300;
+  --surface:     #020b02;
+  --border:      #003300;
+  --green:       #00ff41;
+  --green-mid:   #00cc33;
+  --green-dim:   #00aa2233;
+  --text:        #00cc33;
+  --text-dim:    #006622;
+  --white:       #ccffcc;
+  --glow:        0 0 10px #00ff4166, 0 0 20px #00ff4133;
+  --glow-strong: 0 0 8px #00ff41, 0 0 20px #00ff4188, 0 0 40px #00ff4144;
+}
+[data-theme="green"] nav { background: rgba(0,3,0,0.95); }
+
+[data-theme="amber"] {
+  --bg:          #020100;
+  --surface:     #0a0500;
+  --border:      #663300;
+  --green:       #ff8c00;
+  --green-mid:   #cc6600;
+  --green-dim:   #ff8c0033;
+  --text:        #ee7700;
+  --text-dim:    #bb5500;
+  --white:       #ffe8cc;
+  --glow:        0 0 10px #ff8c0066, 0 0 20px #ff8c0033;
+  --glow-strong: 0 0 8px #ff8c00, 0 0 20px #ff8c0088, 0 0 40px #ff8c0044;
+}
+[data-theme="amber"] nav { background: rgba(2,1,0,0.95); }
+
+[data-theme="light"] {
+  --bg:          #f5f2eb;
+  --surface:     #eae6db;
+  --border:      #b0a888;
+  --green:       #1a5c3a;
+  --green-mid:   #2a7a50;
+  --green-dim:   rgba(26,92,58,0.1);
+  --text:        #1a3a28;
+  --text-dim:    #5a7a68;
+  --white:       #0a1a10;
+  --glow:        none;
+  --glow-strong: none;
+}
+[data-theme="light"] body           { background: #f5f2eb; }
+[data-theme="light"] nav            { background: rgba(245,242,235,0.95); }
+[data-theme="light"] body::after    { background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.04) 2px, rgba(0,0,0,0.04) 4px); }
+[data-theme="light"] body::before   { background: radial-gradient(ellipse at center, transparent 60%, rgba(0,0,0,0.08) 100%); }
+[data-theme="light"] h1             { animation: none; color: var(--green); text-shadow: none; }
+[data-theme="light"] #matrix-canvas { opacity: 0.035; }
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Share Tech Mono', monospace;
+  line-height: 1.7;
+  overflow-x: hidden;
+  min-height: 100vh;
+}
+
+#matrix-canvas {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  z-index: 0;
+  opacity: 0.06;
+  pointer-events: none;
+}
+
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg, transparent, transparent 2px,
+    rgba(0,0,0,0.12) 2px, rgba(0,0,0,0.12) 4px
+  );
+  pointer-events: none;
+  z-index: 999;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(ellipse at center, transparent 60%, rgba(0,0,0,0.7) 100%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.wrap {
+  position: relative;
+  z-index: 10;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 0 32px;
+}
+
+/* ── NAV ── */
+nav {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(0,3,8,0.95);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--border);
+  padding: 14px 0;
+}
+
+.nav-inner {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+}
+
+.nav-home {
+  font-family: 'Orbitron', monospace;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--green);
+  text-decoration: none;
+  text-shadow: var(--glow);
+  letter-spacing: 2px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.nav-home::before { content: '←'; }
+
+nav a.nav-link {
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text);
+  text-decoration: none;
+  transition: all 0.2s;
+}
+
+nav a.nav-link:hover {
+  color: var(--green);
+  text-shadow: var(--glow);
+}
+
+.nav-controls {
+  margin-left: auto;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.theme-toggle {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  background: none;
+  border: 1px solid var(--border);
+  padding: 4px 10px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.theme-toggle:hover {
+  color: var(--green);
+  border-color: var(--green-mid);
+  background: var(--green-dim);
+}
+
+/* ── HEADER ── */
+header {
+  padding: 64px 0 48px;
+  border-bottom: 1px solid var(--border);
+}
+
+.header-tag {
+  font-size: 11px;
+  color: var(--text-dim);
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.header-tag::before {
+  content: '';
+  width: 20px; height: 1px;
+  background: var(--green);
+  box-shadow: var(--glow);
+}
+
+h1 {
+  font-family: 'Orbitron', monospace;
+  font-size: clamp(28px, 5vw, 42px);
+  font-weight: 900;
+  color: var(--green);
+  text-shadow: var(--glow-strong);
+  letter-spacing: 2px;
+  margin-bottom: 12px;
+  animation: glitch 8s ease infinite;
+}
+
+.header-sub {
+  font-size: 14px;
+  color: var(--text-dim);
+  letter-spacing: 1px;
+}
+
+@keyframes glitch {
+  0%,100% { text-shadow: var(--glow-strong); }
+  92% { text-shadow: var(--glow-strong); }
+  93% { text-shadow: -2px 0 #ff0040, 2px 0 #00ffff; transform: translateX(-2px); }
+  94% { text-shadow: var(--glow-strong); transform: translateX(0); }
+  96% { text-shadow: 2px 0 #ff0040, -2px 0 #00ffff; transform: translateX(2px); }
+  97% { text-shadow: var(--glow-strong); transform: translateX(0); }
+}
+
+/* ── FILTER TABS ── */
+.filters {
+  display: flex;
+  gap: 8px;
+  padding: 32px 0 0;
+  flex-wrap: wrap;
+}
+
+.filter-btn {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 12px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  background: none;
+  border: 1px solid var(--border);
+  padding: 6px 16px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.filter-btn:hover,
+.filter-btn.active {
+  color: var(--green);
+  border-color: var(--green-mid);
+  background: var(--green-dim);
+  box-shadow: var(--glow);
+}
+
+/* ── ARTICLE LIST ── */
+.articles {
+  padding: 40px 0;
+}
+
+.article-item {
+  border: 1px solid var(--border);
+  background: var(--surface);
+  margin-bottom: 16px;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.2s;
+  animation: fadeUp 0.4s ease both;
+  text-decoration: none;
+  display: block;
+  color: inherit;
+  cursor: pointer;
+}
+
+.article-item::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 3px; height: 100%;
+  background: var(--green);
+  transform: scaleY(0);
+  transition: transform 0.2s;
+  transform-origin: top;
+}
+
+.article-item:hover {
+  border-color: var(--green-mid);
+  box-shadow: var(--glow);
+}
+
+.article-item:hover::before { transform: scaleY(1); }
+
+.article-inner {
+  padding: 24px 28px;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 16px;
+  align-items: center;
+}
+
+.article-meta {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 8px;
+  flex-wrap: wrap;
+}
+
+.article-tag {
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  padding: 3px 10px;
+  border: 1px solid var(--border);
+  color: var(--text-dim);
+}
+
+.article-tag.cloud      { color: #00aaff; border-color: #00aaff44; }
+.article-tag.linux      { color: #00ff41; border-color: #00ff4144; }
+.article-tag.kubernetes { color: #ffaa00; border-color: #ffaa0044; }
+.article-tag.vuln-mgmt  { color: #ff6644; border-color: #ff664444; }
+.article-tag.networking { color: #00ccff; border-color: #00ccff44; }
+.article-tag.security   { color: #ff6644; border-color: #ff664444; }
+
+.article-level {
+  font-size: 11px;
+  letter-spacing: 1px;
+  color: var(--text-dim);
+}
+
+.article-title {
+  font-family: 'Orbitron', monospace;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--green);
+  letter-spacing: 1px;
+  margin-bottom: 8px;
+  line-height: 1.3;
+}
+
+.article-desc {
+  font-size: 14px;
+  color: var(--text-dim);
+  line-height: 1.6;
+}
+
+.article-arrow {
+  font-size: 20px;
+  color: var(--green-mid);
+  opacity: 0;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+
+.article-item:hover .article-arrow {
+  opacity: 1;
+  transform: translateX(4px);
+}
+
+/* ── SECTION LABEL ── */
+.section-label {
+  font-size: 12px;
+  color: var(--text-dim);
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  margin: 40px 0 16px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.section-label::after {
+  content: '';
+  flex: 1; height: 1px;
+  background: linear-gradient(90deg, var(--border), transparent);
+}
+
+/* ── ARTICLE VIEW ── */
+#article-view {
+  display: none;
+  padding: 40px 0 80px;
+}
+
+.art-back {
+  margin-bottom: 40px;
+}
+
+.back-btn {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 12px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  background: none;
+  border: 1px solid var(--border);
+  padding: 6px 16px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.back-btn:hover {
+  color: var(--green);
+  border-color: var(--green-mid);
+  background: var(--green-dim);
+  box-shadow: var(--glow);
+}
+
+.art-body {
+  max-width: 760px;
+}
+
+.art-body h1 {
+  font-family: 'Orbitron', monospace;
+  font-size: clamp(20px, 3vw, 30px);
+  font-weight: 900;
+  color: var(--green);
+  text-shadow: var(--glow-strong);
+  letter-spacing: 1px;
+  margin: 0 0 28px;
+  animation: none;
+  line-height: 1.3;
+}
+
+.art-body h2 {
+  font-family: 'Orbitron', monospace;
+  font-size: clamp(14px, 2vw, 18px);
+  font-weight: 700;
+  color: var(--green);
+  letter-spacing: 1px;
+  margin: 40px 0 14px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+}
+
+.art-body h3 {
+  font-size: 15px;
+  color: var(--text);
+  letter-spacing: 1px;
+  margin: 28px 0 10px;
+}
+
+.art-body p {
+  font-size: 15px;
+  color: var(--white);
+  line-height: 1.85;
+  margin-bottom: 16px;
+}
+
+.art-body ul, .art-body ol {
+  margin: 0 0 16px 24px;
+}
+
+.art-body li {
+  font-size: 15px;
+  color: var(--white);
+  line-height: 1.85;
+  margin-bottom: 6px;
+}
+
+.art-body li::marker { color: var(--green-mid); }
+
+.art-body blockquote {
+  border-left: 3px solid var(--green-mid);
+  padding: 8px 20px;
+  margin: 20px 0;
+  background: var(--surface);
+  color: var(--text-dim);
+  font-size: 14px;
+}
+
+.art-body pre {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--green-mid);
+  padding: 16px 20px;
+  margin: 20px 0;
+  overflow-x: auto;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.art-body pre code {
+  color: var(--text);
+  background: none;
+  padding: 0;
+  font-family: 'Share Tech Mono', monospace;
+}
+
+.art-body code {
+  color: var(--green);
+  background: var(--green-dim);
+  padding: 2px 6px;
+  font-size: 13px;
+  font-family: 'Share Tech Mono', monospace;
+}
+
+.art-body a {
+  color: var(--green-mid);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  transition: color 0.15s;
+}
+.art-body a:hover { color: var(--green); }
+
+.art-body hr {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 36px 0;
+}
+
+.art-loading {
+  font-size: 14px;
+  color: var(--text-dim);
+  letter-spacing: 2px;
+  margin-top: 40px;
+  animation: pulse 1s ease infinite;
+}
+@keyframes pulse { 0%,100%{opacity:0.4} 50%{opacity:1} }
+
+.art-fetch-error {
+  font-size: 14px;
+  color: #884400;
+  margin-top: 40px;
+}
+
+/* ── FOOTER ── */
+footer {
+  padding: 40px 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid var(--border);
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.footer-sig {
+  font-family: 'Orbitron', monospace;
+  font-size: 13px;
+  color: var(--green);
+  text-shadow: var(--glow);
+  letter-spacing: 2px;
+}
+
+.footer-copy {
+  font-size: 11px;
+  color: var(--text-dim);
+  letter-spacing: 2px;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 640px) {
+  .wrap { padding: 0 16px; }
+  .article-inner { grid-template-columns: 1fr; }
+  .article-arrow { display: none; }
+  .nav-inner { gap: 8px; }
+  .nav-home { font-size: 10px; letter-spacing: 1px; }
+  nav a.nav-link { font-size: 10px; }
+  .theme-toggle { font-size: 9px; padding: 4px 7px; }
+}
+
+@font-face {
+  font-family: 'pIqaD';
+  src: url('/fonts/pIqaD.woff') format('woff');
+}
+body.piqad-active [data-i18n],
+body.piqad-active #article-content * {
+  font-family: 'pIqaD', monospace;
+  letter-spacing: 3px;
+}
+
+[hidden] { display: none !important; }
+</style>
+</head>
+<body>
+
+<canvas id="matrix-canvas"></canvas>
+
+<nav>
+  <div class="wrap">
+    <div class="nav-inner">
+      <a href="/" class="nav-home">ORUAM.CLOUD</a>
+      <a href="/projects/" class="nav-link"><span class="en">Projects</span><span class="pt" hidden>Projetos</span></a>
+      <a href="/writing/" class="nav-link"><span class="en">Writing</span><span class="pt" hidden>Textos</span></a>
+      <div class="nav-controls">
+        <button class="theme-toggle" id="theme-btn" onclick="toggleTheme()">◈ Green</button>
+        <button class="theme-toggle" id="lang-btn" onclick="toggleLang()">PT-BR</button>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<div class="wrap">
+  <div id="article-view" style="display:block; padding-top:40px;">
+    <div class="art-back">
+      <a class="back-btn" href="/writing/" style="display:inline-block; text-decoration:none;">
+        <span class="en">← Writing</span><span class="pt" hidden>← Textos</span>
+      </a>
+    </div>
+    <div class="article-meta" style="margin-bottom:20px;">
+      <span class="article-tag cloud">Cloud · IAM · Containers</span>
+      <span class="article-level">// Practitioner</span>
+    </div>
+    <div class="art-body en">
+<h1>Your Container's Identity Is Worth More Than Root</h1>
+<div style="height:12px"></div>
+<blockquote><strong>Category:</strong> Cloud · IAM · Containers</blockquote>
+<blockquote><strong>Level:</strong> Practitioner</blockquote>
+<div style="height:12px"></div>
+<hr>
+<div style="height:12px"></div>
+<p>There is a persistent mental model in infrastructure security that frames privilege as a binary: you either have root or you don't. In cloud environments, this model is dangerously incomplete.</p>
+<div style="height:12px"></div>
+<p>A container running as a non-root user, with no shell, no tools, and limited file read access, can still be the starting point for a full cross-account compromise — if the workload identity attached to it has the wrong permissions.</p>
+<div style="height:12px"></div>
+<h2>The Metadata Endpoint</h2>
+<div style="height:12px"></div>
+<p>Every major cloud provider exposes a metadata service at a link-local address (typically <code>169.254.169.254</code>). This endpoint is reachable from any process running on the host or inside a container, unless explicitly blocked. It serves:</p>
+<div style="height:12px"></div>
+<ul>
+<li>Instance identity documents</li>
+<li>Temporary IAM credentials</li>
+<li>User data (often contains bootstrap secrets)</li>
+</ul>
+<div style="height:12px"></div>
+<p>Querying it requires nothing more than an HTTP request:</p>
+<div style="height:12px"></div>
+<pre><code>curl http://169.254.169.254/latest/meta-data/iam/security-credentials/
+# Returns: my-app-role
+
+curl http://169.254.169.254/latest/meta-data/iam/security-credentials/my-app-role
+# Returns: AccessKeyId, SecretAccessKey, Token, Expiration</code></pre>
+<div style="height:12px"></div>
+<p>If a vulnerability in the application allows any form of outbound HTTP request or file read, this endpoint is reachable. Server-side request forgery (SSRF), path traversal, dependency vulnerabilities — any of these can be the entry point.</p>
+<div style="height:12px"></div>
+<h2>What Happens After</h2>
+<div style="height:12px"></div>
+<p>The credentials returned are temporary but fully functional AWS credentials tied to the IAM role attached to the workload. Their blast radius depends entirely on what that role is allowed to do.</p>
+<div style="height:12px"></div>
+<p>In a real exercise, a role that could not list all buckets, could not create instances, and had no obvious administrative access still allowed:</p>
+<div style="height:12px"></div>
+<ul>
+<li>Listing images in a specific ECR repository</li>
+<li>Reading objects from a specific S3 bucket</li>
+</ul>
+<div style="height:12px"></div>
+<p>That was enough. An old container image in the registry had a <code>.env</code> file baked into one of its layers. The <code>.env</code> had credentials for another service. That service had a cross-account trust relationship. The chain ended in a production account.</p>
+<div style="height:12px"></div>
+<h2>The Layer History Problem</h2>
+<div style="height:12px"></div>
+<p>Container images are built in layers. Each <code>RUN</code>, <code>COPY</code>, and <code>ADD</code> instruction creates a new layer. When a secret is added in one layer and deleted in a later layer, it is <strong>not removed from the image</strong> — it is only hidden from the final filesystem view. The layer containing the secret still exists in the image manifest and can be extracted:</p>
+<div style="height:12px"></div>
+<pre><code>docker save my-image | tar -x
+# Each layer is a tar archive — extract and inspect
+find . -name "*.env" -o -name "*.key" -o -name "credentials"</code></pre>
+<div style="height:12px"></div>
+<p>Tools like <code>trufflehog</code>, <code>dive</code>, and <code>trivy</code> can scan image history automatically.</p>
+<div style="height:12px"></div>
+<h2>Blocking the Path</h2>
+<div style="height:12px"></div>
+<p><strong>Restrict metadata access:</strong></p>
+<div style="height:12px"></div>
+<p>For AWS, enforce IMDSv2 (token-required mode) and set hop limit to 1 on the instance. This prevents containers from reaching the metadata endpoint in most configurations:</p>
+<div style="height:12px"></div>
+<pre><code>aws ec2 modify-instance-metadata-options \
+  --instance-id i-xxx \
+  --http-tokens required \
+  --http-put-response-hop-limit 1</code></pre>
+<div style="height:12px"></div>
+<p>For containers that do not need instance metadata at all, block the endpoint via network policy or iptables.</p>
+<div style="height:12px"></div>
+<p><strong>Apply least-privilege to workload roles:</strong></p>
+<div style="height:12px"></div>
+<p>The IAM role attached to a container should have exactly the permissions the application needs — nothing more. If the app reads from one S3 bucket, the role policy should name that exact bucket and only allow <code>s3:GetObject</code>.</p>
+<div style="height:12px"></div>
+<p><strong>Scan image layers before pushing:</strong></p>
+<div style="height:12px"></div>
+<p>Make image scanning part of the CI pipeline. Any image with secrets in its history should fail the build, not just be flagged.</p>
+<div style="height:12px"></div>
+<h2>The Core Insight</h2>
+<div style="height:12px"></div>
+<p>In cloud, the workload identity is often more valuable than root on the host. A container running as uid 1000 with no sudo and a read-only filesystem can still be the pivot point into a production account if the IAM role attached to it has been granted permissions that were never properly reviewed.</p>
+<div style="height:12px"></div>
+<p>The question to ask about every workload is not "what user does this container run as?" but "what can the identity attached to this workload do — and what can it reach?"</p>
+<div style="height:12px"></div>
+<hr>
+<div style="height:12px"></div>
+<p><em>Related: <a href="https://github.com/juliomauro/sec-writeups/tree/main/cases/02-container-metadata" target="_blank" rel="noopener">Case 02 — Container Metadata Abuse and IAM Escalation</a></em></p>
+<div style="height:12px"></div>
+    </div>
+    <div class="art-body pt" hidden>
+<h1>A Identidade do Seu Container Vale Mais Que Root</h1>
+<div style="height:12px"></div>
+<blockquote><strong>Categoria:</strong> Cloud · IAM · Containers</blockquote>
+<blockquote><strong>Nível:</strong> Praticante</blockquote>
+<div style="height:12px"></div>
+<hr>
+<div style="height:12px"></div>
+<p>Existe um modelo mental persistente na segurança de infraestrutura que enquadra privilégio como algo binário: ou você tem root, ou não tem. Em ambientes cloud, esse modelo é perigosamente incompleto.</p>
+<div style="height:12px"></div>
+<p>Um container rodando como usuário não-root, sem shell, sem ferramentas e com acesso limitado de leitura a arquivos, ainda pode ser o ponto de partida para um comprometimento total entre contas — se a identidade de workload associada a ele tiver as permissões erradas.</p>
+<div style="height:12px"></div>
+<h2>O Endpoint de Metadados</h2>
+<div style="height:12px"></div>
+<p>Cada grande provedor de cloud expõe um serviço de metadados em um endereço link-local (tipicamente <code>169.254.169.254</code>). Esse endpoint é acessível por qualquer processo rodando no host ou dentro de um container, a menos que seja explicitamente bloqueado. Ele fornece:</p>
+<div style="height:12px"></div>
+<ul>
+<li>Documentos de identidade da instância</li>
+<li>Credenciais IAM temporárias</li>
+<li>User data (frequentemente contém segredos de bootstrap)</li>
+</ul>
+<div style="height:12px"></div>
+<p>Consultá-lo requer apenas uma requisição HTTP:</p>
+<div style="height:12px"></div>
+<pre><code>curl http://169.254.169.254/latest/meta-data/iam/security-credentials/
+# Retorna: my-app-role
+
+curl http://169.254.169.254/latest/meta-data/iam/security-credentials/my-app-role
+# Retorna: AccessKeyId, SecretAccessKey, Token, Expiration</code></pre>
+<div style="height:12px"></div>
+<p>Se uma vulnerabilidade na aplicação permite qualquer forma de requisição HTTP de saída ou leitura de arquivo, esse endpoint é alcançável. SSRF, path traversal, vulnerabilidades em dependências — qualquer um desses pode ser o ponto de entrada.</p>
+<div style="height:12px"></div>
+<h2>O Que Acontece Depois</h2>
+<div style="height:12px"></div>
+<p>As credenciais retornadas são temporárias, mas totalmente funcionais — são credenciais AWS vinculadas à role IAM associada ao workload. O raio de blast depende inteiramente do que essa role tem permissão de fazer.</p>
+<div style="height:12px"></div>
+<p>Em um exercício real, uma role que não conseguia listar todos os buckets, não conseguia criar instâncias e não tinha acesso administrativo óbvio ainda permitiu:</p>
+<div style="height:12px"></div>
+<ul>
+<li>Listar imagens em um repositório ECR específico</li>
+<li>Ler objetos de um bucket S3 específico</li>
+</ul>
+<div style="height:12px"></div>
+<p>Isso foi suficiente. Uma imagem de container antiga no registry tinha um arquivo <code>.env</code> embutido em uma de suas camadas. O <code>.env</code> tinha credenciais para outro serviço. Esse serviço tinha uma relação de confiança cross-account. A cadeia terminou em uma conta de produção.</p>
+<div style="height:12px"></div>
+<h2>O Problema do Histórico de Camadas</h2>
+<div style="height:12px"></div>
+<p>Imagens de container são construídas em camadas. Cada instrução <code>RUN</code>, <code>COPY</code> e <code>ADD</code> cria uma nova camada. Quando um segredo é adicionado em uma camada e deletado em uma camada posterior, ele <strong>não é removido da imagem</strong> — apenas fica oculto da visão final do filesystem. A camada contendo o segredo ainda existe no manifesto da imagem e pode ser extraída:</p>
+<div style="height:12px"></div>
+<pre><code>docker save my-image | tar -x
+# Cada camada é um arquivo tar — extraia e inspecione
+find . -name "*.env" -o -name "*.key" -o -name "credentials"</code></pre>
+<div style="height:12px"></div>
+<p>Ferramentas como <code>trufflehog</code>, <code>dive</code> e <code>trivy</code> conseguem varrer o histórico da imagem automaticamente.</p>
+<div style="height:12px"></div>
+<h2>Bloqueando o Caminho</h2>
+<div style="height:12px"></div>
+<p><strong>Restringir o acesso aos metadados:</strong></p>
+<div style="height:12px"></div>
+<p>Para AWS, force o IMDSv2 (modo com token obrigatório) e defina o hop limit para 1 na instância. Isso impede que containers acessem o endpoint de metadados na maioria das configurações:</p>
+<div style="height:12px"></div>
+<pre><code>aws ec2 modify-instance-metadata-options \
+  --instance-id i-xxx \
+  --http-tokens required \
+  --http-put-response-hop-limit 1</code></pre>
+<div style="height:12px"></div>
+<p>Para containers que não precisam de metadados da instância, bloqueie o endpoint via network policy ou iptables.</p>
+<div style="height:12px"></div>
+<p><strong>Aplique least-privilege às roles de workload:</strong></p>
+<div style="height:12px"></div>
+<p>A role IAM associada a um container deve ter exatamente as permissões que a aplicação precisa — nada mais. Se o app lê de um bucket S3, a policy da role deve nomear exatamente aquele bucket e permitir apenas <code>s3:GetObject</code>.</p>
+<div style="height:12px"></div>
+<p><strong>Escaneie as camadas de imagem antes de fazer push:</strong></p>
+<div style="height:12px"></div>
+<p>Inclua o escaneamento de imagens no pipeline de CI. Qualquer imagem com segredos no histórico deve reprovar o build, não apenas ser sinalizada.</p>
+<div style="height:12px"></div>
+<h2>O Insight Principal</h2>
+<div style="height:12px"></div>
+<p>Em cloud, a identidade do workload frequentemente vale mais do que root no host. Um container rodando como uid 1000 sem sudo e com filesystem read-only ainda pode ser o ponto de pivot para uma conta de produção se a role IAM associada a ele tiver permissões que nunca foram revisadas adequadamente.</p>
+<div style="height:12px"></div>
+<p>A pergunta a se fazer sobre cada workload não é "como qual usuário esse container roda?" mas "o que a identidade associada a esse workload pode fazer — e o que ela consegue alcançar?"</p>
+<div style="height:12px"></div>
+<hr>
+<div style="height:12px"></div>
+<p><em>Relacionado: <a href="https://github.com/juliomauro/sec-writeups/tree/main/cases/02-container-metadata" target="_blank" rel="noopener">Case 02 — Container Metadata Abuse and IAM Escalation</a></em></p>
+<div style="height:12px"></div>
+    </div>
+  </div>
+
+  <footer>
+    <div class="footer-sig">ORUAM_OLIUJ</div>
+    <div class="footer-copy"><span class="en">&gt; oruam.cloud/writing · 2026_</span><span class="pt" hidden>&gt; oruam.cloud/writing · 2026_</span></div>
+  </footer>
+</div>
+
+<script>
+const canvas = document.getElementById('matrix-canvas');
+const ctx = canvas.getContext('2d');
+canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+window.addEventListener('resize', () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; init(); });
+const chars = 'アイウエオカキクケコ0123456789ABCDEF$#@%&';
+const fontSize = 16;
+let columns, drops;
+function init() { columns = Math.floor(canvas.width / fontSize); drops = Array(columns).fill(1); }
+function draw() {
+  const theme = document.documentElement.dataset.theme;
+  ctx.fillStyle = theme === 'green' ? 'rgba(0,3,0,0.04)' : theme === 'amber' ? 'rgba(2,1,0,0.04)' : theme === 'light' ? 'rgba(245,242,235,0.06)' : 'rgba(0,3,8,0.04)';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  ctx.fillStyle = theme === 'green' ? '#00ff41' : theme === 'amber' ? '#ff8c00' : theme === 'light' ? '#1a5c3a' : '#00b4ff';
+  ctx.font = fontSize + 'px Share Tech Mono';
+  for (let i = 0; i < drops.length; i++) {
+    const char = chars[Math.floor(Math.random() * chars.length)];
+    ctx.fillText(char, i * fontSize, drops[i] * fontSize);
+    if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
+    drops[i]++;
+  }
+}
+init(); setInterval(draw, 45);
+
+const themeNames = {
+  en: { green: '◈ Green', amber: '◈ Amber', blue: '◈ Blue', light: '◈ Light' },
+  pt: { green: '◈ Verde', amber: '◈ Âmbar', blue: '◈ Azul', light: '◈ Claro' },
+};
+function currentLang() { return localStorage.getItem('lang') === 'pt' ? 'pt' : 'en'; }
+function nextTheme(cur) { cur = cur || 'blue'; return cur==='blue'?'green':cur==='green'?'amber':cur==='amber'?'light':'blue'; }
+function updateThemeBtn(cur) { document.getElementById('theme-btn').textContent = themeNames[currentLang()][nextTheme(cur)]; }
+function toggleTheme() {
+  const html = document.documentElement;
+  const next = nextTheme(html.dataset.theme);
+  html.dataset.theme = next === 'blue' ? '' : next;
+  localStorage.setItem('theme', next);
+  updateThemeBtn(next);
+}
+
+function setLang(lang) {
+  document.querySelectorAll('.en').forEach(el => el.hidden = (lang !== 'en'));
+  document.querySelectorAll('.pt').forEach(el => el.hidden = (lang !== 'pt'));
+  document.getElementById('lang-btn').textContent = lang === 'en' ? 'PT-BR' : 'ENGLISH';
+  document.documentElement.lang = lang;
+  localStorage.setItem('lang', lang);
+  updateThemeBtn(document.documentElement.dataset.theme);
+}
+function toggleLang() { setLang(currentLang() === 'en' ? 'pt' : 'en'); }
+setLang(currentLang());
+</script>
+</body>
+</html>

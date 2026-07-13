@@ -1,0 +1,824 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MeshCore Brazil: Decentralized Communication Without Infrastructure — Julio Cesar Mauro</title>
+<meta name="description" content="How LoRa radios and mesh networking enable community-driven communication over dozens of kilometers — without internet, cellular, or any centralized provider. Notes from active testing between Santo André, Jundiaí, Sorocaba and Campinas.">
+<link rel="canonical" href="https://oruam.cloud/writing/meshcore/">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' fill='%23000308'/><text x='6' y='23' font-size='20' fill='%2300b4ff' font-family='monospace'>_</text></svg>">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://oruam.cloud/writing/meshcore/">
+<meta property="og:title" content="MeshCore Brazil: Decentralized Communication Without Infrastructure">
+<meta property="og:description" content="How LoRa radios and mesh networking enable community-driven communication over dozens of kilometers — without internet, cellular, or any centralized provider. Notes from active testing between Santo André, Jundiaí, Sorocaba and Campinas.">
+<meta property="og:image" content="https://oruam.cloud/preview.svg">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="MeshCore Brazil: Decentralized Communication Without Infrastructure">
+<meta name="twitter:description" content="How LoRa radios and mesh networking enable community-driven communication over dozens of kilometers — without internet, cellular, or any centralized provider. Notes from active testing between Santo André, Jundiaí, Sorocaba and Campinas.">
+<meta name="twitter:image" content="https://oruam.cloud/preview.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+<script>(function(){var t=localStorage.getItem('theme');if(t==='green'||t==='amber'||t==='light')document.documentElement.dataset.theme=t;})();</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "MeshCore Brazil: Decentralized Communication Without Infrastructure",
+  "description": "How LoRa radios and mesh networking enable community-driven communication over dozens of kilometers — without internet, cellular, or any centralized provider. Notes from active testing between Santo André, Jundiaí, Sorocaba and Campinas.",
+  "author": { "@type": "Person", "name": "Julio Cesar Mauro", "alternateName": "Julio Mauro", "url": "https://oruam.cloud" },
+  "publisher": { "@type": "Person", "name": "Julio Cesar Mauro" },
+  "mainEntityOfPage": { "@type": "WebPage", "@id": "https://oruam.cloud/writing/meshcore/" },
+  "image": "https://oruam.cloud/preview.svg",
+  "inLanguage": "en"
+}
+</script>
+<style>
+:root {
+  --bg:          #000308;
+  --surface:     #020810;
+  --border:      #003388;
+  --green:       #00b4ff;
+  --green-mid:   #0088cc;
+  --green-dim:   #00b4ff22;
+  --text:        #00bbee;
+  --text-dim:    #0088bb;
+  --white:       #cce8ff;
+  --glow:        0 0 10px #00b4ff66, 0 0 20px #00b4ff33;
+  --glow-strong: 0 0 8px #00b4ff, 0 0 20px #00b4ff88, 0 0 40px #00b4ff44;
+}
+
+[data-theme="green"] {
+  --bg:          #000300;
+  --surface:     #020b02;
+  --border:      #003300;
+  --green:       #00ff41;
+  --green-mid:   #00cc33;
+  --green-dim:   #00aa2233;
+  --text:        #00cc33;
+  --text-dim:    #006622;
+  --white:       #ccffcc;
+  --glow:        0 0 10px #00ff4166, 0 0 20px #00ff4133;
+  --glow-strong: 0 0 8px #00ff41, 0 0 20px #00ff4188, 0 0 40px #00ff4144;
+}
+[data-theme="green"] nav { background: rgba(0,3,0,0.95); }
+
+[data-theme="amber"] {
+  --bg:          #020100;
+  --surface:     #0a0500;
+  --border:      #663300;
+  --green:       #ff8c00;
+  --green-mid:   #cc6600;
+  --green-dim:   #ff8c0033;
+  --text:        #ee7700;
+  --text-dim:    #bb5500;
+  --white:       #ffe8cc;
+  --glow:        0 0 10px #ff8c0066, 0 0 20px #ff8c0033;
+  --glow-strong: 0 0 8px #ff8c00, 0 0 20px #ff8c0088, 0 0 40px #ff8c0044;
+}
+[data-theme="amber"] nav { background: rgba(2,1,0,0.95); }
+
+[data-theme="light"] {
+  --bg:          #f5f2eb;
+  --surface:     #eae6db;
+  --border:      #b0a888;
+  --green:       #1a5c3a;
+  --green-mid:   #2a7a50;
+  --green-dim:   rgba(26,92,58,0.1);
+  --text:        #1a3a28;
+  --text-dim:    #5a7a68;
+  --white:       #0a1a10;
+  --glow:        none;
+  --glow-strong: none;
+}
+[data-theme="light"] body           { background: #f5f2eb; }
+[data-theme="light"] nav            { background: rgba(245,242,235,0.95); }
+[data-theme="light"] body::after    { background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.04) 2px, rgba(0,0,0,0.04) 4px); }
+[data-theme="light"] body::before   { background: radial-gradient(ellipse at center, transparent 60%, rgba(0,0,0,0.08) 100%); }
+[data-theme="light"] h1             { animation: none; color: var(--green); text-shadow: none; }
+[data-theme="light"] #matrix-canvas { opacity: 0.035; }
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Share Tech Mono', monospace;
+  line-height: 1.7;
+  overflow-x: hidden;
+  min-height: 100vh;
+}
+
+#matrix-canvas {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  z-index: 0;
+  opacity: 0.06;
+  pointer-events: none;
+}
+
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg, transparent, transparent 2px,
+    rgba(0,0,0,0.12) 2px, rgba(0,0,0,0.12) 4px
+  );
+  pointer-events: none;
+  z-index: 999;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(ellipse at center, transparent 60%, rgba(0,0,0,0.7) 100%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.wrap {
+  position: relative;
+  z-index: 10;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 0 32px;
+}
+
+/* ── NAV ── */
+nav {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(0,3,8,0.95);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--border);
+  padding: 14px 0;
+}
+
+.nav-inner {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+}
+
+.nav-home {
+  font-family: 'Orbitron', monospace;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--green);
+  text-decoration: none;
+  text-shadow: var(--glow);
+  letter-spacing: 2px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.nav-home::before { content: '←'; }
+
+nav a.nav-link {
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text);
+  text-decoration: none;
+  transition: all 0.2s;
+}
+
+nav a.nav-link:hover {
+  color: var(--green);
+  text-shadow: var(--glow);
+}
+
+.nav-controls {
+  margin-left: auto;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.theme-toggle {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  background: none;
+  border: 1px solid var(--border);
+  padding: 4px 10px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.theme-toggle:hover {
+  color: var(--green);
+  border-color: var(--green-mid);
+  background: var(--green-dim);
+}
+
+/* ── HEADER ── */
+header {
+  padding: 64px 0 48px;
+  border-bottom: 1px solid var(--border);
+}
+
+.header-tag {
+  font-size: 11px;
+  color: var(--text-dim);
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.header-tag::before {
+  content: '';
+  width: 20px; height: 1px;
+  background: var(--green);
+  box-shadow: var(--glow);
+}
+
+h1 {
+  font-family: 'Orbitron', monospace;
+  font-size: clamp(28px, 5vw, 42px);
+  font-weight: 900;
+  color: var(--green);
+  text-shadow: var(--glow-strong);
+  letter-spacing: 2px;
+  margin-bottom: 12px;
+  animation: glitch 8s ease infinite;
+}
+
+.header-sub {
+  font-size: 14px;
+  color: var(--text-dim);
+  letter-spacing: 1px;
+}
+
+@keyframes glitch {
+  0%,100% { text-shadow: var(--glow-strong); }
+  92% { text-shadow: var(--glow-strong); }
+  93% { text-shadow: -2px 0 #ff0040, 2px 0 #00ffff; transform: translateX(-2px); }
+  94% { text-shadow: var(--glow-strong); transform: translateX(0); }
+  96% { text-shadow: 2px 0 #ff0040, -2px 0 #00ffff; transform: translateX(2px); }
+  97% { text-shadow: var(--glow-strong); transform: translateX(0); }
+}
+
+/* ── FILTER TABS ── */
+.filters {
+  display: flex;
+  gap: 8px;
+  padding: 32px 0 0;
+  flex-wrap: wrap;
+}
+
+.filter-btn {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 12px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  background: none;
+  border: 1px solid var(--border);
+  padding: 6px 16px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.filter-btn:hover,
+.filter-btn.active {
+  color: var(--green);
+  border-color: var(--green-mid);
+  background: var(--green-dim);
+  box-shadow: var(--glow);
+}
+
+/* ── ARTICLE LIST ── */
+.articles {
+  padding: 40px 0;
+}
+
+.article-item {
+  border: 1px solid var(--border);
+  background: var(--surface);
+  margin-bottom: 16px;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.2s;
+  animation: fadeUp 0.4s ease both;
+  text-decoration: none;
+  display: block;
+  color: inherit;
+  cursor: pointer;
+}
+
+.article-item::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 3px; height: 100%;
+  background: var(--green);
+  transform: scaleY(0);
+  transition: transform 0.2s;
+  transform-origin: top;
+}
+
+.article-item:hover {
+  border-color: var(--green-mid);
+  box-shadow: var(--glow);
+}
+
+.article-item:hover::before { transform: scaleY(1); }
+
+.article-inner {
+  padding: 24px 28px;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 16px;
+  align-items: center;
+}
+
+.article-meta {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 8px;
+  flex-wrap: wrap;
+}
+
+.article-tag {
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  padding: 3px 10px;
+  border: 1px solid var(--border);
+  color: var(--text-dim);
+}
+
+.article-tag.cloud      { color: #00aaff; border-color: #00aaff44; }
+.article-tag.linux      { color: #00ff41; border-color: #00ff4144; }
+.article-tag.kubernetes { color: #ffaa00; border-color: #ffaa0044; }
+.article-tag.vuln-mgmt  { color: #ff6644; border-color: #ff664444; }
+.article-tag.networking { color: #00ccff; border-color: #00ccff44; }
+.article-tag.security   { color: #ff6644; border-color: #ff664444; }
+
+.article-level {
+  font-size: 11px;
+  letter-spacing: 1px;
+  color: var(--text-dim);
+}
+
+.article-title {
+  font-family: 'Orbitron', monospace;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--green);
+  letter-spacing: 1px;
+  margin-bottom: 8px;
+  line-height: 1.3;
+}
+
+.article-desc {
+  font-size: 14px;
+  color: var(--text-dim);
+  line-height: 1.6;
+}
+
+.article-arrow {
+  font-size: 20px;
+  color: var(--green-mid);
+  opacity: 0;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+
+.article-item:hover .article-arrow {
+  opacity: 1;
+  transform: translateX(4px);
+}
+
+/* ── SECTION LABEL ── */
+.section-label {
+  font-size: 12px;
+  color: var(--text-dim);
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  margin: 40px 0 16px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.section-label::after {
+  content: '';
+  flex: 1; height: 1px;
+  background: linear-gradient(90deg, var(--border), transparent);
+}
+
+/* ── ARTICLE VIEW ── */
+#article-view {
+  display: none;
+  padding: 40px 0 80px;
+}
+
+.art-back {
+  margin-bottom: 40px;
+}
+
+.back-btn {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 12px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  background: none;
+  border: 1px solid var(--border);
+  padding: 6px 16px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.back-btn:hover {
+  color: var(--green);
+  border-color: var(--green-mid);
+  background: var(--green-dim);
+  box-shadow: var(--glow);
+}
+
+.art-body {
+  max-width: 760px;
+}
+
+.art-body h1 {
+  font-family: 'Orbitron', monospace;
+  font-size: clamp(20px, 3vw, 30px);
+  font-weight: 900;
+  color: var(--green);
+  text-shadow: var(--glow-strong);
+  letter-spacing: 1px;
+  margin: 0 0 28px;
+  animation: none;
+  line-height: 1.3;
+}
+
+.art-body h2 {
+  font-family: 'Orbitron', monospace;
+  font-size: clamp(14px, 2vw, 18px);
+  font-weight: 700;
+  color: var(--green);
+  letter-spacing: 1px;
+  margin: 40px 0 14px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+}
+
+.art-body h3 {
+  font-size: 15px;
+  color: var(--text);
+  letter-spacing: 1px;
+  margin: 28px 0 10px;
+}
+
+.art-body p {
+  font-size: 15px;
+  color: var(--white);
+  line-height: 1.85;
+  margin-bottom: 16px;
+}
+
+.art-body ul, .art-body ol {
+  margin: 0 0 16px 24px;
+}
+
+.art-body li {
+  font-size: 15px;
+  color: var(--white);
+  line-height: 1.85;
+  margin-bottom: 6px;
+}
+
+.art-body li::marker { color: var(--green-mid); }
+
+.art-body blockquote {
+  border-left: 3px solid var(--green-mid);
+  padding: 8px 20px;
+  margin: 20px 0;
+  background: var(--surface);
+  color: var(--text-dim);
+  font-size: 14px;
+}
+
+.art-body pre {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--green-mid);
+  padding: 16px 20px;
+  margin: 20px 0;
+  overflow-x: auto;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.art-body pre code {
+  color: var(--text);
+  background: none;
+  padding: 0;
+  font-family: 'Share Tech Mono', monospace;
+}
+
+.art-body code {
+  color: var(--green);
+  background: var(--green-dim);
+  padding: 2px 6px;
+  font-size: 13px;
+  font-family: 'Share Tech Mono', monospace;
+}
+
+.art-body a {
+  color: var(--green-mid);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  transition: color 0.15s;
+}
+.art-body a:hover { color: var(--green); }
+
+.art-body hr {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 36px 0;
+}
+
+.art-loading {
+  font-size: 14px;
+  color: var(--text-dim);
+  letter-spacing: 2px;
+  margin-top: 40px;
+  animation: pulse 1s ease infinite;
+}
+@keyframes pulse { 0%,100%{opacity:0.4} 50%{opacity:1} }
+
+.art-fetch-error {
+  font-size: 14px;
+  color: #884400;
+  margin-top: 40px;
+}
+
+/* ── FOOTER ── */
+footer {
+  padding: 40px 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid var(--border);
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.footer-sig {
+  font-family: 'Orbitron', monospace;
+  font-size: 13px;
+  color: var(--green);
+  text-shadow: var(--glow);
+  letter-spacing: 2px;
+}
+
+.footer-copy {
+  font-size: 11px;
+  color: var(--text-dim);
+  letter-spacing: 2px;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 640px) {
+  .wrap { padding: 0 16px; }
+  .article-inner { grid-template-columns: 1fr; }
+  .article-arrow { display: none; }
+  .nav-inner { gap: 8px; }
+  .nav-home { font-size: 10px; letter-spacing: 1px; }
+  nav a.nav-link { font-size: 10px; }
+  .theme-toggle { font-size: 9px; padding: 4px 7px; }
+}
+
+@font-face {
+  font-family: 'pIqaD';
+  src: url('/fonts/pIqaD.woff') format('woff');
+}
+body.piqad-active [data-i18n],
+body.piqad-active #article-content * {
+  font-family: 'pIqaD', monospace;
+  letter-spacing: 3px;
+}
+
+[hidden] { display: none !important; }
+</style>
+</head>
+<body>
+
+<canvas id="matrix-canvas"></canvas>
+
+<nav>
+  <div class="wrap">
+    <div class="nav-inner">
+      <a href="/" class="nav-home">ORUAM.CLOUD</a>
+      <a href="/projects/" class="nav-link"><span class="en">Projects</span><span class="pt" hidden>Projetos</span></a>
+      <a href="/writing/" class="nav-link"><span class="en">Writing</span><span class="pt" hidden>Textos</span></a>
+      <div class="nav-controls">
+        <button class="theme-toggle" id="theme-btn" onclick="toggleTheme()">◈ Green</button>
+        <button class="theme-toggle" id="lang-btn" onclick="toggleLang()">PT-BR</button>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<div class="wrap">
+  <div id="article-view" style="display:block; padding-top:40px;">
+    <div class="art-back">
+      <a class="back-btn" href="/writing/" style="display:inline-block; text-decoration:none;">
+        <span class="en">← Writing</span><span class="pt" hidden>← Textos</span>
+      </a>
+    </div>
+    <div class="article-meta" style="margin-bottom:20px;">
+      <span class="article-tag networking">Networking · Community · LoRa</span>
+      <span class="article-level">// Foundational</span>
+    </div>
+    <div class="art-body en">
+<h1>MeshCore Brazil: Decentralized Communication Without Infrastructure</h1>
+<div style="height:12px"></div>
+<blockquote><strong>Category:</strong> Networking · Community · LoRa</blockquote>
+<blockquote><strong>Level:</strong> Foundational</blockquote>
+<div style="height:12px"></div>
+<hr>
+<div style="height:12px"></div>
+<p>Over the past few months, I have been following more closely a very interesting movement around LoRa radios and projects like MeshCore.</p>
+<div style="height:12px"></div>
+<h2>What LoRa Is</h2>
+<div style="height:12px"></div>
+<p>LoRa is a long-range, low-power radio technology. With relatively small devices, it is possible to exchange messages over several kilometers without relying on the internet, cellular networks, Wi-Fi, or any centralized infrastructure.</p>
+<div style="height:12px"></div>
+<p>MeshCore builds on top of this by creating decentralized mesh networks. Instead of depending on a central antenna or provider, each node can help relay messages across the network. In practice, this creates a community-driven communication mesh, where coverage improves as more people deploy and position their devices.</p>
+<div style="height:12px"></div>
+<h2>Why It Stands Out</h2>
+<div style="height:12px"></div>
+<p><strong>Infrastructure independence</strong></p>
+<p>Communication does not depend on telecom providers, internet services, or centralized platforms.</p>
+<div style="height:12px"></div>
+<p><strong>Resilience</strong></p>
+<p>In scenarios such as internet outages, power failures, remote areas, or emergency situations, a mesh network can continue operating locally.</p>
+<div style="height:12px"></div>
+<p><strong>Low cost and low power consumption</strong></p>
+<p>LoRa devices are typically affordable, compact, and efficient, often running for long periods on batteries or simple power sources like solar.</p>
+<div style="height:12px"></div>
+<p><strong>Technical learning</strong></p>
+<p>It brings together radio, networking, antennas, propagation, security, mapping, and infrastructure design.</p>
+<div style="height:12px"></div>
+<p><strong>Community-driven growth</strong></p>
+<p>The more people participate, test, deploy repeaters, and share knowledge, the stronger and more useful the network becomes.</p>
+<div style="height:12px"></div>
+<h2>What Is Happening in Brazil</h2>
+<div style="height:12px"></div>
+<p>This is not only happening outside Brazil. Local communities are growing here as well, sharing experiences, documenting tests, building coverage maps, and experimenting with the best ways to connect cities.</p>
+<div style="height:12px"></div>
+<p>I am actively participating in the MeshCore Brazil group, contributing with tests, repeater deployments and mapping nearby cities.</p>
+<div style="height:12px"></div>
+<p>Today we have already managed to establish communication between Santo André, Jundiaí, and Sorocaba, with Campinas occasionally joining the mesh as well. It is still early stage — a lot of testing, antenna tuning, positioning, and experimentation — but it already shows the potential once the community starts to grow and organize.</p>
+<div style="height:12px"></div>
+<h2>The Broader Point</h2>
+<div style="height:12px"></div>
+<p>Today, most people associate communication only with the internet, mobile networks, and large platforms. But projects like MeshCore show that there is still room for decentralized, community-driven, and independent communication networks.</p>
+<div style="height:12px"></div>
+<p>From a security standpoint, infrastructure independence also means resilience against censorship, targeted outages, and single-points-of-failure that centralized systems inherently carry. A network that no single entity controls cannot be shut down by a single decision.</p>
+<div style="height:12px"></div>
+<p>It is still early, but it shows a lot of promise.</p>
+<div style="height:12px"></div>
+<hr>
+<div style="height:12px"></div>
+<ul>
+<li><a href="https://meshcore.io" target="_blank" rel="noopener">meshcore.io</a></li>
+<li><a href="https://meshcore.com.br" target="_blank" rel="noopener">meshcore.com.br</a></li>
+</ul>
+<div style="height:12px"></div>
+    </div>
+    <div class="art-body pt" hidden>
+<h1>MeshCore Brasil: Comunicação Descentralizada Sem Infraestrutura</h1>
+<div style="height:12px"></div>
+<blockquote><strong>Categoria:</strong> Redes · Comunidade · LoRa</blockquote>
+<blockquote><strong>Nível:</strong> Fundacional</blockquote>
+<div style="height:12px"></div>
+<hr>
+<div style="height:12px"></div>
+<p>Nos últimos meses, tenho acompanhado de perto um movimento muito interessante em torno de rádios LoRa e projetos como o MeshCore.</p>
+<div style="height:12px"></div>
+<h2>O Que É LoRa</h2>
+<div style="height:12px"></div>
+<p>LoRa é uma tecnologia de rádio de longo alcance e baixo consumo. Com dispositivos relativamente pequenos, é possível trocar mensagens ao longo de vários quilômetros sem depender de internet, redes celulares, Wi-Fi ou qualquer infraestrutura centralizada.</p>
+<div style="height:12px"></div>
+<p>O MeshCore expande isso criando redes mesh descentralizadas. Em vez de depender de uma antena ou provedor central, cada nó pode ajudar a retransmitir mensagens pela rede. Na prática, isso cria uma malha de comunicação impulsionada pela comunidade, onde a cobertura melhora à medida que mais pessoas implantam e posicionam seus dispositivos.</p>
+<div style="height:12px"></div>
+<h2>Por Que Se Destaca</h2>
+<div style="height:12px"></div>
+<p><strong>Independência de infraestrutura</strong></p>
+<p>A comunicação não depende de provedores de telecom, serviços de internet ou plataformas centralizadas.</p>
+<div style="height:12px"></div>
+<p><strong>Resiliência</strong></p>
+<p>Em cenários como quedas de internet, falhas de energia, áreas remotas ou situações de emergência, uma rede mesh pode continuar operando localmente.</p>
+<div style="height:12px"></div>
+<p><strong>Baixo custo e baixo consumo de energia</strong></p>
+<p>Dispositivos LoRa são tipicamente acessíveis, compactos e eficientes, frequentemente funcionando por longos períodos com baterias ou fontes de energia simples como solar.</p>
+<div style="height:12px"></div>
+<p><strong>Aprendizado técnico</strong></p>
+<p>Reúne rádio, redes, antenas, propagação, segurança, mapeamento e design de infraestrutura.</p>
+<div style="height:12px"></div>
+<p><strong>Crescimento impulsionado pela comunidade</strong></p>
+<p>Quanto mais pessoas participam, testam, implantam repetidores e compartilham conhecimento, mais forte e útil a rede se torna.</p>
+<div style="height:12px"></div>
+<h2>O Que Está Acontecendo no Brasil</h2>
+<div style="height:12px"></div>
+<p>Isso não está acontecendo apenas fora do Brasil. Comunidades locais estão crescendo aqui também, compartilhando experiências, documentando testes, construindo mapas de cobertura e experimentando as melhores formas de conectar cidades.</p>
+<div style="height:12px"></div>
+<p>Estou participando ativamente do grupo MeshCore Brasil, contribuindo com testes, implantação de repetidores e mapeamento de cidades próximas.</p>
+<div style="height:12px"></div>
+<p>Hoje já conseguimos estabelecer comunicação entre Santo André, Jundiaí e Sorocaba, com Campinas eventualmente também entrando na malha. Ainda é fase inicial — muito teste, ajuste de antenas, posicionamento e experimentação — mas já mostra o potencial quando a comunidade começa a crescer e se organizar.</p>
+<div style="height:12px"></div>
+<h2>O Ponto Mais Amplo</h2>
+<div style="height:12px"></div>
+<p>Hoje, a maioria das pessoas associa comunicação apenas à internet, redes móveis e grandes plataformas. Mas projetos como o MeshCore mostram que ainda há espaço para redes de comunicação descentralizadas, comunitárias e independentes.</p>
+<div style="height:12px"></div>
+<p>Do ponto de vista de segurança, independência de infraestrutura também significa resiliência contra censura, interrupções direcionadas e pontos únicos de falha que sistemas centralizados carregam inerentemente. Uma rede que nenhuma entidade única controla não pode ser desligada por uma única decisão.</p>
+<div style="height:12px"></div>
+<p>Ainda é cedo, mas mostra muito potencial.</p>
+<div style="height:12px"></div>
+<hr>
+<div style="height:12px"></div>
+<ul>
+<li><a href="https://meshcore.io" target="_blank" rel="noopener">meshcore.io</a></li>
+<li><a href="https://meshcore.com.br" target="_blank" rel="noopener">meshcore.com.br</a></li>
+</ul>
+<div style="height:12px"></div>
+    </div>
+  </div>
+
+  <footer>
+    <div class="footer-sig">ORUAM_OLIUJ</div>
+    <div class="footer-copy"><span class="en">&gt; oruam.cloud/writing · 2026_</span><span class="pt" hidden>&gt; oruam.cloud/writing · 2026_</span></div>
+  </footer>
+</div>
+
+<script>
+const canvas = document.getElementById('matrix-canvas');
+const ctx = canvas.getContext('2d');
+canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+window.addEventListener('resize', () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; init(); });
+const chars = 'アイウエオカキクケコ0123456789ABCDEF$#@%&';
+const fontSize = 16;
+let columns, drops;
+function init() { columns = Math.floor(canvas.width / fontSize); drops = Array(columns).fill(1); }
+function draw() {
+  const theme = document.documentElement.dataset.theme;
+  ctx.fillStyle = theme === 'green' ? 'rgba(0,3,0,0.04)' : theme === 'amber' ? 'rgba(2,1,0,0.04)' : theme === 'light' ? 'rgba(245,242,235,0.06)' : 'rgba(0,3,8,0.04)';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  ctx.fillStyle = theme === 'green' ? '#00ff41' : theme === 'amber' ? '#ff8c00' : theme === 'light' ? '#1a5c3a' : '#00b4ff';
+  ctx.font = fontSize + 'px Share Tech Mono';
+  for (let i = 0; i < drops.length; i++) {
+    const char = chars[Math.floor(Math.random() * chars.length)];
+    ctx.fillText(char, i * fontSize, drops[i] * fontSize);
+    if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
+    drops[i]++;
+  }
+}
+init(); setInterval(draw, 45);
+
+const themeNames = {
+  en: { green: '◈ Green', amber: '◈ Amber', blue: '◈ Blue', light: '◈ Light' },
+  pt: { green: '◈ Verde', amber: '◈ Âmbar', blue: '◈ Azul', light: '◈ Claro' },
+};
+function currentLang() { return localStorage.getItem('lang') === 'pt' ? 'pt' : 'en'; }
+function nextTheme(cur) { cur = cur || 'blue'; return cur==='blue'?'green':cur==='green'?'amber':cur==='amber'?'light':'blue'; }
+function updateThemeBtn(cur) { document.getElementById('theme-btn').textContent = themeNames[currentLang()][nextTheme(cur)]; }
+function toggleTheme() {
+  const html = document.documentElement;
+  const next = nextTheme(html.dataset.theme);
+  html.dataset.theme = next === 'blue' ? '' : next;
+  localStorage.setItem('theme', next);
+  updateThemeBtn(next);
+}
+
+function setLang(lang) {
+  document.querySelectorAll('.en').forEach(el => el.hidden = (lang !== 'en'));
+  document.querySelectorAll('.pt').forEach(el => el.hidden = (lang !== 'pt'));
+  document.getElementById('lang-btn').textContent = lang === 'en' ? 'PT-BR' : 'ENGLISH';
+  document.documentElement.lang = lang;
+  localStorage.setItem('lang', lang);
+  updateThemeBtn(document.documentElement.dataset.theme);
+}
+function toggleLang() { setLang(currentLang() === 'en' ? 'pt' : 'en'); }
+setLang(currentLang());
+</script>
+</body>
+</html>

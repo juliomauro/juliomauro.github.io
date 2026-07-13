@@ -1,0 +1,958 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>One Wildcard in a Trust Policy — Julio Cesar Mauro</title>
+<meta name="description" content="How StringLike with a glob pattern in an IAM trust policy condition turns a controlled role assumption into an open path — and why StringEquals matters.">
+<link rel="canonical" href="https://oruam.cloud/writing/wildcard/">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' fill='%23000308'/><text x='6' y='23' font-size='20' fill='%2300b4ff' font-family='monospace'>_</text></svg>">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://oruam.cloud/writing/wildcard/">
+<meta property="og:title" content="One Wildcard in a Trust Policy">
+<meta property="og:description" content="How StringLike with a glob pattern in an IAM trust policy condition turns a controlled role assumption into an open path — and why StringEquals matters.">
+<meta property="og:image" content="https://oruam.cloud/preview.svg">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="One Wildcard in a Trust Policy">
+<meta name="twitter:description" content="How StringLike with a glob pattern in an IAM trust policy condition turns a controlled role assumption into an open path — and why StringEquals matters.">
+<meta name="twitter:image" content="https://oruam.cloud/preview.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+<script>(function(){var t=localStorage.getItem('theme');if(t==='green'||t==='amber'||t==='light')document.documentElement.dataset.theme=t;})();</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "One Wildcard in a Trust Policy",
+  "description": "How StringLike with a glob pattern in an IAM trust policy condition turns a controlled role assumption into an open path — and why StringEquals matters.",
+  "author": { "@type": "Person", "name": "Julio Cesar Mauro", "alternateName": "Julio Mauro", "url": "https://oruam.cloud" },
+  "publisher": { "@type": "Person", "name": "Julio Cesar Mauro" },
+  "mainEntityOfPage": { "@type": "WebPage", "@id": "https://oruam.cloud/writing/wildcard/" },
+  "image": "https://oruam.cloud/preview.svg",
+  "inLanguage": "en"
+}
+</script>
+<style>
+:root {
+  --bg:          #000308;
+  --surface:     #020810;
+  --border:      #003388;
+  --green:       #00b4ff;
+  --green-mid:   #0088cc;
+  --green-dim:   #00b4ff22;
+  --text:        #00bbee;
+  --text-dim:    #0088bb;
+  --white:       #cce8ff;
+  --glow:        0 0 10px #00b4ff66, 0 0 20px #00b4ff33;
+  --glow-strong: 0 0 8px #00b4ff, 0 0 20px #00b4ff88, 0 0 40px #00b4ff44;
+}
+
+[data-theme="green"] {
+  --bg:          #000300;
+  --surface:     #020b02;
+  --border:      #003300;
+  --green:       #00ff41;
+  --green-mid:   #00cc33;
+  --green-dim:   #00aa2233;
+  --text:        #00cc33;
+  --text-dim:    #006622;
+  --white:       #ccffcc;
+  --glow:        0 0 10px #00ff4166, 0 0 20px #00ff4133;
+  --glow-strong: 0 0 8px #00ff41, 0 0 20px #00ff4188, 0 0 40px #00ff4144;
+}
+[data-theme="green"] nav { background: rgba(0,3,0,0.95); }
+
+[data-theme="amber"] {
+  --bg:          #020100;
+  --surface:     #0a0500;
+  --border:      #663300;
+  --green:       #ff8c00;
+  --green-mid:   #cc6600;
+  --green-dim:   #ff8c0033;
+  --text:        #ee7700;
+  --text-dim:    #bb5500;
+  --white:       #ffe8cc;
+  --glow:        0 0 10px #ff8c0066, 0 0 20px #ff8c0033;
+  --glow-strong: 0 0 8px #ff8c00, 0 0 20px #ff8c0088, 0 0 40px #ff8c0044;
+}
+[data-theme="amber"] nav { background: rgba(2,1,0,0.95); }
+
+[data-theme="light"] {
+  --bg:          #f5f2eb;
+  --surface:     #eae6db;
+  --border:      #b0a888;
+  --green:       #1a5c3a;
+  --green-mid:   #2a7a50;
+  --green-dim:   rgba(26,92,58,0.1);
+  --text:        #1a3a28;
+  --text-dim:    #5a7a68;
+  --white:       #0a1a10;
+  --glow:        none;
+  --glow-strong: none;
+}
+[data-theme="light"] body           { background: #f5f2eb; }
+[data-theme="light"] nav            { background: rgba(245,242,235,0.95); }
+[data-theme="light"] body::after    { background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.04) 2px, rgba(0,0,0,0.04) 4px); }
+[data-theme="light"] body::before   { background: radial-gradient(ellipse at center, transparent 60%, rgba(0,0,0,0.08) 100%); }
+[data-theme="light"] h1             { animation: none; color: var(--green); text-shadow: none; }
+[data-theme="light"] #matrix-canvas { opacity: 0.035; }
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Share Tech Mono', monospace;
+  line-height: 1.7;
+  overflow-x: hidden;
+  min-height: 100vh;
+}
+
+#matrix-canvas {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  z-index: 0;
+  opacity: 0.06;
+  pointer-events: none;
+}
+
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg, transparent, transparent 2px,
+    rgba(0,0,0,0.12) 2px, rgba(0,0,0,0.12) 4px
+  );
+  pointer-events: none;
+  z-index: 999;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(ellipse at center, transparent 60%, rgba(0,0,0,0.7) 100%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.wrap {
+  position: relative;
+  z-index: 10;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 0 32px;
+}
+
+/* ── NAV ── */
+nav {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(0,3,8,0.95);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--border);
+  padding: 14px 0;
+}
+
+.nav-inner {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+}
+
+.nav-home {
+  font-family: 'Orbitron', monospace;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--green);
+  text-decoration: none;
+  text-shadow: var(--glow);
+  letter-spacing: 2px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.nav-home::before { content: '←'; }
+
+nav a.nav-link {
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text);
+  text-decoration: none;
+  transition: all 0.2s;
+}
+
+nav a.nav-link:hover {
+  color: var(--green);
+  text-shadow: var(--glow);
+}
+
+.nav-controls {
+  margin-left: auto;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.theme-toggle {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  background: none;
+  border: 1px solid var(--border);
+  padding: 4px 10px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.theme-toggle:hover {
+  color: var(--green);
+  border-color: var(--green-mid);
+  background: var(--green-dim);
+}
+
+/* ── HEADER ── */
+header {
+  padding: 64px 0 48px;
+  border-bottom: 1px solid var(--border);
+}
+
+.header-tag {
+  font-size: 11px;
+  color: var(--text-dim);
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.header-tag::before {
+  content: '';
+  width: 20px; height: 1px;
+  background: var(--green);
+  box-shadow: var(--glow);
+}
+
+h1 {
+  font-family: 'Orbitron', monospace;
+  font-size: clamp(28px, 5vw, 42px);
+  font-weight: 900;
+  color: var(--green);
+  text-shadow: var(--glow-strong);
+  letter-spacing: 2px;
+  margin-bottom: 12px;
+  animation: glitch 8s ease infinite;
+}
+
+.header-sub {
+  font-size: 14px;
+  color: var(--text-dim);
+  letter-spacing: 1px;
+}
+
+@keyframes glitch {
+  0%,100% { text-shadow: var(--glow-strong); }
+  92% { text-shadow: var(--glow-strong); }
+  93% { text-shadow: -2px 0 #ff0040, 2px 0 #00ffff; transform: translateX(-2px); }
+  94% { text-shadow: var(--glow-strong); transform: translateX(0); }
+  96% { text-shadow: 2px 0 #ff0040, -2px 0 #00ffff; transform: translateX(2px); }
+  97% { text-shadow: var(--glow-strong); transform: translateX(0); }
+}
+
+/* ── FILTER TABS ── */
+.filters {
+  display: flex;
+  gap: 8px;
+  padding: 32px 0 0;
+  flex-wrap: wrap;
+}
+
+.filter-btn {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 12px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  background: none;
+  border: 1px solid var(--border);
+  padding: 6px 16px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.filter-btn:hover,
+.filter-btn.active {
+  color: var(--green);
+  border-color: var(--green-mid);
+  background: var(--green-dim);
+  box-shadow: var(--glow);
+}
+
+/* ── ARTICLE LIST ── */
+.articles {
+  padding: 40px 0;
+}
+
+.article-item {
+  border: 1px solid var(--border);
+  background: var(--surface);
+  margin-bottom: 16px;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.2s;
+  animation: fadeUp 0.4s ease both;
+  text-decoration: none;
+  display: block;
+  color: inherit;
+  cursor: pointer;
+}
+
+.article-item::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 3px; height: 100%;
+  background: var(--green);
+  transform: scaleY(0);
+  transition: transform 0.2s;
+  transform-origin: top;
+}
+
+.article-item:hover {
+  border-color: var(--green-mid);
+  box-shadow: var(--glow);
+}
+
+.article-item:hover::before { transform: scaleY(1); }
+
+.article-inner {
+  padding: 24px 28px;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 16px;
+  align-items: center;
+}
+
+.article-meta {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 8px;
+  flex-wrap: wrap;
+}
+
+.article-tag {
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  padding: 3px 10px;
+  border: 1px solid var(--border);
+  color: var(--text-dim);
+}
+
+.article-tag.cloud      { color: #00aaff; border-color: #00aaff44; }
+.article-tag.linux      { color: #00ff41; border-color: #00ff4144; }
+.article-tag.kubernetes { color: #ffaa00; border-color: #ffaa0044; }
+.article-tag.vuln-mgmt  { color: #ff6644; border-color: #ff664444; }
+.article-tag.networking { color: #00ccff; border-color: #00ccff44; }
+.article-tag.security   { color: #ff6644; border-color: #ff664444; }
+
+.article-level {
+  font-size: 11px;
+  letter-spacing: 1px;
+  color: var(--text-dim);
+}
+
+.article-title {
+  font-family: 'Orbitron', monospace;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--green);
+  letter-spacing: 1px;
+  margin-bottom: 8px;
+  line-height: 1.3;
+}
+
+.article-desc {
+  font-size: 14px;
+  color: var(--text-dim);
+  line-height: 1.6;
+}
+
+.article-arrow {
+  font-size: 20px;
+  color: var(--green-mid);
+  opacity: 0;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+
+.article-item:hover .article-arrow {
+  opacity: 1;
+  transform: translateX(4px);
+}
+
+/* ── SECTION LABEL ── */
+.section-label {
+  font-size: 12px;
+  color: var(--text-dim);
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  margin: 40px 0 16px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.section-label::after {
+  content: '';
+  flex: 1; height: 1px;
+  background: linear-gradient(90deg, var(--border), transparent);
+}
+
+/* ── ARTICLE VIEW ── */
+#article-view {
+  display: none;
+  padding: 40px 0 80px;
+}
+
+.art-back {
+  margin-bottom: 40px;
+}
+
+.back-btn {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 12px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  background: none;
+  border: 1px solid var(--border);
+  padding: 6px 16px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.back-btn:hover {
+  color: var(--green);
+  border-color: var(--green-mid);
+  background: var(--green-dim);
+  box-shadow: var(--glow);
+}
+
+.art-body {
+  max-width: 760px;
+}
+
+.art-body h1 {
+  font-family: 'Orbitron', monospace;
+  font-size: clamp(20px, 3vw, 30px);
+  font-weight: 900;
+  color: var(--green);
+  text-shadow: var(--glow-strong);
+  letter-spacing: 1px;
+  margin: 0 0 28px;
+  animation: none;
+  line-height: 1.3;
+}
+
+.art-body h2 {
+  font-family: 'Orbitron', monospace;
+  font-size: clamp(14px, 2vw, 18px);
+  font-weight: 700;
+  color: var(--green);
+  letter-spacing: 1px;
+  margin: 40px 0 14px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+}
+
+.art-body h3 {
+  font-size: 15px;
+  color: var(--text);
+  letter-spacing: 1px;
+  margin: 28px 0 10px;
+}
+
+.art-body p {
+  font-size: 15px;
+  color: var(--white);
+  line-height: 1.85;
+  margin-bottom: 16px;
+}
+
+.art-body ul, .art-body ol {
+  margin: 0 0 16px 24px;
+}
+
+.art-body li {
+  font-size: 15px;
+  color: var(--white);
+  line-height: 1.85;
+  margin-bottom: 6px;
+}
+
+.art-body li::marker { color: var(--green-mid); }
+
+.art-body blockquote {
+  border-left: 3px solid var(--green-mid);
+  padding: 8px 20px;
+  margin: 20px 0;
+  background: var(--surface);
+  color: var(--text-dim);
+  font-size: 14px;
+}
+
+.art-body pre {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--green-mid);
+  padding: 16px 20px;
+  margin: 20px 0;
+  overflow-x: auto;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.art-body pre code {
+  color: var(--text);
+  background: none;
+  padding: 0;
+  font-family: 'Share Tech Mono', monospace;
+}
+
+.art-body code {
+  color: var(--green);
+  background: var(--green-dim);
+  padding: 2px 6px;
+  font-size: 13px;
+  font-family: 'Share Tech Mono', monospace;
+}
+
+.art-body a {
+  color: var(--green-mid);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  transition: color 0.15s;
+}
+.art-body a:hover { color: var(--green); }
+
+.art-body hr {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 36px 0;
+}
+
+.art-loading {
+  font-size: 14px;
+  color: var(--text-dim);
+  letter-spacing: 2px;
+  margin-top: 40px;
+  animation: pulse 1s ease infinite;
+}
+@keyframes pulse { 0%,100%{opacity:0.4} 50%{opacity:1} }
+
+.art-fetch-error {
+  font-size: 14px;
+  color: #884400;
+  margin-top: 40px;
+}
+
+/* ── FOOTER ── */
+footer {
+  padding: 40px 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid var(--border);
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.footer-sig {
+  font-family: 'Orbitron', monospace;
+  font-size: 13px;
+  color: var(--green);
+  text-shadow: var(--glow);
+  letter-spacing: 2px;
+}
+
+.footer-copy {
+  font-size: 11px;
+  color: var(--text-dim);
+  letter-spacing: 2px;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 640px) {
+  .wrap { padding: 0 16px; }
+  .article-inner { grid-template-columns: 1fr; }
+  .article-arrow { display: none; }
+  .nav-inner { gap: 8px; }
+  .nav-home { font-size: 10px; letter-spacing: 1px; }
+  nav a.nav-link { font-size: 10px; }
+  .theme-toggle { font-size: 9px; padding: 4px 7px; }
+}
+
+@font-face {
+  font-family: 'pIqaD';
+  src: url('/fonts/pIqaD.woff') format('woff');
+}
+body.piqad-active [data-i18n],
+body.piqad-active #article-content * {
+  font-family: 'pIqaD', monospace;
+  letter-spacing: 3px;
+}
+
+[hidden] { display: none !important; }
+</style>
+</head>
+<body>
+
+<canvas id="matrix-canvas"></canvas>
+
+<nav>
+  <div class="wrap">
+    <div class="nav-inner">
+      <a href="/" class="nav-home">ORUAM.CLOUD</a>
+      <a href="/projects/" class="nav-link"><span class="en">Projects</span><span class="pt" hidden>Projetos</span></a>
+      <a href="/writing/" class="nav-link"><span class="en">Writing</span><span class="pt" hidden>Textos</span></a>
+      <div class="nav-controls">
+        <button class="theme-toggle" id="theme-btn" onclick="toggleTheme()">◈ Green</button>
+        <button class="theme-toggle" id="lang-btn" onclick="toggleLang()">PT-BR</button>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<div class="wrap">
+  <div id="article-view" style="display:block; padding-top:40px;">
+    <div class="art-back">
+      <a class="back-btn" href="/writing/" style="display:inline-block; text-decoration:none;">
+        <span class="en">← Writing</span><span class="pt" hidden>← Textos</span>
+      </a>
+    </div>
+    <div class="article-meta" style="margin-bottom:20px;">
+      <span class="article-tag cloud">Cloud · IAM · Privilege Escalation</span>
+      <span class="article-level">// Advanced</span>
+    </div>
+    <div class="art-body en">
+<h1>One Wildcard in a Trust Policy</h1>
+<div style="height:12px"></div>
+<blockquote><strong>Category:</strong> Cloud · IAM · Privilege Escalation</blockquote>
+<blockquote><strong>Level:</strong> Advanced</blockquote>
+<div style="height:12px"></div>
+<hr>
+<div style="height:12px"></div>
+<p>IAM privilege escalation in cloud environments is rarely about a leaked admin key. More often it is about a trust relationship that was designed with good intentions and one operator character that made it wider than intended.</p>
+<div style="height:12px"></div>
+<p>This note is about one of the most common patterns: the <code>StringLike</code> condition with a wildcard in a role trust policy.</p>
+<div style="height:12px"></div>
+<h2>How Trust Policies Work</h2>
+<div style="height:12px"></div>
+<p>When a role is created in AWS, it has two types of policies attached:</p>
+<div style="height:12px"></div>
+<ol>
+<li><strong>Permission policy</strong> — what the role can do</li>
+<li><strong>Trust policy</strong> — who can assume the role</li>
+</ol>
+<div style="height:12px"></div>
+<p>The trust policy controls the <code>sts:AssumeRole</code> action. A typical trust policy might say: "only the CI/CD pipeline role can assume me."</p>
+<div style="height:12px"></div>
+<pre><code>{
+  "Statement": [{
+    "Effect": "Allow",
+    "Principal": {"AWS": "arn:aws:iam::111111111111:role/deploy-prod"},
+    "Action": "sts:AssumeRole"
+  }]
+}</code></pre>
+<div style="height:12px"></div>
+<p>This is specific and safe. The problem starts when conditions are used instead of an exact principal match.</p>
+<div style="height:12px"></div>
+<h2>The Vulnerable Pattern</h2>
+<div style="height:12px"></div>
+<pre><code>{
+  "Statement": [{
+    "Effect": "Allow",
+    "Principal": {"AWS": "*"},
+    "Action": "sts:AssumeRole",
+    "Condition": {
+      "StringLike": {
+        "aws:PrincipalArn": "arn:aws:iam::111111111111:assumed-role/deploy-*/*"
+      }
+    }
+  }]
+}</code></pre>
+<div style="height:12px"></div>
+<p>The intent: only roles whose name starts with <code>deploy-</code> can assume this role.</p>
+<div style="height:12px"></div>
+<p>The problem: <code>StringLike</code> with <code>*</code> is a pattern match, not an exact match. Any role in the account whose name starts with <code>deploy-</code> satisfies this condition — including <code>deploy-readonly</code>, <code>deploy-staging</code>, <code>deploy-old-2022</code>, or any future role created with that prefix for any reason.</p>
+<div style="height:12px"></div>
+<p>If a low-privilege identity can assume any role matching <code>deploy-*</code>, it can then use that role to assume the target role.</p>
+<div style="height:12px"></div>
+<h2>The Escalation in Practice</h2>
+<div style="height:12px"></div>
+<p>Starting identity: <code>app-reader</code> — read-only permissions, no obvious path forward.</p>
+<div style="height:12px"></div>
+<p>Step 1: enumerate trust policies using <code>iam:GetRole</code>:</p>
+<div style="height:12px"></div>
+<pre><code>aws iam get-role --role-name automation-deploy \
+  --query 'Role.AssumeRolePolicyDocument'</code></pre>
+<div style="height:12px"></div>
+<p>Step 2: identify a role matching the pattern that <code>app-reader</code> can assume:</p>
+<div style="height:12px"></div>
+<pre><code>aws iam list-roles --query 'Roles[?starts_with(RoleName, `deploy-`)].RoleName'
+# deploy-readonly</code></pre>
+<div style="height:12px"></div>
+<p>Step 3: assume <code>deploy-readonly</code> (permitted by its own trust policy):</p>
+<div style="height:12px"></div>
+<pre><code>aws sts assume-role \
+  --role-arn arn:aws:iam::111111111111:role/deploy-readonly \
+  --role-session-name pivot</code></pre>
+<div style="height:12px"></div>
+<p>Caller ARN is now: <code>arn:aws:iam::111111111111:assumed-role/deploy-readonly/pivot</code></p>
+<div style="height:12px"></div>
+<p>This matches <code>deploy-<em>/</em></code>. The condition on <code>automation-deploy</code> is satisfied.</p>
+<div style="height:12px"></div>
+<p>Step 4: assume <code>automation-deploy</code>:</p>
+<div style="height:12px"></div>
+<pre><code>aws sts assume-role \
+  --role-arn arn:aws:iam::111111111111:role/automation-deploy \
+  --role-session-name escalated</code></pre>
+<div style="height:12px"></div>
+<p>Full automation permissions acquired. Two API calls from a read-only starting point.</p>
+<div style="height:12px"></div>
+<h2>The Fix</h2>
+<div style="height:12px"></div>
+<p><strong>Use <code>StringEquals</code> with a specific ARN:</strong></p>
+<div style="height:12px"></div>
+<pre><code>"Condition": {
+  "StringEquals": {
+    "aws:PrincipalArn": "arn:aws:iam::111111111111:assumed-role/deploy-prod/session"
+  }
+}</code></pre>
+<div style="height:12px"></div>
+<p>Or, better — use a named principal directly without conditions:</p>
+<div style="height:12px"></div>
+<pre><code>"Principal": {
+  "AWS": "arn:aws:iam::111111111111:role/deploy-prod"
+}</code></pre>
+<div style="height:12px"></div>
+<p><strong>Limit <code>iam:GetRole</code> and <code>iam:ListRoles</code>:</strong></p>
+<div style="height:12px"></div>
+<p>These permissions allow full enumeration of trust relationships. A low-privilege identity should not be able to read the trust policy of every role in the account.</p>
+<div style="height:12px"></div>
+<p><strong>Use IAM Access Analyzer:</strong></p>
+<div style="height:12px"></div>
+<p>AWS IAM Access Analyzer continuously evaluates trust policies and flags external access and overly permissive conditions. Enable it in every account and review its findings regularly.</p>
+<div style="height:12px"></div>
+<p><strong>Audit with a graph mindset:</strong></p>
+<div style="height:12px"></div>
+<p>Trust policies cannot be reviewed in isolation. The question is not "who can assume this role?" but "starting from any identity in this account, can someone reach this role through a chain of assumptions?" Tools like PMapper (Principal Mapper) build this graph automatically.</p>
+<div style="height:12px"></div>
+<h2>One Character, One Operator</h2>
+<div style="height:12px"></div>
+<p>The difference between a safe trust policy and the vulnerable one above is <code>StringEquals</code> vs <code>StringLike</code>. One character of difference in the operator name. The wildcard in the ARN pattern becomes inert with <code>StringEquals</code> — it matches literally, not as a glob.</p>
+<div style="height:12px"></div>
+<p>This is the class of misconfiguration that does not show up in vulnerability scanners, does not have a CVE, and is invisible to anyone reviewing the policy without understanding how <code>StringLike</code> works in this context. It only becomes visible when you think about the policy as part of a permission graph — not as a standalone document.</p>
+<div style="height:12px"></div>
+<hr>
+<div style="height:12px"></div>
+<p><em>Related: <a href="https://github.com/juliomauro/sec-writeups/tree/main/cases/05-cloud-iam-trust" target="_blank" rel="noopener">Case 05 — Cloud IAM Trust Policy and Role Chaining</a></em></p>
+<div style="height:12px"></div>
+    </div>
+    <div class="art-body pt" hidden>
+<h1>Um Wildcard em uma Trust Policy</h1>
+<div style="height:12px"></div>
+<blockquote><strong>Categoria:</strong> Cloud · IAM · Escalada de Privilégios</blockquote>
+<blockquote><strong>Nível:</strong> Avançado</blockquote>
+<div style="height:12px"></div>
+<hr>
+<div style="height:12px"></div>
+<p>Escalada de privilégios IAM em ambientes cloud raramente envolve uma chave de admin vazada. Na maioria das vezes, trata-se de uma relação de confiança criada com boas intenções e um único caractere que a tornou mais ampla do que o pretendido.</p>
+<div style="height:12px"></div>
+<p>Esta nota é sobre um dos padrões mais comuns: a condição <code>StringLike</code> com wildcard em uma trust policy de role.</p>
+<div style="height:12px"></div>
+<h2>Como Trust Policies Funcionam</h2>
+<div style="height:12px"></div>
+<p>Quando uma role é criada na AWS, ela tem dois tipos de policies associadas:</p>
+<div style="height:12px"></div>
+<ol>
+<li><strong>Permission policy</strong> — o que a role pode fazer</li>
+<li><strong>Trust policy</strong> — quem pode assumir a role</li>
+</ol>
+<div style="height:12px"></div>
+<p>A trust policy controla a ação <code>sts:AssumeRole</code>. Uma trust policy típica pode dizer: "apenas a role do pipeline de CI/CD pode me assumir."</p>
+<div style="height:12px"></div>
+<pre><code>{
+  "Statement": [{
+    "Effect": "Allow",
+    "Principal": {"AWS": "arn:aws:iam::111111111111:role/deploy-prod"},
+    "Action": "sts:AssumeRole"
+  }]
+}</code></pre>
+<div style="height:12px"></div>
+<p>Isso é específico e seguro. O problema começa quando condições são usadas em vez de um principal exato.</p>
+<div style="height:12px"></div>
+<h2>O Padrão Vulnerável</h2>
+<div style="height:12px"></div>
+<pre><code>{
+  "Statement": [{
+    "Effect": "Allow",
+    "Principal": {"AWS": "*"},
+    "Action": "sts:AssumeRole",
+    "Condition": {
+      "StringLike": {
+        "aws:PrincipalArn": "arn:aws:iam::111111111111:assumed-role/deploy-*/*"
+      }
+    }
+  }]
+}</code></pre>
+<div style="height:12px"></div>
+<p>A intenção: apenas roles cujo nome começa com <code>deploy-</code> podem assumir esta role.</p>
+<div style="height:12px"></div>
+<p>O problema: <code>StringLike</code> com <code>*</code> é correspondência de padrão, não correspondência exata. Qualquer role na conta cujo nome começa com <code>deploy-</code> satisfaz essa condição — incluindo <code>deploy-readonly</code>, <code>deploy-staging</code>, <code>deploy-old-2022</code>, ou qualquer role futura criada com esse prefixo.</p>
+<div style="height:12px"></div>
+<h2>A Escalada na Prática</h2>
+<div style="height:12px"></div>
+<p>Identidade inicial: <code>app-reader</code> — permissões somente leitura, sem caminho óbvio para escalada.</p>
+<div style="height:12px"></div>
+<p>Passo 1: enumerar trust policies usando <code>iam:GetRole</code>:</p>
+<div style="height:12px"></div>
+<pre><code>aws iam get-role --role-name automation-deploy \
+  --query 'Role.AssumeRolePolicyDocument'</code></pre>
+<div style="height:12px"></div>
+<p>Passo 2: identificar uma role que satisfaz o padrão que <code>app-reader</code> pode assumir:</p>
+<div style="height:12px"></div>
+<pre><code>aws iam list-roles --query 'Roles[?starts_with(RoleName, `deploy-`)].RoleName'
+# deploy-readonly</code></pre>
+<div style="height:12px"></div>
+<p>Passo 3: assumir <code>deploy-readonly</code>:</p>
+<div style="height:12px"></div>
+<pre><code>aws sts assume-role \
+  --role-arn arn:aws:iam::111111111111:role/deploy-readonly \
+  --role-session-name pivot</code></pre>
+<div style="height:12px"></div>
+<p>ARN do caller agora: <code>arn:aws:iam::111111111111:assumed-role/deploy-readonly/pivot</code></p>
+<div style="height:12px"></div>
+<p>Isso satisfaz o padrão <code>deploy-<em>/</em></code>. A condição em <code>automation-deploy</code> está satisfeita.</p>
+<div style="height:12px"></div>
+<p>Passo 4: assumir <code>automation-deploy</code>:</p>
+<div style="height:12px"></div>
+<pre><code>aws sts assume-role \
+  --role-arn arn:aws:iam::111111111111:role/automation-deploy \
+  --role-session-name escalated</code></pre>
+<div style="height:12px"></div>
+<p>Permissões completas de automação adquiridas. Duas chamadas de API a partir de um ponto de partida somente leitura.</p>
+<div style="height:12px"></div>
+<h2>A Correção</h2>
+<div style="height:12px"></div>
+<p><strong>Use <code>StringEquals</code> com um ARN específico:</strong></p>
+<div style="height:12px"></div>
+<pre><code>"Condition": {
+  "StringEquals": {
+    "aws:PrincipalArn": "arn:aws:iam::111111111111:assumed-role/deploy-prod/session"
+  }
+}</code></pre>
+<div style="height:12px"></div>
+<p>Ou, melhor — use um principal nomeado diretamente sem condições:</p>
+<div style="height:12px"></div>
+<pre><code>"Principal": {
+  "AWS": "arn:aws:iam::111111111111:role/deploy-prod"
+}</code></pre>
+<div style="height:12px"></div>
+<p><strong>Limite <code>iam:GetRole</code> e <code>iam:ListRoles</code>:</strong></p>
+<div style="height:12px"></div>
+<p>Essas permissões permitem enumeração completa de relações de confiança. Uma identidade com poucos privilégios não deveria ler a trust policy de todas as roles na conta.</p>
+<div style="height:12px"></div>
+<p><strong>Use o IAM Access Analyzer:</strong></p>
+<div style="height:12px"></div>
+<p>O AWS IAM Access Analyzer avalia continuamente as trust policies e sinaliza acesso externo e condições excessivamente permissivas. Ative-o em cada conta e revise seus findings regularmente.</p>
+<div style="height:12px"></div>
+<p><strong>Faça auditoria com uma mentalidade de grafo:</strong></p>
+<div style="height:12px"></div>
+<p>Trust policies não podem ser revisadas isoladamente. A pergunta não é "quem pode assumir essa role?" mas "partindo de qualquer identidade nessa conta, alguém consegue chegar a essa role por uma cadeia de assumptions?" Ferramentas como PMapper constroem esse grafo automaticamente.</p>
+<div style="height:12px"></div>
+<h2>Um Caractere, Um Operador</h2>
+<div style="height:12px"></div>
+<p>A diferença entre uma trust policy segura e a vulnerável acima é <code>StringEquals</code> vs <code>StringLike</code>. Uma diferença no nome do operador. O wildcard no padrão de ARN torna-se inerte com <code>StringEquals</code> — ele corresponde literalmente, não como glob.</p>
+<div style="height:12px"></div>
+<p>Essa é a classe de misconfiguration que não aparece em scanners de vulnerabilidades, não tem CVE, e é invisível para quem revisa a policy sem entender como <code>StringLike</code> funciona nesse contexto. Ela só se torna visível quando você pensa na policy como parte de um grafo de permissões — não como um documento isolado.</p>
+<div style="height:12px"></div>
+<hr>
+<div style="height:12px"></div>
+<p><em>Relacionado: <a href="https://github.com/juliomauro/sec-writeups/tree/main/cases/05-cloud-iam-trust" target="_blank" rel="noopener">Case 05 — Cloud IAM Trust Policy and Role Chaining</a></em></p>
+<div style="height:12px"></div>
+    </div>
+  </div>
+
+  <footer>
+    <div class="footer-sig">ORUAM_OLIUJ</div>
+    <div class="footer-copy"><span class="en">&gt; oruam.cloud/writing · 2026_</span><span class="pt" hidden>&gt; oruam.cloud/writing · 2026_</span></div>
+  </footer>
+</div>
+
+<script>
+const canvas = document.getElementById('matrix-canvas');
+const ctx = canvas.getContext('2d');
+canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+window.addEventListener('resize', () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; init(); });
+const chars = 'アイウエオカキクケコ0123456789ABCDEF$#@%&';
+const fontSize = 16;
+let columns, drops;
+function init() { columns = Math.floor(canvas.width / fontSize); drops = Array(columns).fill(1); }
+function draw() {
+  const theme = document.documentElement.dataset.theme;
+  ctx.fillStyle = theme === 'green' ? 'rgba(0,3,0,0.04)' : theme === 'amber' ? 'rgba(2,1,0,0.04)' : theme === 'light' ? 'rgba(245,242,235,0.06)' : 'rgba(0,3,8,0.04)';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  ctx.fillStyle = theme === 'green' ? '#00ff41' : theme === 'amber' ? '#ff8c00' : theme === 'light' ? '#1a5c3a' : '#00b4ff';
+  ctx.font = fontSize + 'px Share Tech Mono';
+  for (let i = 0; i < drops.length; i++) {
+    const char = chars[Math.floor(Math.random() * chars.length)];
+    ctx.fillText(char, i * fontSize, drops[i] * fontSize);
+    if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
+    drops[i]++;
+  }
+}
+init(); setInterval(draw, 45);
+
+const themeNames = {
+  en: { green: '◈ Green', amber: '◈ Amber', blue: '◈ Blue', light: '◈ Light' },
+  pt: { green: '◈ Verde', amber: '◈ Âmbar', blue: '◈ Azul', light: '◈ Claro' },
+};
+function currentLang() { return localStorage.getItem('lang') === 'pt' ? 'pt' : 'en'; }
+function nextTheme(cur) { cur = cur || 'blue'; return cur==='blue'?'green':cur==='green'?'amber':cur==='amber'?'light':'blue'; }
+function updateThemeBtn(cur) { document.getElementById('theme-btn').textContent = themeNames[currentLang()][nextTheme(cur)]; }
+function toggleTheme() {
+  const html = document.documentElement;
+  const next = nextTheme(html.dataset.theme);
+  html.dataset.theme = next === 'blue' ? '' : next;
+  localStorage.setItem('theme', next);
+  updateThemeBtn(next);
+}
+
+function setLang(lang) {
+  document.querySelectorAll('.en').forEach(el => el.hidden = (lang !== 'en'));
+  document.querySelectorAll('.pt').forEach(el => el.hidden = (lang !== 'pt'));
+  document.getElementById('lang-btn').textContent = lang === 'en' ? 'PT-BR' : 'ENGLISH';
+  document.documentElement.lang = lang;
+  localStorage.setItem('lang', lang);
+  updateThemeBtn(document.documentElement.dataset.theme);
+}
+function toggleLang() { setLang(currentLang() === 'en' ? 'pt' : 'en'); }
+setLang(currentLang());
+</script>
+</body>
+</html>

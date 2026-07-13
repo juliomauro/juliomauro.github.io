@@ -17,6 +17,7 @@
 <meta name="twitter:image" content="https://oruam.cloud/preview.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+<link rel="canonical" href="https://oruam.cloud/writing/">
 <script>(function(){var t=localStorage.getItem('theme');if(t==='green'||t==='amber'||t==='light')document.documentElement.dataset.theme=t;})();</script>
 <style>
 :root {
@@ -642,7 +643,7 @@ body.piqad-active #article-content * {
 
     <div class="section-label" data-i18n="section-latest">Latest</div>
 
-    <div class="article-item" data-tag="security"
+    <a class="article-item" data-tag="security" href="/writing/misantropia/"
          data-path="security/misantropia-Security-Incident-and-the-Brazillian-National-Alert-System-Failure.md">
       <div class="article-inner">
         <div>
@@ -655,11 +656,11 @@ body.piqad-active #article-content * {
         </div>
         <div class="article-arrow">→</div>
       </div>
-    </div>
+    </a>
 
     <div class="section-label">Cloud</div>
 
-    <div class="article-item" data-tag="cloud"
+    <a class="article-item" data-tag="cloud" href="/writing/container/"
          data-path="cloud/your-container-identity-is-worth-more-than-root.md">
       <div class="article-inner">
         <div>
@@ -672,9 +673,9 @@ body.piqad-active #article-content * {
         </div>
         <div class="article-arrow">→</div>
       </div>
-    </div>
+    </a>
 
-    <div class="article-item" data-tag="cloud"
+    <a class="article-item" data-tag="cloud" href="/writing/wildcard/"
          data-path="cloud/one-wildcard-in-a-trust-policy.md">
       <div class="article-inner">
         <div>
@@ -687,11 +688,11 @@ body.piqad-active #article-content * {
         </div>
         <div class="article-arrow">→</div>
       </div>
-    </div>
+    </a>
 
     <div class="section-label">Linux</div>
 
-    <div class="article-item" data-tag="linux"
+    <a class="article-item" data-tag="linux" href="/writing/header/"
          data-path="linux/the-header-that-opened-the-network.md">
       <div class="article-inner">
         <div>
@@ -704,9 +705,9 @@ body.piqad-active #article-content * {
         </div>
         <div class="article-arrow">→</div>
       </div>
-    </div>
+    </a>
 
-    <div class="article-item" data-tag="linux"
+    <a class="article-item" data-tag="linux" href="/writing/systemd/"
          data-path="linux/systemd-as-an-attack-surface.md">
       <div class="article-inner">
         <div>
@@ -719,11 +720,11 @@ body.piqad-active #article-content * {
         </div>
         <div class="article-arrow">→</div>
       </div>
-    </div>
+    </a>
 
     <div class="section-label">Kubernetes</div>
 
-    <div class="article-item" data-tag="kubernetes"
+    <a class="article-item" data-tag="kubernetes" href="/writing/rbac/"
          data-path="kubernetes/rbac-when-no-single-permission-seems-critical.md">
       <div class="article-inner">
         <div>
@@ -736,11 +737,11 @@ body.piqad-active #article-content * {
         </div>
         <div class="article-arrow">→</div>
       </div>
-    </div>
+    </a>
 
     <div class="section-label" data-i18n="section-networking">Networking</div>
 
-    <div class="article-item" data-tag="networking"
+    <a class="article-item" data-tag="networking" href="/writing/meshcore/"
          data-path="networking/meshcore-brazil.md">
       <div class="article-inner">
         <div>
@@ -753,11 +754,11 @@ body.piqad-active #article-content * {
         </div>
         <div class="article-arrow">→</div>
       </div>
-    </div>
+    </a>
 
     <div class="section-label" data-i18n="section-security">Security</div>
 
-    <div class="article-item" data-tag="security"
+    <a class="article-item" data-tag="security" href="/writing/appearances/"
          data-path="security/the-hidden-danger-of-judging-by-appearances.md">
       <div class="article-inner">
         <div>
@@ -770,7 +771,7 @@ body.piqad-active #article-content * {
         </div>
         <div class="article-arrow">→</div>
       </div>
-    </div>
+    </a>
 
   </div><!-- /#article-list -->
 
@@ -1819,6 +1820,8 @@ const RAW = 'https://raw.githubusercontent.com/juliomauro/sec-notes/main/';
 document.getElementById('article-list').addEventListener('click', e => {
   const item = e.target.closest('.article-item');
   if (!item || !item.dataset.path) return;
+  if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return; // let the browser open the real link (new tab, etc.)
+  e.preventDefault();
   openArticle(item.dataset.path);
 });
 

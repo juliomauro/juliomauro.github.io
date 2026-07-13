@@ -1,0 +1,866 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Header That Opened the Network — Julio Cesar Mauro</title>
+<meta name="description" content="Why X-Forwarded-For should never be used for access control at the edge — and how one misconfigured Nginx directive led to full internal network access.">
+<link rel="canonical" href="https://oruam.cloud/writing/header/">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' fill='%23000308'/><text x='6' y='23' font-size='20' fill='%2300b4ff' font-family='monospace'>_</text></svg>">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://oruam.cloud/writing/header/">
+<meta property="og:title" content="The Header That Opened the Network">
+<meta property="og:description" content="Why X-Forwarded-For should never be used for access control at the edge — and how one misconfigured Nginx directive led to full internal network access.">
+<meta property="og:image" content="https://oruam.cloud/preview.svg">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="The Header That Opened the Network">
+<meta name="twitter:description" content="Why X-Forwarded-For should never be used for access control at the edge — and how one misconfigured Nginx directive led to full internal network access.">
+<meta name="twitter:image" content="https://oruam.cloud/preview.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+<script>(function(){var t=localStorage.getItem('theme');if(t==='green'||t==='amber'||t==='light')document.documentElement.dataset.theme=t;})();</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "The Header That Opened the Network",
+  "description": "Why X-Forwarded-For should never be used for access control at the edge — and how one misconfigured Nginx directive led to full internal network access.",
+  "author": { "@type": "Person", "name": "Julio Cesar Mauro", "alternateName": "Julio Mauro", "url": "https://oruam.cloud" },
+  "publisher": { "@type": "Person", "name": "Julio Cesar Mauro" },
+  "mainEntityOfPage": { "@type": "WebPage", "@id": "https://oruam.cloud/writing/header/" },
+  "image": "https://oruam.cloud/preview.svg",
+  "inLanguage": "en"
+}
+</script>
+<style>
+:root {
+  --bg:          #000308;
+  --surface:     #020810;
+  --border:      #003388;
+  --green:       #00b4ff;
+  --green-mid:   #0088cc;
+  --green-dim:   #00b4ff22;
+  --text:        #00bbee;
+  --text-dim:    #0088bb;
+  --white:       #cce8ff;
+  --glow:        0 0 10px #00b4ff66, 0 0 20px #00b4ff33;
+  --glow-strong: 0 0 8px #00b4ff, 0 0 20px #00b4ff88, 0 0 40px #00b4ff44;
+}
+
+[data-theme="green"] {
+  --bg:          #000300;
+  --surface:     #020b02;
+  --border:      #003300;
+  --green:       #00ff41;
+  --green-mid:   #00cc33;
+  --green-dim:   #00aa2233;
+  --text:        #00cc33;
+  --text-dim:    #006622;
+  --white:       #ccffcc;
+  --glow:        0 0 10px #00ff4166, 0 0 20px #00ff4133;
+  --glow-strong: 0 0 8px #00ff41, 0 0 20px #00ff4188, 0 0 40px #00ff4144;
+}
+[data-theme="green"] nav { background: rgba(0,3,0,0.95); }
+
+[data-theme="amber"] {
+  --bg:          #020100;
+  --surface:     #0a0500;
+  --border:      #663300;
+  --green:       #ff8c00;
+  --green-mid:   #cc6600;
+  --green-dim:   #ff8c0033;
+  --text:        #ee7700;
+  --text-dim:    #bb5500;
+  --white:       #ffe8cc;
+  --glow:        0 0 10px #ff8c0066, 0 0 20px #ff8c0033;
+  --glow-strong: 0 0 8px #ff8c00, 0 0 20px #ff8c0088, 0 0 40px #ff8c0044;
+}
+[data-theme="amber"] nav { background: rgba(2,1,0,0.95); }
+
+[data-theme="light"] {
+  --bg:          #f5f2eb;
+  --surface:     #eae6db;
+  --border:      #b0a888;
+  --green:       #1a5c3a;
+  --green-mid:   #2a7a50;
+  --green-dim:   rgba(26,92,58,0.1);
+  --text:        #1a3a28;
+  --text-dim:    #5a7a68;
+  --white:       #0a1a10;
+  --glow:        none;
+  --glow-strong: none;
+}
+[data-theme="light"] body           { background: #f5f2eb; }
+[data-theme="light"] nav            { background: rgba(245,242,235,0.95); }
+[data-theme="light"] body::after    { background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.04) 2px, rgba(0,0,0,0.04) 4px); }
+[data-theme="light"] body::before   { background: radial-gradient(ellipse at center, transparent 60%, rgba(0,0,0,0.08) 100%); }
+[data-theme="light"] h1             { animation: none; color: var(--green); text-shadow: none; }
+[data-theme="light"] #matrix-canvas { opacity: 0.035; }
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Share Tech Mono', monospace;
+  line-height: 1.7;
+  overflow-x: hidden;
+  min-height: 100vh;
+}
+
+#matrix-canvas {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  z-index: 0;
+  opacity: 0.06;
+  pointer-events: none;
+}
+
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg, transparent, transparent 2px,
+    rgba(0,0,0,0.12) 2px, rgba(0,0,0,0.12) 4px
+  );
+  pointer-events: none;
+  z-index: 999;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(ellipse at center, transparent 60%, rgba(0,0,0,0.7) 100%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.wrap {
+  position: relative;
+  z-index: 10;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 0 32px;
+}
+
+/* ── NAV ── */
+nav {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(0,3,8,0.95);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--border);
+  padding: 14px 0;
+}
+
+.nav-inner {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+}
+
+.nav-home {
+  font-family: 'Orbitron', monospace;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--green);
+  text-decoration: none;
+  text-shadow: var(--glow);
+  letter-spacing: 2px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.nav-home::before { content: '←'; }
+
+nav a.nav-link {
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text);
+  text-decoration: none;
+  transition: all 0.2s;
+}
+
+nav a.nav-link:hover {
+  color: var(--green);
+  text-shadow: var(--glow);
+}
+
+.nav-controls {
+  margin-left: auto;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.theme-toggle {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  background: none;
+  border: 1px solid var(--border);
+  padding: 4px 10px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.theme-toggle:hover {
+  color: var(--green);
+  border-color: var(--green-mid);
+  background: var(--green-dim);
+}
+
+/* ── HEADER ── */
+header {
+  padding: 64px 0 48px;
+  border-bottom: 1px solid var(--border);
+}
+
+.header-tag {
+  font-size: 11px;
+  color: var(--text-dim);
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.header-tag::before {
+  content: '';
+  width: 20px; height: 1px;
+  background: var(--green);
+  box-shadow: var(--glow);
+}
+
+h1 {
+  font-family: 'Orbitron', monospace;
+  font-size: clamp(28px, 5vw, 42px);
+  font-weight: 900;
+  color: var(--green);
+  text-shadow: var(--glow-strong);
+  letter-spacing: 2px;
+  margin-bottom: 12px;
+  animation: glitch 8s ease infinite;
+}
+
+.header-sub {
+  font-size: 14px;
+  color: var(--text-dim);
+  letter-spacing: 1px;
+}
+
+@keyframes glitch {
+  0%,100% { text-shadow: var(--glow-strong); }
+  92% { text-shadow: var(--glow-strong); }
+  93% { text-shadow: -2px 0 #ff0040, 2px 0 #00ffff; transform: translateX(-2px); }
+  94% { text-shadow: var(--glow-strong); transform: translateX(0); }
+  96% { text-shadow: 2px 0 #ff0040, -2px 0 #00ffff; transform: translateX(2px); }
+  97% { text-shadow: var(--glow-strong); transform: translateX(0); }
+}
+
+/* ── FILTER TABS ── */
+.filters {
+  display: flex;
+  gap: 8px;
+  padding: 32px 0 0;
+  flex-wrap: wrap;
+}
+
+.filter-btn {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 12px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  background: none;
+  border: 1px solid var(--border);
+  padding: 6px 16px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.filter-btn:hover,
+.filter-btn.active {
+  color: var(--green);
+  border-color: var(--green-mid);
+  background: var(--green-dim);
+  box-shadow: var(--glow);
+}
+
+/* ── ARTICLE LIST ── */
+.articles {
+  padding: 40px 0;
+}
+
+.article-item {
+  border: 1px solid var(--border);
+  background: var(--surface);
+  margin-bottom: 16px;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.2s;
+  animation: fadeUp 0.4s ease both;
+  text-decoration: none;
+  display: block;
+  color: inherit;
+  cursor: pointer;
+}
+
+.article-item::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 3px; height: 100%;
+  background: var(--green);
+  transform: scaleY(0);
+  transition: transform 0.2s;
+  transform-origin: top;
+}
+
+.article-item:hover {
+  border-color: var(--green-mid);
+  box-shadow: var(--glow);
+}
+
+.article-item:hover::before { transform: scaleY(1); }
+
+.article-inner {
+  padding: 24px 28px;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 16px;
+  align-items: center;
+}
+
+.article-meta {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 8px;
+  flex-wrap: wrap;
+}
+
+.article-tag {
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  padding: 3px 10px;
+  border: 1px solid var(--border);
+  color: var(--text-dim);
+}
+
+.article-tag.cloud      { color: #00aaff; border-color: #00aaff44; }
+.article-tag.linux      { color: #00ff41; border-color: #00ff4144; }
+.article-tag.kubernetes { color: #ffaa00; border-color: #ffaa0044; }
+.article-tag.vuln-mgmt  { color: #ff6644; border-color: #ff664444; }
+.article-tag.networking { color: #00ccff; border-color: #00ccff44; }
+.article-tag.security   { color: #ff6644; border-color: #ff664444; }
+
+.article-level {
+  font-size: 11px;
+  letter-spacing: 1px;
+  color: var(--text-dim);
+}
+
+.article-title {
+  font-family: 'Orbitron', monospace;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--green);
+  letter-spacing: 1px;
+  margin-bottom: 8px;
+  line-height: 1.3;
+}
+
+.article-desc {
+  font-size: 14px;
+  color: var(--text-dim);
+  line-height: 1.6;
+}
+
+.article-arrow {
+  font-size: 20px;
+  color: var(--green-mid);
+  opacity: 0;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+
+.article-item:hover .article-arrow {
+  opacity: 1;
+  transform: translateX(4px);
+}
+
+/* ── SECTION LABEL ── */
+.section-label {
+  font-size: 12px;
+  color: var(--text-dim);
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  margin: 40px 0 16px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.section-label::after {
+  content: '';
+  flex: 1; height: 1px;
+  background: linear-gradient(90deg, var(--border), transparent);
+}
+
+/* ── ARTICLE VIEW ── */
+#article-view {
+  display: none;
+  padding: 40px 0 80px;
+}
+
+.art-back {
+  margin-bottom: 40px;
+}
+
+.back-btn {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 12px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  background: none;
+  border: 1px solid var(--border);
+  padding: 6px 16px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.back-btn:hover {
+  color: var(--green);
+  border-color: var(--green-mid);
+  background: var(--green-dim);
+  box-shadow: var(--glow);
+}
+
+.art-body {
+  max-width: 760px;
+}
+
+.art-body h1 {
+  font-family: 'Orbitron', monospace;
+  font-size: clamp(20px, 3vw, 30px);
+  font-weight: 900;
+  color: var(--green);
+  text-shadow: var(--glow-strong);
+  letter-spacing: 1px;
+  margin: 0 0 28px;
+  animation: none;
+  line-height: 1.3;
+}
+
+.art-body h2 {
+  font-family: 'Orbitron', monospace;
+  font-size: clamp(14px, 2vw, 18px);
+  font-weight: 700;
+  color: var(--green);
+  letter-spacing: 1px;
+  margin: 40px 0 14px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+}
+
+.art-body h3 {
+  font-size: 15px;
+  color: var(--text);
+  letter-spacing: 1px;
+  margin: 28px 0 10px;
+}
+
+.art-body p {
+  font-size: 15px;
+  color: var(--white);
+  line-height: 1.85;
+  margin-bottom: 16px;
+}
+
+.art-body ul, .art-body ol {
+  margin: 0 0 16px 24px;
+}
+
+.art-body li {
+  font-size: 15px;
+  color: var(--white);
+  line-height: 1.85;
+  margin-bottom: 6px;
+}
+
+.art-body li::marker { color: var(--green-mid); }
+
+.art-body blockquote {
+  border-left: 3px solid var(--green-mid);
+  padding: 8px 20px;
+  margin: 20px 0;
+  background: var(--surface);
+  color: var(--text-dim);
+  font-size: 14px;
+}
+
+.art-body pre {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--green-mid);
+  padding: 16px 20px;
+  margin: 20px 0;
+  overflow-x: auto;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.art-body pre code {
+  color: var(--text);
+  background: none;
+  padding: 0;
+  font-family: 'Share Tech Mono', monospace;
+}
+
+.art-body code {
+  color: var(--green);
+  background: var(--green-dim);
+  padding: 2px 6px;
+  font-size: 13px;
+  font-family: 'Share Tech Mono', monospace;
+}
+
+.art-body a {
+  color: var(--green-mid);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  transition: color 0.15s;
+}
+.art-body a:hover { color: var(--green); }
+
+.art-body hr {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 36px 0;
+}
+
+.art-loading {
+  font-size: 14px;
+  color: var(--text-dim);
+  letter-spacing: 2px;
+  margin-top: 40px;
+  animation: pulse 1s ease infinite;
+}
+@keyframes pulse { 0%,100%{opacity:0.4} 50%{opacity:1} }
+
+.art-fetch-error {
+  font-size: 14px;
+  color: #884400;
+  margin-top: 40px;
+}
+
+/* ── FOOTER ── */
+footer {
+  padding: 40px 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid var(--border);
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.footer-sig {
+  font-family: 'Orbitron', monospace;
+  font-size: 13px;
+  color: var(--green);
+  text-shadow: var(--glow);
+  letter-spacing: 2px;
+}
+
+.footer-copy {
+  font-size: 11px;
+  color: var(--text-dim);
+  letter-spacing: 2px;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 640px) {
+  .wrap { padding: 0 16px; }
+  .article-inner { grid-template-columns: 1fr; }
+  .article-arrow { display: none; }
+  .nav-inner { gap: 8px; }
+  .nav-home { font-size: 10px; letter-spacing: 1px; }
+  nav a.nav-link { font-size: 10px; }
+  .theme-toggle { font-size: 9px; padding: 4px 7px; }
+}
+
+@font-face {
+  font-family: 'pIqaD';
+  src: url('/fonts/pIqaD.woff') format('woff');
+}
+body.piqad-active [data-i18n],
+body.piqad-active #article-content * {
+  font-family: 'pIqaD', monospace;
+  letter-spacing: 3px;
+}
+
+[hidden] { display: none !important; }
+</style>
+</head>
+<body>
+
+<canvas id="matrix-canvas"></canvas>
+
+<nav>
+  <div class="wrap">
+    <div class="nav-inner">
+      <a href="/" class="nav-home">ORUAM.CLOUD</a>
+      <a href="/projects/" class="nav-link"><span class="en">Projects</span><span class="pt" hidden>Projetos</span></a>
+      <a href="/writing/" class="nav-link"><span class="en">Writing</span><span class="pt" hidden>Textos</span></a>
+      <div class="nav-controls">
+        <button class="theme-toggle" id="theme-btn" onclick="toggleTheme()">◈ Green</button>
+        <button class="theme-toggle" id="lang-btn" onclick="toggleLang()">PT-BR</button>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<div class="wrap">
+  <div id="article-view" style="display:block; padding-top:40px;">
+    <div class="art-back">
+      <a class="back-btn" href="/writing/" style="display:inline-block; text-decoration:none;">
+        <span class="en">← Writing</span><span class="pt" hidden>← Textos</span>
+      </a>
+    </div>
+    <div class="article-meta" style="margin-bottom:20px;">
+      <span class="article-tag linux">Linux · Web · Lateral Movement</span>
+      <span class="article-level">// Practitioner</span>
+    </div>
+    <div class="art-body en">
+<h1>The Header That Opened the Network</h1>
+<div style="height:12px"></div>
+<blockquote><strong>Category:</strong> Linux · Web · Lateral Movement</blockquote>
+<blockquote><strong>Level:</strong> Practitioner</blockquote>
+<div style="height:12px"></div>
+<hr>
+<div style="height:12px"></div>
+<p>There is a class of misconfiguration that appears everywhere in modern infrastructure and is consistently underestimated: <strong>trusting client-controlled HTTP headers for access control decisions</strong>.</p>
+<div style="height:12px"></div>
+<p>The scenario is common. A public-facing server runs Nginx as a reverse proxy in front of an internal application. The application has an admin panel that should only be accessible from localhost. Someone — reasonably, it seems — decides to enforce this by checking the origin IP in the request. The problem is where they check it.</p>
+<div style="height:12px"></div>
+<h2>The Mistake</h2>
+<div style="height:12px"></div>
+<pre><code>location /admin {
+    if ($http_x_forwarded_for != "127.0.0.1") {
+        return 403;
+    }
+    proxy_pass http://127.0.0.1:8080;
+}</code></pre>
+<div style="height:12px"></div>
+<p><code>$http_x_forwarded_for</code> is the value of the <code>X-Forwarded-For</code> header. That header is set by the <strong>client</strong>. Any external user can send:</p>
+<div style="height:12px"></div>
+<pre><code>GET /admin/diagnostics HTTP/1.1
+X-Forwarded-For: 127.0.0.1</code></pre>
+<div style="height:12px"></div>
+<p>And the check passes. The admin panel is now accessible from anywhere on the internet.</p>
+<div style="height:12px"></div>
+<h2>Why This Happens</h2>
+<div style="height:12px"></div>
+<p>The confusion comes from how <code>X-Forwarded-For</code> is supposed to work. In a properly configured stack, the header is set by a trusted upstream proxy — not the client. The internal application reads it to know the real client IP after going through load balancers.</p>
+<div style="height:12px"></div>
+<p>But when Nginx is the <strong>first</strong> point of contact (the internet-facing layer), it is receiving headers from untrusted clients. Trusting those headers for security decisions is equivalent to asking someone for their ID and accepting whatever they write on a piece of paper.</p>
+<div style="height:12px"></div>
+<h2>The Right Approach</h2>
+<div style="height:12px"></div>
+<p><strong>At the Nginx level</strong> — use <code>$remote_addr</code> (the actual TCP connection IP) instead of the forwarded header:</p>
+<div style="height:12px"></div>
+<pre><code>location /admin {
+    allow 127.0.0.1;
+    deny all;
+    proxy_pass http://127.0.0.1:8080;
+}</code></pre>
+<div style="height:12px"></div>
+<p>This cannot be forged. The <code>allow/deny</code> directives operate on the real network layer.</p>
+<div style="height:12px"></div>
+<p><strong>At the application level</strong> — never make authorization decisions based on <code>X-Forwarded-For</code> alone. If the application needs the real IP, configure Nginx to set a trusted header using <code>$remote_addr</code>:</p>
+<div style="height:12px"></div>
+<pre><code>proxy_set_header X-Real-IP $remote_addr;
+proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;</code></pre>
+<div style="height:12px"></div>
+<p>And strip any client-supplied version of those headers before forwarding:</p>
+<div style="height:12px"></div>
+<pre><code>proxy_set_header X-Forwarded-For "";</code></pre>
+<div style="height:12px"></div>
+<h2>The Cascade</h2>
+<div style="height:12px"></div>
+<p>The reason this is worth writing about is not the misconfiguration itself — it is what came after in a real exercise. The accessible admin panel exposed system diagnostics. The diagnostics exposed log fragments. The log fragments exposed a temporary SSH key path. The key gave access to an internal network segment. The flag was on a host with no public route.</p>
+<div style="height:12px"></div>
+<p><strong>One bad header. Full internal network access.</strong></p>
+<div style="height:12px"></div>
+<p>The surface looked small. Two public ports, no obvious login form, no CMS. The weakness was invisible to a passive scan. It only showed up when you paid attention to how the proxy behaved under different inputs.</p>
+<div style="height:12px"></div>
+<h2>Takeaways</h2>
+<div style="height:12px"></div>
+<ul>
+<li>Never use <code>X-Forwarded-For</code> or <code>X-Real-IP</code> for access control at the edge layer — they are client-controlled</li>
+<li>Restrict sensitive paths using network-layer controls (<code>allow/deny</code>, firewall rules), not header checks</li>
+<li>Admin endpoints should not be on the same listener as the public application if at all avoidable</li>
+<li>Verbose diagnostics endpoints are a significant risk — limit what they expose and who can reach them</li>
+<li>A small attack surface in a port scan is not the same as a small attack surface in practice</li>
+</ul>
+<div style="height:12px"></div>
+<hr>
+<div style="height:12px"></div>
+<p><em>Related: <a href="https://github.com/juliomauro/sec-writeups/tree/main/cases/01-linux-pivot" target="_blank" rel="noopener">Case 01 — Linux Pivot via Reverse Proxy Misconfiguration</a></em></p>
+<div style="height:12px"></div>
+    </div>
+    <div class="art-body pt" hidden>
+<h1>O Header Que Abriu a Rede</h1>
+<div style="height:12px"></div>
+<blockquote><strong>Categoria:</strong> Linux · Web · Movimentação Lateral</blockquote>
+<blockquote><strong>Nível:</strong> Praticante</blockquote>
+<div style="height:12px"></div>
+<hr>
+<div style="height:12px"></div>
+<p>Existe uma classe de misconfiguration que aparece em toda infraestrutura moderna e é consistentemente subestimada: <strong>confiar em headers HTTP controlados pelo cliente para decisões de controle de acesso</strong>.</p>
+<div style="height:12px"></div>
+<p>O cenário é comum. Um servidor público roda Nginx como proxy reverso na frente de uma aplicação interna. A aplicação tem um painel de administração que deveria ser acessível apenas a partir do localhost. Alguém decide reforçar isso verificando o IP de origem da requisição. O problema está em onde verificam.</p>
+<div style="height:12px"></div>
+<h2>O Erro</h2>
+<div style="height:12px"></div>
+<pre><code>location /admin {
+    if ($http_x_forwarded_for != "127.0.0.1") {
+        return 403;
+    }
+    proxy_pass http://127.0.0.1:8080;
+}</code></pre>
+<div style="height:12px"></div>
+<p><code>$http_x_forwarded_for</code> é o valor do header <code>X-Forwarded-For</code>. Esse header é definido pelo <strong>cliente</strong>. Qualquer usuário externo pode enviar:</p>
+<div style="height:12px"></div>
+<pre><code>GET /admin/diagnostics HTTP/1.1
+X-Forwarded-For: 127.0.0.1</code></pre>
+<div style="height:12px"></div>
+<p>E a verificação passa. O painel de administração agora é acessível de qualquer lugar na internet.</p>
+<div style="height:12px"></div>
+<h2>Por Que Isso Acontece</h2>
+<div style="height:12px"></div>
+<p>A confusão vem de como o <code>X-Forwarded-For</code> deveria funcionar. Em uma stack bem configurada, o header é definido por um proxy upstream confiável — não pelo cliente. A aplicação interna o lê para saber o IP real do cliente após passar por load balancers.</p>
+<div style="height:12px"></div>
+<p>Mas quando o Nginx é o <strong>primeiro ponto de contato</strong> (a camada voltada para a internet), ele está recebendo headers de clientes não confiáveis. Confiar nesses headers para decisões de segurança é equivalente a pedir um documento a alguém e aceitar qualquer coisa que ele escrever num papel.</p>
+<div style="height:12px"></div>
+<h2>A Abordagem Correta</h2>
+<div style="height:12px"></div>
+<p><strong>No nível do Nginx</strong> — use <code>$remote_addr</code> (o IP real da conexão TCP) em vez do header encaminhado:</p>
+<div style="height:12px"></div>
+<pre><code>location /admin {
+    allow 127.0.0.1;
+    deny all;
+    proxy_pass http://127.0.0.1:8080;
+}</code></pre>
+<div style="height:12px"></div>
+<p>Isso não pode ser falsificado. As diretivas <code>allow/deny</code> operam na camada de rede real.</p>
+<div style="height:12px"></div>
+<p><strong>No nível da aplicação</strong> — nunca tome decisões de autorização baseadas apenas no <code>X-Forwarded-For</code>. Se a aplicação precisa do IP real, configure o Nginx para definir um header confiável usando <code>$remote_addr</code>:</p>
+<div style="height:12px"></div>
+<pre><code>proxy_set_header X-Real-IP $remote_addr;
+proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;</code></pre>
+<div style="height:12px"></div>
+<p>E remova qualquer versão fornecida pelo cliente desses headers antes de encaminhar:</p>
+<div style="height:12px"></div>
+<pre><code>proxy_set_header X-Forwarded-For "";</code></pre>
+<div style="height:12px"></div>
+<h2>A Cascata</h2>
+<div style="height:12px"></div>
+<p>O motivo pelo qual isso vale a pena documentar não é a misconfiguration em si — é o que veio depois em um exercício real. O painel acessível expôs diagnósticos do sistema. Os diagnósticos expuseram fragmentos de log. Os logs expuseram um caminho de chave SSH temporária. A chave deu acesso a um segmento de rede interna.</p>
+<div style="height:12px"></div>
+<p><strong>Um header errado. Acesso completo à rede interna.</strong></p>
+<div style="height:12px"></div>
+<p>A superfície parecia pequena. Duas portas públicas, nenhum formulário de login óbvio, nenhum CMS. A fraqueza era invisível a um scan passivo. Ela só apareceu quando se prestou atenção em como o proxy se comportava sob diferentes entradas.</p>
+<div style="height:12px"></div>
+<h2>Conclusões</h2>
+<div style="height:12px"></div>
+<ul>
+<li>Nunca use <code>X-Forwarded-For</code> ou <code>X-Real-IP</code> para controle de acesso na camada de borda — eles são controlados pelo cliente</li>
+<li>Restrinja caminhos sensíveis usando controles de camada de rede (<code>allow/deny</code>, regras de firewall), não verificações de header</li>
+<li>Endpoints de administração não deveriam estar no mesmo listener que a aplicação pública</li>
+<li>Endpoints de diagnóstico verbosos são um risco significativo — limite o que expõem e quem pode acessá-los</li>
+<li>Uma superfície de ataque pequena em um port scan não é o mesmo que uma superfície de ataque pequena na prática</li>
+</ul>
+<div style="height:12px"></div>
+<hr>
+<div style="height:12px"></div>
+<p><em>Relacionado: <a href="https://github.com/juliomauro/sec-writeups/tree/main/cases/01-linux-pivot" target="_blank" rel="noopener">Case 01 — Linux Pivot via Reverse Proxy Misconfiguration</a></em></p>
+<div style="height:12px"></div>
+    </div>
+  </div>
+
+  <footer>
+    <div class="footer-sig">ORUAM_OLIUJ</div>
+    <div class="footer-copy"><span class="en">&gt; oruam.cloud/writing · 2026_</span><span class="pt" hidden>&gt; oruam.cloud/writing · 2026_</span></div>
+  </footer>
+</div>
+
+<script>
+const canvas = document.getElementById('matrix-canvas');
+const ctx = canvas.getContext('2d');
+canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+window.addEventListener('resize', () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; init(); });
+const chars = 'アイウエオカキクケコ0123456789ABCDEF$#@%&';
+const fontSize = 16;
+let columns, drops;
+function init() { columns = Math.floor(canvas.width / fontSize); drops = Array(columns).fill(1); }
+function draw() {
+  const theme = document.documentElement.dataset.theme;
+  ctx.fillStyle = theme === 'green' ? 'rgba(0,3,0,0.04)' : theme === 'amber' ? 'rgba(2,1,0,0.04)' : theme === 'light' ? 'rgba(245,242,235,0.06)' : 'rgba(0,3,8,0.04)';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  ctx.fillStyle = theme === 'green' ? '#00ff41' : theme === 'amber' ? '#ff8c00' : theme === 'light' ? '#1a5c3a' : '#00b4ff';
+  ctx.font = fontSize + 'px Share Tech Mono';
+  for (let i = 0; i < drops.length; i++) {
+    const char = chars[Math.floor(Math.random() * chars.length)];
+    ctx.fillText(char, i * fontSize, drops[i] * fontSize);
+    if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
+    drops[i]++;
+  }
+}
+init(); setInterval(draw, 45);
+
+const themeNames = {
+  en: { green: '◈ Green', amber: '◈ Amber', blue: '◈ Blue', light: '◈ Light' },
+  pt: { green: '◈ Verde', amber: '◈ Âmbar', blue: '◈ Azul', light: '◈ Claro' },
+};
+function currentLang() { return localStorage.getItem('lang') === 'pt' ? 'pt' : 'en'; }
+function nextTheme(cur) { cur = cur || 'blue'; return cur==='blue'?'green':cur==='green'?'amber':cur==='amber'?'light':'blue'; }
+function updateThemeBtn(cur) { document.getElementById('theme-btn').textContent = themeNames[currentLang()][nextTheme(cur)]; }
+function toggleTheme() {
+  const html = document.documentElement;
+  const next = nextTheme(html.dataset.theme);
+  html.dataset.theme = next === 'blue' ? '' : next;
+  localStorage.setItem('theme', next);
+  updateThemeBtn(next);
+}
+
+function setLang(lang) {
+  document.querySelectorAll('.en').forEach(el => el.hidden = (lang !== 'en'));
+  document.querySelectorAll('.pt').forEach(el => el.hidden = (lang !== 'pt'));
+  document.getElementById('lang-btn').textContent = lang === 'en' ? 'PT-BR' : 'ENGLISH';
+  document.documentElement.lang = lang;
+  localStorage.setItem('lang', lang);
+  updateThemeBtn(document.documentElement.dataset.theme);
+}
+function toggleLang() { setLang(currentLang() === 'en' ? 'pt' : 'en'); }
+setLang(currentLang());
+</script>
+</body>
+</html>
