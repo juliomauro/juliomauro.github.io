@@ -1352,7 +1352,7 @@ body.piqad-active [data-i18n] {
     <div data-i18n="hint-3">// ...its twin carries every weapon</div>
     <div data-i18n="hint-4">// say what you are, or where you want to go</div>
     <div data-i18n="hint-5">// follow the white rabbit, or just say his name</div>
-    <div data-i18n="hint-6">// the truth has a folder. type its name.</div>
+    <div data-i18n="hint-6" id="hint-xfiles">// the truth has a folder. type its name.</div>
     <div data-i18n="hint-7">// tap the name like you mean it. five times.</div>
   </div>
 
@@ -1746,6 +1746,19 @@ function toggleTheme() {
 
 (function() {
   var CODE = 'IDDQD', buf = '';
+  // 5 taps on the xfiles hint → xfiles easter egg (mobile)
+  (function() {
+    var taps = 0, timer = null;
+    var el = document.getElementById('hint-xfiles');
+    if (!el) return;
+    el.addEventListener('touchend', function(e) {
+      e.preventDefault();
+      taps++;
+      clearTimeout(timer);
+      if (taps >= 5) { taps = 0; xfilesTransition(); return; }
+      timer = setTimeout(function() { taps = 0; }, 3000);
+    }, { passive: false });
+  })();
   // 5 taps on the name → matrix easter egg (mobile)
   (function() {
     var taps = 0, timer = null;
