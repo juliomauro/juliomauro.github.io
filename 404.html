@@ -29,6 +29,46 @@ body::after {
   background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.12) 2px,rgba(0,0,0,0.12) 4px);
   pointer-events:none;z-index:999;
 }
+/* ── AMBIENT GRAIN (broken-signal texture) ── */
+#grain {
+  position: fixed; inset: -100px; z-index: 3; pointer-events: none;
+  opacity: 0.06; mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  animation: grainShift 0.5s steps(4) infinite;
+}
+@keyframes grainShift {
+  0%   { transform: translate(0,0); }
+  25%  { transform: translate(-2%,1%); }
+  50%  { transform: translate(1%,-2%); }
+  75%  { transform: translate(-1%,-1%); }
+  100% { transform: translate(0,0); }
+}
+/* ── AMBIENT FLICKER (dying signal) ── */
+#flicker {
+  position: fixed; inset: 0; z-index: 998; pointer-events: none;
+  background: #000; opacity: 0;
+  animation: flick 6.7s infinite;
+}
+@keyframes flick {
+  0%, 93%, 100% { opacity: 0; }
+  93.4% { opacity: 0.28; }
+  93.7% { opacity: 0; }
+  94.3% { opacity: 0.4; }
+  94.6% { opacity: 0.03; }
+  95.1% { opacity: 0.22; }
+  95.5% { opacity: 0; }
+}
+/* ── INTERFERENCE BURST (on load) ── */
+#interrupt {
+  position: fixed; inset: 0; z-index: 1000; pointer-events: none;
+  display: flex; align-items: center; justify-content: center;
+  background: #000; opacity: 0;
+}
+#interrupt-text {
+  font-family: 'Orbitron', monospace; font-weight: 900;
+  font-size: clamp(28px, 6vw, 56px); letter-spacing: 4px;
+  color: #ff2244; text-shadow: 0 0 10px #ff2244, 0 0 30px #ff224488;
+}
 .wrap {
   position:relative;z-index:10;
   text-align:center;padding:40px 32px;
@@ -59,9 +99,6 @@ body::after {
   display:inline-block;
 }
 .boot div { margin-bottom:6px; opacity:0; animation:fadeIn 0.3s ease forwards; }
-.boot div:nth-child(1){animation-delay:0.2s}
-.boot div:nth-child(2){animation-delay:0.5s}
-.boot div:nth-child(3){animation-delay:0.8s}
 .home-link {
   font-size:12px;letter-spacing:3px;text-transform:uppercase;
   color:#00cc33;text-decoration:none;
@@ -75,17 +112,53 @@ body::after {
 </head>
 <body>
 <canvas id="matrix-canvas"></canvas>
+<div id="grain"></div>
+<div id="flicker"></div>
+<div id="interrupt"><div id="interrupt-text">SIGNAL LOST</div></div>
 <div class="wrap">
   <div class="code">404</div>
-  <div class="boot">
-    <div>> LOCATING TARGET... [FAILED]</div>
-    <div>> PAGE NOT FOUND IN SYSTEM</div>
-    <div>> REDIRECTING AVAILABLE</div>
-  </div>
+  <div class="boot" id="boot"></div>
   <p class="msg">The page you're looking for<br>does <span>not exist</span> in this matrix.</p>
   <a href="/" class="home-link">⌥ Return to base</a>
 </div>
 <script>
+var BOOTS = [
+  ['> LOCATING TARGET... [FAILED]', '> PAGE NOT FOUND IN SYSTEM', '> REDIRECTING AVAILABLE'],
+  ['> SCANNING FILESYSTEM... [EMPTY]', '> THIS ROUTE DOES NOT COMPUTE', '> SUGGEST: TRY A DIFFERENT TIMELINE'],
+  ['> QUERY: WHERE IS THIS PAGE?', '> RESPONSE: NOWHERE. IT NEVER EXISTED', '> ...OR DID IT?'],
+  ['> ACCESSING RESTRICTED ROUTE... [DENIED]', '> EVEN GOOGLE COULDN\'T FIND THIS ONE', '> NICE TRY THOUGH'],
+  ['> TRACE COMPLETE', '> DESTINATION: THE VOID', '> THE TRUTH (OF THIS URL) IS NOT OUT THERE'],
+];
+(function() {
+  var pick = BOOTS[Math.floor(Math.random() * BOOTS.length)];
+  var boot = document.getElementById('boot');
+  pick.forEach(function(line, i) {
+    var div = document.createElement('div');
+    div.textContent = line;
+    div.style.animationDelay = (0.2 + i * 0.3) + 's';
+    boot.appendChild(div);
+  });
+})();
+
+(function() {
+  var overlay = document.getElementById('interrupt');
+
+  function burst() {
+    overlay.style.transition = 'none';
+    var t = 0;
+    [0.85, 0.2, 0.7, 0.1].forEach(function(level, i) {
+      t += 70 + (i % 2) * 40;
+      setTimeout(function() { overlay.style.opacity = level; }, t);
+    });
+    setTimeout(function() { overlay.style.transition = 'opacity 0.4s ease'; overlay.style.opacity = 0; }, t + 260);
+  }
+
+  burst();
+  (function loop() {
+    setTimeout(function() { burst(); loop(); }, 2500 + Math.random() * 3500);
+  })();
+})();
+
 const canvas=document.getElementById('matrix-canvas');
 const ctx=canvas.getContext('2d');
 function resize(){canvas.width=window.innerWidth;canvas.height=window.innerHeight}
