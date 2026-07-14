@@ -1666,6 +1666,7 @@ const ART_KEY = {
   'networking/meshcore-brazil.md':                            'meshcore',
   'security/the-hidden-danger-of-judging-by-appearances.md':  'appearances',
 };
+const SLUG_TO_PATH = Object.fromEntries(Object.entries(ART_KEY).map(([path, slug]) => [slug, path]));
 
 let currentPath = null;
 
@@ -1887,8 +1888,8 @@ function closeArticle() {
 
 window.addEventListener('popstate', () => {
   const hash = window.location.hash.slice(1);
-  if (hash) {
-    openArticle(hash + '.md');
+  if (hash && SLUG_TO_PATH[hash]) {
+    openArticle(SLUG_TO_PATH[hash]);
   } else {
     currentPath = null;
     document.getElementById('list-header').style.display = '';
@@ -1900,7 +1901,7 @@ window.addEventListener('popstate', () => {
 // Open article from hash on direct load
 (function() {
   const hash = window.location.hash.slice(1);
-  if (hash) openArticle(hash + '.md');
+  if (hash && SLUG_TO_PATH[hash]) openArticle(SLUG_TO_PATH[hash]);
 })();
 
 // ── MARKDOWN RENDERER ──
