@@ -772,6 +772,9 @@ footer a:hover { color: #b3121a; border-color: #b3121a; }
     })(t0);
   }
   function toggleThemeAudio() {
+    if (window.goatcounter && window.goatcounter.count) {
+      window.goatcounter.count({ path: 'egg-iwanttobelieve', title: 'Easter egg: I WANT TO BELIEVE audio', event: true });
+    }
     if (themeAudio.paused) {
       themeAudio.currentTime = 0;
       themeAudio.volume = 0;

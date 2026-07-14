@@ -1854,6 +1854,9 @@ function toggleTheme() {
   }
 
   function triggerGodMode() {
+    if (window.goatcounter && window.goatcounter.count) {
+      window.goatcounter.count({ path: 'egg-iddqd', title: 'Easter egg: IDDQD', event: true });
+    }
     textEl.innerHTML = '';
     overlay.classList.remove('fadeout');
     overlay.classList.add('active');
@@ -1902,6 +1905,9 @@ function xfilesTransition() {
 }
 
 function openDoom() {
+  if (window.goatcounter && window.goatcounter.count) {
+    window.goatcounter.count({ path: 'egg-idkfa', title: 'Easter egg: IDKFA', event: true });
+  }
   var overlay  = document.getElementById('doom-overlay');
   var screen   = document.getElementById('crt-screen');
   var terminal = document.getElementById('doom-terminal');
@@ -1982,6 +1988,9 @@ function closeDoom() {
   window.showMatrixMsg = function() {
     if (active) return;
     active = true;
+    if (window.goatcounter && window.goatcounter.count) {
+      window.goatcounter.count({ path: 'egg-matrix', title: 'Easter egg: MATRIX/NEO', event: true });
+    }
     initRain();
 
     var audio   = matrixAudio();
