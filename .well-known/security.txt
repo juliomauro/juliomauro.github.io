@@ -1,0 +1,17 @@
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA512
+
+Contact: mailto:juliomauro@gmail.com
+Contact: https://oruam.cloud/
+Encryption: https://oruam.cloud/pgp/juliomauro.asc
+Preferred-Languages: en, pt-BR
+Canonical: https://oruam.cloud/.well-known/security.txt
+Expires: 2027-07-14T00:00:00.000Z
+-----BEGIN PGP SIGNATURE-----
+
+iJEEARYKADkWIQTtEfsGZ05R/Q9tIg1q1Ktdtm0etQUCalZ7DhsUgAAAAAAEAA5t
+YW51MiwyLjUrMS4xMiwwLDMACgkQatSrXbZtHrX+cgD/Qz34BsvaR3AvmNVQDj1l
+55vek1gFf17z30ltX9HK2coBAOMOFAj2vxHtcbwJElcRPxKBAY5j3QooX72pqCPj
+jQ4H
+=53Vx
+-----END PGP SIGNATURE-----
