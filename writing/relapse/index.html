@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Relapse: The Browser Bug That Opened the PS5's Kernel — Julio Cesar Mauro</title>
+<meta name="description" content="How the Relapse jailbreak chains a JavaScriptCore memory corruption bug with a kernel use-after-free race in aiomultiwait — and why every major public PS5 kernel exploit since 2022 traces back to FreeBSD, not Sony's own code.">
+<link rel="canonical" href="https://oruam.cloud/writing/relapse/">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' fill='%23000308'/><text x='6' y='23' font-size='20' fill='%2300b4ff' font-family='monospace'>_</text></svg>">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://oruam.cloud/writing/relapse/">
+<meta property="og:title" content="Relapse: The Browser Bug That Opened the PS5's Kernel">
+<meta property="og:description" content="How the Relapse jailbreak chains a JavaScriptCore memory corruption bug with a kernel use-after-free race in aiomultiwait — and why every major public PS5 kernel exploit since 2022 traces back to FreeBSD, not Sony's own code.">
+<meta property="og:image" content="https://oruam.cloud/og/relapse.png">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Relapse: The Browser Bug That Opened the PS5's Kernel">
+<meta name="twitter:description" content="How the Relapse jailbreak chains a JavaScriptCore memory corruption bug with a kernel use-after-free race in aiomultiwait — and why every major public PS5 kernel exploit since 2022 traces back to FreeBSD, not Sony's own code.">
+<meta name="twitter:image" content="https://oruam.cloud/og/relapse.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+<script>(function(){var t=localStorage.getItem('theme');if(t==='green'||t==='amber'||t==='light')document.documentElement.dataset.theme=t;})();</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "Relapse: The Browser Bug That Opened the PS5's Kernel",
+  "description": "How the Relapse jailbreak chains a JavaScriptCore memory corruption bug with a kernel use-after-free race in aiomultiwait — and why every major public PS5 kernel exploit since 2022 traces back to FreeBSD, not Sony's own code.",
+  "author": { "@type": "Person", "name": "Julio Cesar Mauro", "alternateName": "Julio Mauro", "url": "https://oruam.cloud" },
+  "publisher": { "@type": "Person", "name": "Julio Cesar Mauro" },
+  "mainEntityOfPage": { "@type": "WebPage", "@id": "https://oruam.cloud/writing/relapse/" },
+  "image": "https://oruam.cloud/og/relapse.png",
+  "inLanguage": "en"
+}
+</script>
+<style>
+:root {
+  --bg:          #000308;
+  --surface:     #020810;
+  --border:      #003388;
+  --green:       #00b4ff;
+  --green-mid:   #0088cc;
+  --green-dim:   #00b4ff22;
+  --text:        #00bbee;
+  --text-dim:    #0088bb;
+  --white:       #cce8ff;
+  --glow:        0 0 10px #00b4ff66, 0 0 20px #00b4ff33;
+  --glow-strong: 0 0 8px #00b4ff, 0 0 20px #00b4ff88, 0 0 40px #00b4ff44;
+}
+
+[data-theme="green"] {
+  --bg:          #000300;
+  --surface:     #020b02;
+  --border:      #003300;
+  --green:       #00ff41;
+  --green-mid:   #00cc33;
+  --green-dim:   #00aa2233;
+  --text:        #00cc33;
+  --text-dim:    #006622;
+  --white:       #ccffcc;
+  --glow:        0 0 10px #00ff4166, 0 0 20px #00ff4133;
+  --glow-strong: 0 0 8px #00ff41, 0 0 20px #00ff4188, 0 0 40px #00ff4144;
+}
+[data-theme="green"] nav { background: rgba(0,3,0,0.95); }
+
+[data-theme="amber"] {
+  --bg:          #020100;
+  --surface:     #0a0500;
+  --border:      #663300;
+  --green:       #ff8c00;
+  --green-mid:   #cc6600;
+  --green-dim:   #ff8c0033;
+  --text:        #ee7700;
+  --text-dim:    #bb5500;
+  --white:       #ffe8cc;
+  --glow:        0 0 10px #ff8c0066, 0 0 20px #ff8c0033;
+  --glow-strong: 0 0 8px #ff8c00, 0 0 20px #ff8c0088, 0 0 40px #ff8c0044;
+}
+[data-theme="amber"] nav { background: rgba(2,1,0,0.95); }
+
+[data-theme="light"] {
+  --bg:          #f5f2eb;
+  --surface:     #eae6db;
+  --border:      #b0a888;
+  --green:       #1a5c3a;
+  --green-mid:   #2a7a50;
+  --green-dim:   rgba(26,92,58,0.1);
+  --text:        #1a3a28;
+  --text-dim:    #5a7a68;
+  --white:       #0a1a10;
+  --glow:        none;
+  --glow-strong: none;
+}
+[data-theme="light"] body           { background: #f5f2eb; }
+[data-theme="light"] nav            { background: rgba(245,242,235,0.95); }
+[data-theme="light"] body::after    { background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.04) 2px, rgba(0,0,0,0.04) 4px); }
+[data-theme="light"] body::before   { background: radial-gradient(ellipse at center, transparent 60%, rgba(0,0,0,0.08) 100%); }
+[data-theme="light"] h1             { animation: none; color: var(--green); text-shadow: none; }
+[data-theme="light"] #matrix-canvas { opacity: 0.035; }
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Share Tech Mono', monospace;
+  line-height: 1.7;
+  overflow-x: hidden;
+  min-height: 100vh;
+}
+
+#matrix-canvas {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  z-index: 0;
+  opacity: 0.06;
+  pointer-events: none;
+}
+
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg, transparent, transparent 2px,
+    rgba(0,0,0,0.12) 2px, rgba(0,0,0,0.12) 4px
+  );
+  pointer-events: none;
+  z-index: 999;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(ellipse at center, transparent 60%, rgba(0,0,0,0.7) 100%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.wrap {
+  position: relative;
+  z-index: 10;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 0 32px;
+}
+
+nav {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(0,3,8,0.95);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--border);
+  padding: 14px 0;
+}
+
+.nav-inner {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+}
+
+.nav-home {
+  font-family: 'Orbitron', monospace;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--green);
+  text-decoration: none;
+  text-shadow: var(--glow);
+  letter-spacing: 2px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.nav-home::before { content: '←'; }
+
+nav a.nav-link {
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text);
+  text-decoration: none;
+  transition: all 0.2s;
+}
+
+nav a.nav-link:hover {
+  color: var(--green);
+  text-shadow: var(--glow);
+}
+
+.nav-controls {
+  margin-left: auto;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.theme-toggle {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  background: none;
+  border: 1px solid var(--border);
+  padding: 4px 10px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.theme-toggle:hover {
+  color: var(--green);
+  border-color: var(--green-mid);
+  background: var(--green-dim);
+}
+
+#article-view {
+  padding: 40px 0 80px;
+}
+
+.art-back {
+  margin-bottom: 40px;
+}
+
+.back-btn {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 12px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  background: none;
+  border: 1px solid var(--border);
+  padding: 6px 16px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.back-btn:hover {
+  color: var(--green);
+  border-color: var(--green-mid);
+  background: var(--green-dim);
+  box-shadow: var(--glow);
+}
+
+.art-body {
+  max-width: 760px;
+}
+
+.article-meta {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.article-tag {
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  padding: 3px 10px;
+  border: 1px solid var(--border);
+  color: var(--text-dim);
+}
+.article-tag.security { color: #ff6644; border-color: #ff664444; }
+
+.article-level {
+  font-size: 11px;
+  letter-spacing: 1px;
+  color: var(--text-dim);
+}
+
+.art-body h1 {
+  font-family: 'Orbitron', monospace;
+  font-size: clamp(20px, 3vw, 30px);
+  font-weight: 900;
+  color: var(--green);
+  text-shadow: var(--glow-strong);
+  letter-spacing: 1px;
+  margin: 0 0 28px;
+  line-height: 1.3;
+}
+
+.art-body h2 {
+  font-family: 'Orbitron', monospace;
+  font-size: clamp(14px, 2vw, 18px);
+  font-weight: 700;
+  color: var(--green);
+  letter-spacing: 1px;
+  margin: 40px 0 14px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+}
+
+.art-body h3 {
+  font-size: 15px;
+  color: var(--text);
+  letter-spacing: 1px;
+  margin: 28px 0 10px;
+}
+
+.art-body p {
+  font-size: 15px;
+  color: var(--white);
+  line-height: 1.85;
+  margin-bottom: 16px;
+}
+
+.art-body ul, .art-body ol {
+  margin: 0 0 16px 24px;
+}
+
+.art-body li {
+  font-size: 15px;
+  color: var(--white);
+  line-height: 1.85;
+  margin-bottom: 6px;
+}
+
+.art-body li::marker { color: var(--green-mid); }
+
+.art-body blockquote {
+  border-left: 3px solid var(--green-mid);
+  padding: 8px 20px;
+  margin: 20px 0;
+  background: var(--surface);
+  color: var(--text-dim);
+  font-size: 14px;
+}
+
+.art-body pre {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--green-mid);
+  padding: 16px 20px;
+  margin: 20px 0;
+  overflow-x: auto;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.art-body pre code {
+  color: var(--text);
+  background: none;
+  padding: 0;
+  font-family: 'Share Tech Mono', monospace;
+}
+
+.art-body code {
+  color: var(--green);
+  background: var(--green-dim);
+  padding: 2px 6px;
+  font-size: 13px;
+  font-family: 'Share Tech Mono', monospace;
+}
+
+.art-body a {
+  color: var(--green-mid);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  transition: color 0.15s;
+}
+.art-body a:hover { color: var(--green); }
+
+.art-body hr {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 36px 0;
+}
+
+footer {
+  padding: 40px 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid var(--border);
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.footer-sig {
+  font-family: 'Orbitron', monospace;
+  font-size: 13px;
+  color: var(--green);
+  text-shadow: var(--glow);
+  letter-spacing: 2px;
+}
+
+.footer-copy {
+  font-size: 11px;
+  color: var(--text-dim);
+  letter-spacing: 2px;
+}
+
+@media (max-width: 640px) {
+  .wrap { padding: 0 16px; }
+  .nav-inner { gap: 8px; }
+  .nav-home { font-size: 10px; letter-spacing: 1px; }
+  nav a.nav-link { font-size: 10px; }
+  .theme-toggle { font-size: 9px; padding: 4px 7px; }
+}
+
+@font-face {
+  font-family: 'pIqaD';
+  src: url('/fonts/pIqaD.woff') format('woff');
+}
+body.piqad-active [data-i18n],
+body.piqad-active #article-content * {
+  font-family: 'pIqaD', monospace;
+  letter-spacing: 3px;
+}
+
+[hidden] { display: none !important; }
+</style>
+<script data-goatcounter="https://oruam.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</head>
+<body>
+
+<canvas id="matrix-canvas"></canvas>
+
+<nav>
+  <div class="wrap">
+    <div class="nav-inner">
+      <a href="/" class="nav-home">ORUAM.CLOUD</a>
+      <a href="/projects/" class="nav-link"><span class="en">Projects</span><span class="pt" hidden>Projetos</span></a>
+      <a href="/writing/" class="nav-link"><span class="en">Writing</span><span class="pt" hidden>Textos</span></a>
+      <div class="nav-controls">
+        <button class="theme-toggle" id="theme-btn" onclick="toggleTheme()">◈ Green</button>
+        <button class="theme-toggle" id="lang-btn" onclick="toggleLang()">PT-BR</button>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<div class="wrap">
+  <div id="article-view">
+    <div class="art-back">
+      <a class="back-btn" href="/writing/" style="display:inline-block; text-decoration:none;">
+        <span class="en">← Writing</span><span class="pt" hidden>← Textos</span>
+      </a>
+    </div>
+    <div class="article-meta" style="margin-bottom:20px;">
+      <span class="article-tag security">Security · Kernel Exploitation · Console Hacking</span>
+      <span class="article-level">// Practitioner</span>
+    </div>
+    <div class="art-body en">
+<h1>Relapse: The Browser Bug That Opened the PS5's Kernel</h1>
+<div style="height:12px"></div>
+<blockquote><strong>Category:</strong> Security · Kernel Exploitation · Console Hacking</blockquote>
+<blockquote><strong>Level:</strong> Practitioner</blockquote>
+<div style="height:12px"></div>
+<hr>
+<div style="height:12px"></div>
+<p>On September 29, a jailbreak called Relapse went public on GitHub, built by a developer going by ntfargo. It chains a memory corruption bug in the PS5's browser engine with a use-after-free race in the kernel, and it works on every firmware from 7.00 to 13.60 — PS5 and PS5 Pro both.</p>
+<div style="height:12px"></div>
+<p>Sony patched the entry point in firmware 14.00, released September 16, two weeks before Relapse shipped publicly. The exploit had clearly existed in private hands before that.</p>
+<div style="height:12px"></div>
+<h2>The Chain</h2>
+<div style="height:12px"></div>
+<p>Getting from "visit a web page" to "kernel code execution" on a locked-down console takes two separate bugs, because the browser and the kernel are different trust boundaries.</p>
+<div style="height:12px"></div>
+<p>Stage one lives in JavaScriptCore, the JS engine behind the PS5's browser. A memory corruption bug there gets you arbitrary read/write inside the browser process — enough to build further primitives, not enough to touch the kernel.</p>
+<div style="height:12px"></div>
+<p>Stage two is where the actual escalation happens: a use-after-free race condition in <code>aiomultiwait</code>, the kernel's asynchronous I/O wait syscall. Win the race, and a freed kernel object gets reused in a way the attacker controls. That's kernel read/write, full stop — the ceiling for what a modern console's security model is built to prevent.</p>
+<div style="height:12px"></div>
+<h2>A FreeBSD Problem, Not a PlayStation Problem</h2>
+<div style="height:12px"></div>
+<p>The PS5 runs on a FreeBSD 11 base. Every major public PS5 kernel exploit since 2022 has come from a FreeBSD bug, not a Sony-written one.</p>
+<div style="height:12px"></div>
+<p>TheFloW's 2022 disclosure used a use-after-free in FreeBSD's IPv6 socket handling — a bug already fixed upstream on the PS4, but still live in PS5 firmware when he found it. CVE-2024-43102, a UMTX_SHM_DESTROY use-after-free, got weaponized into a separate PS5 kernel exploit the same way. <code>aiomultiwait</code> is the third entry in that pattern: a bug in the operating system Sony built on top of, not in anything Sony wrote for the console itself.</p>
+<div style="height:12px"></div>
+<p>Shipping a console on a general-purpose OS kernel means inheriting that kernel's entire bug history — including bugs nobody was thinking about PlayStation when they patched them.</p>
+<div style="height:12px"></div>
+<h2>Sony's Countermove</h2>
+<div style="height:12px"></div>
+<p>Firmware 14.10, released October 1, doesn't try to force every console onto the new version before it'll boot. Instead, it ties PlayStation Network access to a minimum firmware version. A console still running Relapse keeps working — single-player, offline, no PSN — but the moment it tries to authenticate online, the version check blocks it.</p>
+<div style="height:12px"></div>
+<p>That's enforcement at the service layer instead of the boot layer, and it's a deliberate trade. Sony doesn't control what firmware is physically running on a console someone's deliberately downgraded and exploited. It does control who gets to talk to PSN. Moving the checkpoint to the thing Sony actually owns is a more defensible line than trying to win a fight over code already running on hardware outside their control.</p>
+<div style="height:12px"></div>
+<h2>What's Left</h2>
+<div style="height:12px"></div>
+<p>One developer, Gezine, claims to have partially defeated 14.10's protections — posted footage reportedly showing the hidden debug menu — while also saying a fully updated console will need a hypervisor-level exploit to go further. The PS5 runs a hypervisor between the kernel and the hardware specifically to make kernel access alone insufficient. If that claim holds, the next jailbreak isn't a browser-to-kernel chain anymore — it's a third stage on top of the first two.</p>
+<div style="height:12px"></div>
+<p>Separately, a leak of PS5 BootROM keys at the end of 2025 didn't enable Relapse directly, but it's the kind of compromise that outlives any single firmware patch. BootROM is the first thing that runs, the root of the chain of trust everything else depends on. Patch the kernel bug and you've closed Relapse. You can't patch a leaked key.</p>
+<div style="height:12px"></div>
+<hr>
+<div style="height:12px"></div>
+<p><em>Related: <a href="https://doctorglitch.com/ps5-relapse-jailbreak-explained/" target="_blank" rel="noopener">doctorglitch — PS5 Relapse Jailbreak Explained</a></em></p>
+<div style="height:12px"></div>
+    </div>
+    <div class="art-body pt" hidden>
+<h1>Relapse: O Bug de Navegador Que Abriu o Kernel do PS5</h1>
+<div style="height:12px"></div>
+<blockquote><strong>Categoria:</strong> Segurança · Exploração de Kernel · Hacking de Console</blockquote>
+<blockquote><strong>Nível:</strong> Praticante</blockquote>
+<div style="height:12px"></div>
+<hr>
+<div style="height:12px"></div>
+<p>Em 29 de setembro, um jailbreak chamado Relapse foi publicado no GitHub, feito por um desenvolvedor conhecido como ntfargo. Ele encadeia um bug de corrupção de memória no motor do navegador do PS5 com uma race condition de use-after-free no kernel, e funciona em todo firmware de 7.00 a 13.60 — PS5 e PS5 Pro.</p>
+<div style="height:12px"></div>
+<p>A Sony corrigiu o ponto de entrada no firmware 14.00, lançado em 16 de setembro, duas semanas antes do Relapse ser publicado. O exploit claramente já existia em mãos privadas antes disso.</p>
+<div style="height:12px"></div>
+<h2>A Cadeia</h2>
+<div style="height:12px"></div>
+<p>Ir de "visitar uma página web" até "execução de código no kernel" num console travado exige dois bugs separados, porque o navegador e o kernel são fronteiras de confiança diferentes.</p>
+<div style="height:12px"></div>
+<p>A primeira etapa vive no JavaScriptCore, o motor JS por trás do navegador do PS5. Um bug de corrupção de memória ali te dá leitura/escrita arbitrária dentro do processo do navegador — o suficiente pra construir primitivas mais avançadas, mas não o suficiente pra tocar no kernel.</p>
+<div style="height:12px"></div>
+<p>A segunda etapa é onde a escalada de verdade acontece: uma race condition de use-after-free no <code>aiomultiwait</code>, a syscall de espera de I/O assíncrono do kernel. Ganhe a corrida, e um objeto de kernel liberado é reutilizado de um jeito que o atacante controla. Isso é leitura/escrita de kernel, ponto final — o teto do que o modelo de segurança de um console moderno é construído pra impedir.</p>
+<div style="height:12px"></div>
+<h2>Um Problema do FreeBSD, Não da PlayStation</h2>
+<div style="height:12px"></div>
+<p>O PS5 roda sobre uma base FreeBSD 11. Todo exploit de kernel público relevante do PS5 desde 2022 veio de um bug do FreeBSD, não de algo escrito pela Sony.</p>
+<div style="height:12px"></div>
+<p>A divulgação da TheFloW em 2022 usou um use-after-free no tratamento de socket IPv6 do FreeBSD — um bug já corrigido no PS4, mas ainda vivo no firmware do PS5 quando ele achou. O CVE-2024-43102, um use-after-free no UMTX_SHM_DESTROY, virou arma pra outro exploit de kernel do PS5 do mesmo jeito. O <code>aiomultiwait</code> é a terceira entrada nesse padrão: um bug no sistema operacional sobre o qual a Sony construiu, não em nada que a Sony escreveu pro console em si.</p>
+<div style="height:12px"></div>
+<p>Lançar um console sobre um kernel de propósito geral significa herdar todo o histórico de bugs desse kernel — incluindo bugs que ninguém tava pensando em PlayStation quando corrigiu.</p>
+<div style="height:12px"></div>
+<h2>O Contra-Ataque da Sony</h2>
+<div style="height:12px"></div>
+<p>O firmware 14.10, lançado em 1º de outubro, não tenta forçar todo console pra nova versão antes de ligar. Em vez disso, amarra o acesso à PlayStation Network a uma versão mínima de firmware. Um console ainda rodando Relapse continua funcionando — single-player, offline, sem PSN — mas no momento em que tenta autenticar online, a checagem de versão bloqueia.</p>
+<div style="height:12px"></div>
+<p>Isso é enforcement na camada de serviço, não na camada de boot, e é uma escolha deliberada. A Sony não controla qual firmware tá fisicamente rodando num console que alguém deliberadamente fez downgrade e explorou. Ela controla quem fala com a PSN. Mover o ponto de checagem pra algo que a Sony realmente possui é uma linha mais defensável do que tentar vencer uma briga sobre código já rodando em hardware fora do controle dela.</p>
+<div style="height:12px"></div>
+<h2>O Que Falta</h2>
+<div style="height:12px"></div>
+<p>Um desenvolvedor, Gezine, afirma ter parcialmente derrotado as proteções do 14.10 — postou um vídeo supostamente mostrando o menu de debug escondido — e também disse que um console totalmente atualizado vai precisar de um exploit no nível do hypervisor pra ir além. O PS5 roda um hypervisor entre o kernel e o hardware especificamente pra que o acesso de kernel sozinho não seja suficiente. Se essa afirmação se confirmar, o próximo jailbreak não é mais uma cadeia navegador-pro-kernel — é uma terceira etapa em cima das duas primeiras.</p>
+<div style="height:12px"></div>
+<p>Separadamente, um vazamento das chaves do BootROM do PS5 no fim de 2025 não habilitou o Relapse diretamente, mas é o tipo de comprometimento que sobrevive a qualquer patch de firmware específico. BootROM é a primeira coisa que roda, a raiz da cadeia de confiança da qual tudo depende. Corrija o bug do kernel e você fechou o Relapse. Você não corrige uma chave vazada.</p>
+<div style="height:12px"></div>
+<hr>
+<div style="height:12px"></div>
+<p><em>Relacionado: <a href="https://doctorglitch.com/ps5-relapse-jailbreak-explained/" target="_blank" rel="noopener">doctorglitch — PS5 Relapse Jailbreak Explained</a></em></p>
+<div style="height:12px"></div>
+    </div>
+  </div>
+
+  <footer>
+    <div class="footer-sig">ORUAM_OLIUJ</div>
+    <div class="footer-copy"><span class="en">&gt; oruam.cloud/writing · 2026_</span><span class="pt" hidden>&gt; oruam.cloud/writing · 2026_</span></div>
+  </footer>
+</div>
+
+<script>
+const canvas = document.getElementById('matrix-canvas');
+const ctx = canvas.getContext('2d');
+canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+window.addEventListener('resize', () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; init(); });
+const chars = 'アイウエオカキクケコ0123456789ABCDEF$#@%&';
+const fontSize = 16;
+let columns, drops;
+function init() { columns = Math.floor(canvas.width / fontSize); drops = Array(columns).fill(1); }
+function draw() {
+  const theme = document.documentElement.dataset.theme;
+  ctx.fillStyle = theme === 'green' ? 'rgba(0,3,0,0.04)' : theme === 'amber' ? 'rgba(2,1,0,0.04)' : theme === 'light' ? 'rgba(245,242,235,0.06)' : 'rgba(0,3,8,0.04)';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  ctx.fillStyle = theme === 'green' ? '#00ff41' : theme === 'amber' ? '#ff8c00' : theme === 'light' ? '#1a5c3a' : '#00b4ff';
+  ctx.font = fontSize + 'px Share Tech Mono';
+  for (let i = 0; i < drops.length; i++) {
+    const char = chars[Math.floor(Math.random() * chars.length)];
+    ctx.fillText(char, i * fontSize, drops[i] * fontSize);
+    if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
+    drops[i]++;
+  }
+}
+init(); setInterval(draw, 45);
+
+const themeNames = {
+  en: { green: '◈ Green', amber: '◈ Amber', blue: '◈ Blue', light: '◈ Light' },
+  pt: { green: '◈ Verde', amber: '◈ Âmbar', blue: '◈ Azul', light: '◈ Claro' },
+};
+function currentLang() { return localStorage.getItem('lang') === 'pt' ? 'pt' : 'en'; }
+function nextTheme(cur) { cur = cur || 'blue'; return cur==='blue'?'green':cur==='green'?'amber':cur==='amber'?'light':'blue'; }
+function updateThemeBtn(cur) { document.getElementById('theme-btn').textContent = themeNames[currentLang()][nextTheme(cur)]; }
+function toggleTheme() {
+  const html = document.documentElement;
+  const next = nextTheme(html.dataset.theme);
+  html.dataset.theme = next === 'blue' ? '' : next;
+  localStorage.setItem('theme', next);
+  updateThemeBtn(next);
+}
+
+function setLang(lang) {
+  document.querySelectorAll('.en').forEach(el => el.hidden = (lang !== 'en'));
+  document.querySelectorAll('.pt').forEach(el => el.hidden = (lang !== 'pt'));
+  document.getElementById('lang-btn').textContent = lang === 'en' ? 'PT-BR' : 'ENGLISH';
+  document.documentElement.lang = lang;
+  localStorage.setItem('lang', lang);
+  updateThemeBtn(document.documentElement.dataset.theme);
+}
+function toggleLang() { setLang(currentLang() === 'en' ? 'pt' : 'en'); }
+setLang(currentLang());
+</script>
+</body>
+</html>

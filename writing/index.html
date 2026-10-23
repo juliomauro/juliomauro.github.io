@@ -759,6 +759,21 @@ body.piqad-active #article-content * {
 
     <div class="section-label" data-i18n="section-security">Security</div>
 
+    <a class="article-item" data-tag="security" href="/writing/relapse/"
+         data-path="security/relapse-the-browser-bug-that-opened-the-ps5-kernel.md">
+      <div class="article-inner">
+        <div>
+          <div class="article-meta">
+            <span class="article-tag security">Security · Kernel Exploitation · Console Hacking</span>
+            <span class="article-level">// Practitioner</span>
+          </div>
+          <div class="article-title" data-i18n="title-relapse">Relapse: The Browser Bug That Opened the PS5's Kernel</div>
+          <div class="article-desc" data-i18n="desc-relapse">How the Relapse jailbreak chains a JavaScriptCore memory corruption bug with a kernel use-after-free race in aiomultiwait — and why every major public PS5 kernel exploit since 2022 traces back to FreeBSD, not Sony's own code.</div>
+        </div>
+        <div class="article-arrow">→</div>
+      </div>
+    </a>
+
     <a class="article-item" data-tag="security" href="/writing/misantropia/"
          data-path="security/misantropia-Security-Incident-and-the-Brazillian-National-Alert-System-Failure.md">
       <div class="article-inner">
@@ -861,6 +876,8 @@ const i18n = {
     'desc-misantropia': 'How a teenager with five-year-old leaked credentials shut down Brazil\'s national emergency alert system — and what the exposed debug mode, SQL injection, and missing MFA say about critical public infrastructure security.',
     'title-php2shell':  'PHP2Shell: 72 Hours of Internet-Wide Panic',
     'desc-php2shell':   'How two critical pre-auth RCE bugs in PHP\'s engine itself (CVE-2026-109618 / CVE-2026-109619) turned into a leaked disclosure, a half-working mitigation, and honeypot-confirmed scanning within hours.',
+    'title-relapse':    'Relapse: The Browser Bug That Opened the PS5\'s Kernel',
+    'desc-relapse':     'How the Relapse jailbreak chains a JavaScriptCore memory corruption bug with a kernel use-after-free race in aiomultiwait — and why every major public PS5 kernel exploit since 2022 traces back to FreeBSD, not Sony\'s own code.',
     'title-container':  "Your Container's Identity Is Worth More Than Root",
     'title-wildcard':   'One Wildcard in a Trust Policy',
     'title-header':     'The Header That Opened the Network',
@@ -896,6 +913,8 @@ const i18n = {
     'desc-misantropia': 'Como um adolescente com credenciais vazadas há cinco anos derrubou o sistema nacional de alertas de emergência do Brasil — e o que o debug mode exposto, SQL injection e ausência de MFA dizem sobre a segurança de infraestrutura pública crítica.',
     'title-php2shell':  'PHP2Shell: 72 Horas de Pânico na Internet',
     'desc-php2shell':   'Como dois bugs críticos de RCE pré-autenticação no próprio motor do PHP (CVE-2026-109618 / CVE-2026-109619) viraram uma divulgação vazada, uma mitigação que só resolvia metade e varredura confirmada por honeypot em questão de horas.',
+    'title-relapse':    'Relapse: O Bug de Navegador Que Abriu o Kernel do PS5',
+    'desc-relapse':     'Como o jailbreak Relapse encadeia um bug de corrupção de memória no JavaScriptCore com uma race condition de use-after-free no kernel (aiomultiwait) — e por que todo exploit de kernel público relevante do PS5 desde 2022 remete ao FreeBSD, não a código da própria Sony.',
     'title-container':  'A Identidade do Seu Container Vale Mais Que Root',
     'title-wildcard':   'Um Wildcard em uma Trust Policy',
     'title-header':     'O Header Que Abriu a Rede',
@@ -931,6 +950,8 @@ const i18n = {
     'desc-misantropia': 'wa\' loD De\' ngeD lo\' — Brazil QaD pat HoHmoH. debug mode, SQL injection, MFA pagh.',
     'title-php2shell':  'PHP2Shell — Internet Hoch tuj',
     'desc-php2shell':   'PHP runtime cha\' Qagh — CVE-2026-109618, CVE-2026-109619. mitigation wa\'maH — honeypot legh.',
+    'title-relapse':    'Relapse — PS5 pub veng poS',
+    'desc-relapse':     'JavaScriptCore Qagh, kernel use-after-free lo\'. FreeBSD Qagh — Sony ghItlhbe\'.',
     'title-container':  'De\'wI\' ngeD ghaH law\' root ghaH puS',
     'title-wildcard':   'wa\' Hoch voq nab',
     'title-header':     'network poSmoH HoS',
@@ -1714,11 +1735,54 @@ O \`session.upload_progress\` existe desde 2012. Ninguém pensa nele, ninguém d
 
 ---
 
-*Relacionado: [watchTowr — PHP2Shell RCE Exploited](https://watchtowr.com/intelligence/php-remote-code-execution-php2shell/)*`
+*Relacionado: [watchTowr — PHP2Shell RCE Exploited](https://watchtowr.com/intelligence/php-remote-code-execution-php2shell/)*`,
+  relapse: `# Relapse: O Bug de Navegador Que Abriu o Kernel do PS5
+
+> **Categoria:** Segurança · Exploração de Kernel · Hacking de Console
+> **Nível:** Praticante
+
+---
+
+Em 29 de setembro, um jailbreak chamado Relapse foi publicado no GitHub, feito por um desenvolvedor conhecido como ntfargo. Ele encadeia um bug de corrupção de memória no motor do navegador do PS5 com uma race condition de use-after-free no kernel, e funciona em todo firmware de 7.00 a 13.60 — PS5 e PS5 Pro.
+
+A Sony corrigiu o ponto de entrada no firmware 14.00, lançado em 16 de setembro, duas semanas antes do Relapse ser publicado. O exploit claramente já existia em mãos privadas antes disso.
+
+## A Cadeia
+
+Ir de "visitar uma página web" até "execução de código no kernel" num console travado exige dois bugs separados, porque o navegador e o kernel são fronteiras de confiança diferentes.
+
+A primeira etapa vive no JavaScriptCore, o motor JS por trás do navegador do PS5. Um bug de corrupção de memória ali te dá leitura/escrita arbitrária dentro do processo do navegador — o suficiente pra construir primitivas mais avançadas, mas não o suficiente pra tocar no kernel.
+
+A segunda etapa é onde a escalada de verdade acontece: uma race condition de use-after-free no \`aiomultiwait\`, a syscall de espera de I/O assíncrono do kernel. Ganhe a corrida, e um objeto de kernel liberado é reutilizado de um jeito que o atacante controla. Isso é leitura/escrita de kernel, ponto final — o teto do que o modelo de segurança de um console moderno é construído pra impedir.
+
+## Um Problema do FreeBSD, Não da PlayStation
+
+O PS5 roda sobre uma base FreeBSD 11. Todo exploit de kernel público relevante do PS5 desde 2022 veio de um bug do FreeBSD, não de algo escrito pela Sony.
+
+A divulgação da TheFloW em 2022 usou um use-after-free no tratamento de socket IPv6 do FreeBSD — um bug já corrigido no PS4, mas ainda vivo no firmware do PS5 quando ele achou. O CVE-2024-43102, um use-after-free no UMTX_SHM_DESTROY, virou arma pra outro exploit de kernel do PS5 do mesmo jeito. O \`aiomultiwait\` é a terceira entrada nesse padrão: um bug no sistema operacional sobre o qual a Sony construiu, não em nada que a Sony escreveu pro console em si.
+
+Lançar um console sobre um kernel de propósito geral significa herdar todo o histórico de bugs desse kernel — incluindo bugs que ninguém tava pensando em PlayStation quando corrigiu.
+
+## O Contra-Ataque da Sony
+
+O firmware 14.10, lançado em 1º de outubro, não tenta forçar todo console pra nova versão antes de ligar. Em vez disso, amarra o acesso à PlayStation Network a uma versão mínima de firmware. Um console ainda rodando Relapse continua funcionando — single-player, offline, sem PSN — mas no momento em que tenta autenticar online, a checagem de versão bloqueia.
+
+Isso é enforcement na camada de serviço, não na camada de boot, e é uma escolha deliberada. A Sony não controla qual firmware tá fisicamente rodando num console que alguém deliberadamente fez downgrade e explorou. Ela controla quem fala com a PSN. Mover o ponto de checagem pra algo que a Sony realmente possui é uma linha mais defensável do que tentar vencer uma briga sobre código já rodando em hardware fora do controle dela.
+
+## O Que Falta
+
+Um desenvolvedor, Gezine, afirma ter parcialmente derrotado as proteções do 14.10 — postou um vídeo supostamente mostrando o menu de debug escondido — e também disse que um console totalmente atualizado vai precisar de um exploit no nível do hypervisor pra ir além. O PS5 roda um hypervisor entre o kernel e o hardware especificamente pra que o acesso de kernel sozinho não seja suficiente. Se essa afirmação se confirmar, o próximo jailbreak não é mais uma cadeia navegador-pro-kernel — é uma terceira etapa em cima das duas primeiras.
+
+Separadamente, um vazamento das chaves do BootROM do PS5 no fim de 2025 não habilitou o Relapse diretamente, mas é o tipo de comprometimento que sobrevive a qualquer patch de firmware específico. BootROM é a primeira coisa que roda, a raiz da cadeia de confiança da qual tudo depende. Corrija o bug do kernel e você fechou o Relapse. Você não corrige uma chave vazada.
+
+---
+
+*Relacionado: [doctorglitch — PS5 Relapse Jailbreak Explained](https://doctorglitch.com/ps5-relapse-jailbreak-explained/)*`
 };
 
 const ART_KEY = {
   'security/php2shell-72-hours-of-internet-wide-panic.md':   'php2shell',
+  'security/relapse-the-browser-bug-that-opened-the-ps5-kernel.md': 'relapse',
   'security/misantropia-Security-Incident-and-the-Brazillian-National-Alert-System-Failure.md': 'misantropia',
   'cloud/your-container-identity-is-worth-more-than-root.md': 'container',
   'cloud/one-wildcard-in-a-trust-policy.md':                  'wildcard',
