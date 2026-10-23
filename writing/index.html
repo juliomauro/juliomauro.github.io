@@ -1682,63 +1682,39 @@ Em suas decisões — seja no trabalho ou na vida pessoal — você está exigin
 
 ---
 
-No final de outubro de 2026, dois bugs críticos no próprio motor do PHP — não em nenhuma aplicação, framework ou plugin rodando em cima dele — colocaram uma fatia desconhecida, mas muito grande, da web em alerta. A comunidade de segurança apelidou a dupla de "PHP2Shell": **CVE-2026-109618** e **CVE-2026-109619**, ambas com nota 9.2 no CVSS v4.0, ambas não autenticadas, ambas de execução remota de código.
+Dois bugs críticos no próprio motor do PHP vieram a público essa semana. **CVE-2026-109618** e **CVE-2026-109619** — apelidadas de "PHP2Shell" — são execução remota de código não autenticada, nota 9.2 no CVSS v4.0, e nenhuma das duas vive no código da aplicação. Vivem no motor sobre o qual toda aplicação PHP roda.
 
-Isso não é o relato de um incidente específico que eu trabalhei. É um olhar sobre o caos público daqueles dias — o vazamento da divulgação, a corrida de advisories, a mitigação que só resolvia metade do problema, e o que os dados de honeypot realmente mostraram quando a poeira baixou um pouco.
+Os detalhes vazaram em 20 de outubro, antes da data coordenada de divulgação. O PHP antecipou o lançamento oficial em dois dias e liberou os patches em 21 de outubro: 8.5.12, 8.4.27, 8.3.36, 8.2.35. Qualquer versão anterior à 8.2 ficou sem correção oficial.
 
----
+## Por Que Código Limpo Não Ajudou
 
-## Por Que Esse Caso Foi Diferente
-
-A maioria dos RCEs que lidamos no dia a dia vive no código da aplicação: uma falha de deserialização numa biblioteca, um path traversal num upload handler, uma regex ruim numa checagem de autenticação. Geralmente dá pra rastrear o bug até uma decisão que alguém tomou num código específico.
-
-O PHP2Shell vive no \`session.upload_progress\` — um recurso do próprio motor do PHP, presente desde o PHP 5.4. Isso significa que uma aplicação com código genuinamente limpo, input bem validado e nenhuma dependência vulnerável conhecida ainda assim poderia ser explorável, porque o bug está abaixo de tudo isso, no runtime que interpreta a requisição. As análises da época citaram especificamente plataformas de e-commerce como Magento, Shopware e WooCommerce como expostas *independente da qualidade do próprio código* — porque a falha dispara antes mesmo da lógica da aplicação rodar, em algumas configurações.
+A maioria dos RCEs remete a uma decisão tomada num código específico: uma falha de deserialização, um path traversal, uma regex ruim numa checagem de autenticação. O PHP2Shell não. Ele vive no \`session.upload_progress\`, um recurso do próprio motor, presente desde o PHP 5.4. Uma aplicação com input bem validado e nenhuma dependência vulnerável ainda assim podia ser explorável, porque o bug está abaixo de tudo isso — no runtime que interpreta a requisição, antes mesmo da lógica da aplicação rodar, em algumas configurações. As análises dessa semana apontaram lojas Magento, Shopware e WooCommerce como expostas independente da qualidade do próprio código.
 
 ## Dois Bugs, Dois Problemas de Memória Diferentes
 
-**CVE-2026-109618** é um problema de corrupção por falta de memória (out-of-memory). Quando uma condição de OOM interrompe uma operação vulnerável no meio do caminho, o PHP pode deixar dados de sessão apontando pra memória já liberada — e em certas condições, isso pode vazar endereços de memória, exatamente o que você precisa pra driblar o ASLR como passo intermediário rumo a um RCE completo.
+**CVE-2026-109618** é um bug de corrupção por falta de memória. Quando uma condição de OOM interrompe uma operação vulnerável no meio do caminho, o PHP pode deixar dados de sessão apontando pra memória já liberada — o que pode vazar endereços, o suficiente pra driblar o ASLR como passo rumo a um RCE completo.
 
-**CVE-2026-109619** é outro animal: um bug de estado global obsoleto combinando um use-after-free no backtrace de erro fatal com confusão de tipo no OPcache. Uma requisição posterior tratada pelo mesmo worker pode acabar reutilizando memória que deveria ter sido liberada, com um caminho de backtrace de erro fatal que se aplica especificamente ao PHP 8.5.
+**CVE-2026-109619** é outro bug: estado global obsoleto, combinando um use-after-free no backtrace de erro fatal com confusão de tipo no OPcache. Uma requisição posterior no mesmo worker pode reutilizar memória que deveria ter sido liberada. O caminho de backtrace de erro fatal se aplica especificamente ao PHP 8.5.
 
-Causas raiz diferentes, caminhos de código diferentes — o que acabou importando muito quando as pessoas começaram a aplicar mitigações.
+## A Mitigação Que Cobria Metade do Problema
 
-## Divulgado Cedo, Corrigido Rápido
+A correção provisória mais divulgada foi setar \`session.upload_progress.enabled=0\` e reiniciar todos os workers. Isso resolve a 109619. Não resolve totalmente a 109618 — o advisory da 109618 nem menciona sessões como caminho de disparo.
 
-Os detalhes teriam vazado em 20 de outubro, antes da data coordenada de divulgação — o que forçou o PHP a antecipar o lançamento oficial, originalmente marcado pra 22 de outubro. As versões corrigidas saíram em 21 de outubro: **8.5.12, 8.4.27, 8.3.36, 8.2.35**. Backports foram reportados para 8.1, 8.0 e 7.4, mas qualquer coisa mais antiga — incluindo a cauda longa de instalações PHP 5.x ainda rodando silenciosamente em algum lugar — ficou sem correção oficial nenhuma.
+Duas falhas, um apelido, uma data de divulgação, dois paliativos diferentes — e boa parte da orientação de primeira hora achatou isso em "desliga o upload_progress e tá resolvido". Times que pararam aí continuavam carregando metade da exposição.
 
-Esse cronograma comprimido é exatamente o que transforma um bug crítico numa correria: menos tempo pra coordenar a comunicação, menos tempo pra testar patches em escala, e uma divulgação que correu mais rápido do que quem deveria controlar o ritmo.
+## O Que os Honeypots Viram
 
-## A Mitigação Que Só Resolvia Metade do Problema
+A própria equipe de segurança do PHP disse, no lançamento, que nenhum exploit funcional era conhecido ainda. Não durou. A rede de honeypots da watchTowr pegou varredura em questão de horas — 33 endereços de origem, 743 requisições carregando o campo de progresso de upload de sessão até as 23h UTC do mesmo dia. Parte desse tráfego foi tentativamente ligado ao Potassium, um botnet derivado do Mirai, embora sem execução de payload confirmada.
 
-Essa é a parte que tornou os dias seguintes genuinamente caóticos pra quem tentava responder rápido. A mitigação provisória mais divulgada foi setar \`session.upload_progress.enabled=0\` no \`php.ini\` e reiniciar todos os workers.
+Um RCE pré-autenticação com CVSS 9.2 não precisa de exploit público funcionando pra que a varredura em massa comece. No momento em que existe um ID de CVE e uma descrição mínima, sondagem automatizada já é barata o suficiente pra rodar em escala de internet.
 
-Esse paliativo resolve a CVE-2026-109619. Ele não resolve totalmente a CVE-2026-109618 — segundo alguns relatos, o advisory da 109618 nem sequer menciona sessões como caminho de disparo. Duas falhas compartilhando um apelido e uma data de divulgação, precisando de dois paliativos diferentes, acabaram achatadas em muita orientação de primeira hora em "desliga o upload_progress e tá resolvido". Times que fizeram exatamente isso e deram o caso por encerrado continuavam carregando exposição da outra metade do PHP2Shell.
+## Antigo, Chato, Sem Patch
 
-Esse é um padrão que vale internalizar por si só: quando uma vulnerabilidade ganha um nome chamativo combinado, é tentador tratá-la como uma correção só. Leia além da manchete, entre nos advisories de verdade antes de declarar vitória.
-
-## A Correria da Indústria
-
-Em aproximadamente 72 horas após a divulgação, advisories e análises técnicas saíram da watchTowr, Imperva, Qualys, Arctic Wolf, Akamai, SOCRadar, Unit 42, JFrog, Bitdefender, Ellio e Upwind, entre outras — além de empresas focadas em e-commerce, como a sansec, mirando especificamente a exposição de Magento/Shopware. Isso não é uma resposta incomum pra um CVE crítico, mas o volume e a velocidade são um bom indicador de quão a sério a indústria levou o ângulo "bug no motor, não na aplicação".
-
-Repositórios públicos de prova de conceito também apareceram rápido no GitHub, o que é parte do próprio ciclo de faca de dois gumes: útil pra quem defende validar exposição, e um atalho pra quem tem intenções menos boas.
-
-## O Que os Honeypots Realmente Viram
-
-A própria equipe de segurança do PHP teria dito, no momento do lançamento, que nenhum exploit funcional era conhecido até então. Isso não durou muito. A rede de honeypots da watchTowr reportou atividade real de varredura no mundo real, e uma análise cravou 33 endereços de origem distintos enviando 743 requisições carregando o campo de progresso de upload de sessão até as 23h UTC do dia em que a atividade decolou. Parte desse tráfego foi tentativamente ligado por pesquisadores ao Potassium, um botnet derivado do Mirai — embora sem evidência confirmada de que payloads tenham realmente sido baixados ou executados a partir dessas sessões.
-
-A distância entre "nenhum exploit funcional conhecido" e "varredura oportunista em escala de internet em questão de horas" é um lembrete útil do que um RCE pré-autenticação com CVSS 9.2 realmente significa na prática: você não precisa de um exploit público funcionando pra que a varredura em massa comece. Sondagem automatizada pela superfície vulnerável é barata, e começa no momento em que existe um ID de CVE e uma descrição mínima.
-
-## Os Aprendizados de Verdade
-
-- **Bugs no nível do motor quebram a premissa de "nosso código tá limpo".** Código de aplicação limpo não é defesa contra uma vulnerabilidade no runtime por baixo dele.
-- **Um apelido combinado pode esconder duas correções diferentes.** O PHP2Shell eram duas CVEs com duas causas raiz e dois paliativos separados. Trate cada advisory nos próprios termos, mesmo quando o marketing (inclusive o de segurança) quer um nome único e arrumadinho.
-- **Corrija, não só mitigue.** As flags de configuração provisórias compraram tempo; nunca foram substituto de chegar numa versão corrigida do PHP, e pra instalações 5.x/7.x/8.0/8.1, "chegar numa versão corrigida" nem era opção sem um upgrade de plataforma.
-- **A varredura começa antes da exploração ser comprovada.** Os dados de honeypot nessa janela são um bom estudo de caso de por que "nenhum exploit conhecido ainda" não é motivo pra despriorizar o patch de um 9.2.
-- **Um recurso de quinze anos foi a superfície de ataque.** O \`session.upload_progress\` foi lançado no PHP 5.4. Recursos antigos, chatos e raramente lembrados são exatamente onde esse tipo de bug sobrevive intocado por mais de uma década.
+O \`session.upload_progress\` existe desde 2012. Ninguém pensa nele, ninguém desliga por padrão, e quase ninguém audita um recurso que ficou quieto no motor por quatorze anos. É exatamente aí que esse tipo de bug sobrevive — não em código novo sob escrutínio diário, mas em código antigo que ninguém olha desde que foi lançado.
 
 ---
 
-*Fontes: [Sansec](https://sansec.io/research/php2shell), [Bitdefender](https://www.bitdefender.com/en-us/blog/businessinsights/technical-advisory-php2shell-pre-auth-rce), [SOCRadar](https://socradar.io/blog/php2shell-cve-2026-109618-cve-2026-109619/), [Ellio](https://ellio.tech/en/blog/php2shell-what-we-observed-and-what-to-do/), [Upwind](https://www.upwind.io/feed/initial-assessment-php2shell-two-critical-unpatched-php-rces-cve-2026-109618-cve-2026-109619), [watchTowr](https://watchtowr.com/intelligence/php-remote-code-execution-php2shell/), [Imperva](https://www.imperva.com/blog/php2shell-vulnerability-updates/), [Qualys](https://blog.qualys.com/vulnerabilities-threat-research/2026/10/20/php-announces-critical-security-release-for-two-vulnerabilities), [Arctic Wolf](https://arcticwolf.com/resources/blog/php2shell-critical-php-vulnerabilities-enable-unauthenticated-remote-code-execution/), [Akamai](https://www.akamai.com/blog/security-research/understanding-php2shell-everything-you-need-to-know), [Unit 42](https://unit42.paloaltonetworks.com/cve-2026-109618-cve-2026-109619/), [JFrog](https://research.jfrog.com/post/php2shell-all-you-need-to-know-about-cve-2026-109618-and-cve-2026-109619/). Confira os detalhes das CVEs no NVD/advisories oficiais do PHP antes de agir operacionalmente com base neles.*`
+*Relacionado: [watchTowr — PHP2Shell RCE Exploited](https://watchtowr.com/intelligence/php-remote-code-execution-php2shell/)*`
 };
 
 const ART_KEY = {
