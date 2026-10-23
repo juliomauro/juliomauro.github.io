@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PHP2Shell: 72 Hours of Internet-Wide Panic — Julio Cesar Mauro</title>
+<meta name="description" content="How two critical pre-auth RCE bugs in PHP's engine itself (CVE-2026-109618 / CVE-2026-109619) turned into days of scrambled advisories, conflicting mitigations and honeypot-confirmed scanning across the internet.">
+<link rel="canonical" href="https://oruam.cloud/writing/php2shell/">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' fill='%23000308'/><text x='6' y='23' font-size='20' fill='%2300b4ff' font-family='monospace'>_</text></svg>">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://oruam.cloud/writing/php2shell/">
+<meta property="og:title" content="PHP2Shell: 72 Hours of Internet-Wide Panic">
+<meta property="og:description" content="How two critical pre-auth RCE bugs in PHP's engine itself (CVE-2026-109618 / CVE-2026-109619) turned into days of scrambled advisories, conflicting mitigations and honeypot-confirmed scanning across the internet.">
+<meta property="og:image" content="https://oruam.cloud/preview.svg">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="PHP2Shell: 72 Hours of Internet-Wide Panic">
+<meta name="twitter:description" content="How two critical pre-auth RCE bugs in PHP's engine itself (CVE-2026-109618 / CVE-2026-109619) turned into days of scrambled advisories, conflicting mitigations and honeypot-confirmed scanning across the internet.">
+<meta name="twitter:image" content="https://oruam.cloud/preview.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+<script>(function(){var t=localStorage.getItem('theme');if(t==='green'||t==='amber'||t==='light')document.documentElement.dataset.theme=t;})();</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "PHP2Shell: 72 Hours of Internet-Wide Panic",
+  "description": "How two critical pre-auth RCE bugs in PHP's engine itself (CVE-2026-109618 / CVE-2026-109619) turned into days of scrambled advisories, conflicting mitigations and honeypot-confirmed scanning across the internet.",
+  "author": { "@type": "Person", "name": "Julio Cesar Mauro", "alternateName": "Julio Mauro", "url": "https://oruam.cloud" },
+  "publisher": { "@type": "Person", "name": "Julio Cesar Mauro" },
+  "mainEntityOfPage": { "@type": "WebPage", "@id": "https://oruam.cloud/writing/php2shell/" },
+  "image": "https://oruam.cloud/preview.svg",
+  "inLanguage": "en"
+}
+</script>
+<style>
+:root {
+  --bg:          #000308;
+  --surface:     #020810;
+  --border:      #003388;
+  --green:       #00b4ff;
+  --green-mid:   #0088cc;
+  --green-dim:   #00b4ff22;
+  --text:        #00bbee;
+  --text-dim:    #0088bb;
+  --white:       #cce8ff;
+  --glow:        0 0 10px #00b4ff66, 0 0 20px #00b4ff33;
+  --glow-strong: 0 0 8px #00b4ff, 0 0 20px #00b4ff88, 0 0 40px #00b4ff44;
+}
+
+[data-theme="green"] {
+  --bg:          #000300;
+  --surface:     #020b02;
+  --border:      #003300;
+  --green:       #00ff41;
+  --green-mid:   #00cc33;
+  --green-dim:   #00aa2233;
+  --text:        #00cc33;
+  --text-dim:    #006622;
+  --white:       #ccffcc;
+  --glow:        0 0 10px #00ff4166, 0 0 20px #00ff4133;
+  --glow-strong: 0 0 8px #00ff41, 0 0 20px #00ff4188, 0 0 40px #00ff4144;
+}
+[data-theme="green"] nav { background: rgba(0,3,0,0.95); }
+
+[data-theme="amber"] {
+  --bg:          #020100;
+  --surface:     #0a0500;
+  --border:      #663300;
+  --green:       #ff8c00;
+  --green-mid:   #cc6600;
+  --green-dim:   #ff8c0033;
+  --text:        #ee7700;
+  --text-dim:    #bb5500;
+  --white:       #ffe8cc;
+  --glow:        0 0 10px #ff8c0066, 0 0 20px #ff8c0033;
+  --glow-strong: 0 0 8px #ff8c00, 0 0 20px #ff8c0088, 0 0 40px #ff8c0044;
+}
+[data-theme="amber"] nav { background: rgba(2,1,0,0.95); }
+
+[data-theme="light"] {
+  --bg:          #f5f2eb;
+  --surface:     #eae6db;
+  --border:      #b0a888;
+  --green:       #1a5c3a;
+  --green-mid:   #2a7a50;
+  --green-dim:   rgba(26,92,58,0.1);
+  --text:        #1a3a28;
+  --text-dim:    #5a7a68;
+  --white:       #0a1a10;
+  --glow:        none;
+  --glow-strong: none;
+}
+[data-theme="light"] body           { background: #f5f2eb; }
+[data-theme="light"] nav            { background: rgba(245,242,235,0.95); }
+[data-theme="light"] body::after    { background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.04) 2px, rgba(0,0,0,0.04) 4px); }
+[data-theme="light"] body::before   { background: radial-gradient(ellipse at center, transparent 60%, rgba(0,0,0,0.08) 100%); }
+[data-theme="light"] h1             { animation: none; color: var(--green); text-shadow: none; }
+[data-theme="light"] #matrix-canvas { opacity: 0.035; }
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Share Tech Mono', monospace;
+  line-height: 1.7;
+  overflow-x: hidden;
+  min-height: 100vh;
+}
+
+#matrix-canvas {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  z-index: 0;
+  opacity: 0.06;
+  pointer-events: none;
+}
+
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg, transparent, transparent 2px,
+    rgba(0,0,0,0.12) 2px, rgba(0,0,0,0.12) 4px
+  );
+  pointer-events: none;
+  z-index: 999;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(ellipse at center, transparent 60%, rgba(0,0,0,0.7) 100%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.wrap {
+  position: relative;
+  z-index: 10;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 0 32px;
+}
+
+nav {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(0,3,8,0.95);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--border);
+  padding: 14px 0;
+}
+
+.nav-inner {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+}
+
+.nav-home {
+  font-family: 'Orbitron', monospace;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--green);
+  text-decoration: none;
+  text-shadow: var(--glow);
+  letter-spacing: 2px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.nav-home::before { content: '←'; }
+
+nav a.nav-link {
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text);
+  text-decoration: none;
+  transition: all 0.2s;
+}
+
+nav a.nav-link:hover {
+  color: var(--green);
+  text-shadow: var(--glow);
+}
+
+.nav-controls {
+  margin-left: auto;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.theme-toggle {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  background: none;
+  border: 1px solid var(--border);
+  padding: 4px 10px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.theme-toggle:hover {
+  color: var(--green);
+  border-color: var(--green-mid);
+  background: var(--green-dim);
+}
+
+#article-view {
+  padding: 40px 0 80px;
+}
+
+.art-back {
+  margin-bottom: 40px;
+}
+
+.back-btn {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 12px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  background: none;
+  border: 1px solid var(--border);
+  padding: 6px 16px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.back-btn:hover {
+  color: var(--green);
+  border-color: var(--green-mid);
+  background: var(--green-dim);
+  box-shadow: var(--glow);
+}
+
+.art-body {
+  max-width: 760px;
+}
+
+.article-meta {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.article-tag {
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  padding: 3px 10px;
+  border: 1px solid var(--border);
+  color: var(--text-dim);
+}
+.article-tag.security { color: #ff6644; border-color: #ff664444; }
+
+.article-level {
+  font-size: 11px;
+  letter-spacing: 1px;
+  color: var(--text-dim);
+}
+
+.art-body h1 {
+  font-family: 'Orbitron', monospace;
+  font-size: clamp(20px, 3vw, 30px);
+  font-weight: 900;
+  color: var(--green);
+  text-shadow: var(--glow-strong);
+  letter-spacing: 1px;
+  margin: 0 0 28px;
+  line-height: 1.3;
+}
+
+.art-body h2 {
+  font-family: 'Orbitron', monospace;
+  font-size: clamp(14px, 2vw, 18px);
+  font-weight: 700;
+  color: var(--green);
+  letter-spacing: 1px;
+  margin: 40px 0 14px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+}
+
+.art-body h3 {
+  font-size: 15px;
+  color: var(--text);
+  letter-spacing: 1px;
+  margin: 28px 0 10px;
+}
+
+.art-body p {
+  font-size: 15px;
+  color: var(--white);
+  line-height: 1.85;
+  margin-bottom: 16px;
+}
+
+.art-body ul, .art-body ol {
+  margin: 0 0 16px 24px;
+}
+
+.art-body li {
+  font-size: 15px;
+  color: var(--white);
+  line-height: 1.85;
+  margin-bottom: 6px;
+}
+
+.art-body li::marker { color: var(--green-mid); }
+
+.art-body blockquote {
+  border-left: 3px solid var(--green-mid);
+  padding: 8px 20px;
+  margin: 20px 0;
+  background: var(--surface);
+  color: var(--text-dim);
+  font-size: 14px;
+}
+
+.art-body pre {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--green-mid);
+  padding: 16px 20px;
+  margin: 20px 0;
+  overflow-x: auto;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.art-body pre code {
+  color: var(--text);
+  background: none;
+  padding: 0;
+  font-family: 'Share Tech Mono', monospace;
+}
+
+.art-body code {
+  color: var(--green);
+  background: var(--green-dim);
+  padding: 2px 6px;
+  font-size: 13px;
+  font-family: 'Share Tech Mono', monospace;
+}
+
+.art-body a {
+  color: var(--green-mid);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  transition: color 0.15s;
+}
+.art-body a:hover { color: var(--green); }
+
+.art-body hr {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 36px 0;
+}
+
+footer {
+  padding: 40px 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid var(--border);
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.footer-sig {
+  font-family: 'Orbitron', monospace;
+  font-size: 13px;
+  color: var(--green);
+  text-shadow: var(--glow);
+  letter-spacing: 2px;
+}
+
+.footer-copy {
+  font-size: 11px;
+  color: var(--text-dim);
+  letter-spacing: 2px;
+}
+
+@media (max-width: 640px) {
+  .wrap { padding: 0 16px; }
+  .nav-inner { gap: 8px; }
+  .nav-home { font-size: 10px; letter-spacing: 1px; }
+  nav a.nav-link { font-size: 10px; }
+  .theme-toggle { font-size: 9px; padding: 4px 7px; }
+}
+
+@font-face {
+  font-family: 'pIqaD';
+  src: url('/fonts/pIqaD.woff') format('woff');
+}
+body.piqad-active [data-i18n],
+body.piqad-active #article-content * {
+  font-family: 'pIqaD', monospace;
+  letter-spacing: 3px;
+}
+
+[hidden] { display: none !important; }
+</style>
+<script data-goatcounter="https://oruam.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</head>
+<body>
+
+<canvas id="matrix-canvas"></canvas>
+
+<nav>
+  <div class="wrap">
+    <div class="nav-inner">
+      <a href="/" class="nav-home">ORUAM.CLOUD</a>
+      <a href="/projects/" class="nav-link"><span class="en">Projects</span><span class="pt" hidden>Projetos</span></a>
+      <a href="/writing/" class="nav-link"><span class="en">Writing</span><span class="pt" hidden>Textos</span></a>
+      <div class="nav-controls">
+        <button class="theme-toggle" id="theme-btn" onclick="toggleTheme()">◈ Green</button>
+        <button class="theme-toggle" id="lang-btn" onclick="toggleLang()">PT-BR</button>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<div class="wrap">
+  <div id="article-view">
+    <div class="art-back">
+      <a class="back-btn" href="/writing/" style="display:inline-block; text-decoration:none;">
+        <span class="en">← Writing</span><span class="pt" hidden>← Textos</span>
+      </a>
+    </div>
+    <div class="article-meta" style="margin-bottom:20px;">
+      <span class="article-tag security">Security · Vulnerability Management · Incident Response</span>
+      <span class="article-level">// Foundational</span>
+    </div>
+    <div class="art-body en">
+<h1>PHP2Shell: 72 Hours of Internet-Wide Panic</h1>
+<div style="height:12px"></div>
+<blockquote><strong>Category:</strong> Security · Vulnerability Management · Incident Response</blockquote>
+<blockquote><strong>Level:</strong> Foundational</blockquote>
+<div style="height:12px"></div>
+<hr>
+<div style="height:12px"></div>
+<p>In late October 2026, two critical bugs in the PHP engine itself — not in any application, framework or plugin running on top of it — put an unknown but very large slice of the web on alert. The security community nicknamed the pair "PHP2Shell": <strong>CVE-2026-109618</strong> and <strong>CVE-2026-109619</strong>, both scored 9.2 on CVSS v4.0, both unauthenticated, both remote code execution.</p>
+<div style="height:12px"></div>
+<p>This isn't a writeup of a specific incident I worked. It's a look at the public chaos of those few days — the leaked disclosure, the scramble of advisories, the mitigation that only half-worked, and what the honeypot data actually showed once the dust settled a little.</p>
+<div style="height:12px"></div>
+<hr>
+<div style="height:12px"></div>
+<h2>Why This One Was Different</h2>
+<div style="height:12px"></div>
+<p>Most RCEs people deal with live in application code: a deserialization flaw in a library, a path traversal in an upload handler, a bad regex in an auth check. You can usually trace the bug to a decision someone made in a specific codebase.</p>
+<div style="height:12px"></div>
+<p>PHP2Shell lives in <code>session.upload_progress</code> — a feature of the PHP engine itself, present since PHP 5.4. That means an application with genuinely clean code, properly validated input and no known vulnerable dependencies could still be exploitable, because the bug sits below all of that, in the runtime interpreting the request. Reporting at the time specifically called out e-commerce platforms like Magento, Shopware and WooCommerce as exposed <em>regardless of their own code quality</em> — because the flaw triggers before application logic ever runs, on some configurations.</p>
+<div style="height:12px"></div>
+<h2>Two Bugs, Two Different Memory Problems</h2>
+<div style="height:12px"></div>
+<p><strong>CVE-2026-109618</strong> is an out-of-memory corruption issue. When an OOM condition interrupts a vulnerable operation mid-flight, PHP can leave session data pointing at memory that has already been freed — and in some conditions, that can leak memory addresses, which is exactly what you need to defeat ASLR as a stepping stone toward full RCE.</p>
+<div style="height:12px"></div>
+<p><strong>CVE-2026-109619</strong> is a different animal: a stale global state bug combining a fatal-error-backtrace use-after-free with OPcache type confusion. A later request handled by the same worker process can end up reusing memory that should have been freed, with a fatal-error-backtrace path that specifically applies to PHP 8.5.</p>
+<div style="height:12px"></div>
+<p>Different root causes, different code paths — which turned out to matter a lot once people started patching.</p>
+<div style="height:12px"></div>
+<h2>Disclosed Early, Patched Fast</h2>
+<div style="height:12px"></div>
+<p>The details reportedly leaked on October 20, ahead of the coordinated disclosure date — which forced PHP to move the official release up from October 22. Fixed versions shipped October 21: <strong>8.5.12, 8.4.27, 8.3.36, 8.2.35</strong>. Backports were reported for 8.1, 8.0 and 7.4, but anything older — including the long tail of PHP 5.x installs still quietly running somewhere — was left with no official fix at all.</p>
+<div style="height:12px"></div>
+<p>That compressed timeline is exactly what turns a critical bug into a scramble: less time to coordinate messaging, less time to test patches at scale, and a disclosure that outran the people who were supposed to control its pace.</p>
+<div style="height:12px"></div>
+<h2>The Mitigation That Only Fixed Half the Problem</h2>
+<div style="height:12px"></div>
+<p>This is the part that made the following days genuinely chaotic for anyone trying to respond fast. The most widely circulated interim mitigation was setting <code>session.upload_progress.enabled=0</code> in <code>php.ini</code> and restarting all workers.</p>
+<div style="height:12px"></div>
+<p>That stopgap addresses CVE-2026-109619. It does not fully address CVE-2026-109618 — by some accounts, the advisory for 109618 doesn't even mention sessions as the trigger path. Two bugs sharing a nickname and a disclosure date, needing two different stopgaps, got flattened in a lot of first-pass guidance into "turn off upload_progress and you're covered." Teams that did exactly that and called it done were still carrying exposure from the other half of PHP2Shell.</p>
+<div style="height:12px"></div>
+<p>This is a pattern worth internalizing on its own: when a vulnerability gets a catchy combined name, it's tempting to treat it as one fix. Read past the headline into the actual advisories before declaring victory.</p>
+<div style="height:12px"></div>
+<h2>The Industry Scramble</h2>
+<div style="height:12px"></div>
+<p>Within roughly 72 hours of disclosure, advisories and technical breakdowns went out from watchTowr, Imperva, Qualys, Arctic Wolf, Akamai, SOCRadar, Unit 42, JFrog, Bitdefender, Ellio and Upwind, among others — plus e-commerce-focused shops like sansec zeroing in on Magento/Shopware exposure specifically. That's not an unusual response to a critical CVE, but the volume and speed of it is a reasonable proxy for how seriously the industry took the "engine bug, not app bug" angle.</p>
+<div style="height:12px"></div>
+<p>Public proof-of-concept repositories also appeared quickly on GitHub, which is its own double-edged part of this cycle: useful for defenders validating exposure, and a head start for anyone less well-intentioned.</p>
+<div style="height:12px"></div>
+<h2>What the Honeypots Actually Saw</h2>
+<div style="height:12px"></div>
+<p>PHP's own security team reportedly said, at release time, that no functional exploit was known to exist yet. That didn't hold for long. watchTowr's honeypot network reported real in-the-wild scanning activity, and one analysis clocked 33 distinct source addresses sending 743 requests carrying the session upload progress field by 23:00 UTC on the day activity picked up. Some of that traffic was tentatively linked by researchers to Potassium, a Mirai-derived botnet — though without confirmed evidence that payloads were actually downloaded or executed from those sessions.</p>
+<div style="height:12px"></div>
+<p>The gap between "no known functional exploit" and "internet-wide opportunistic scanning within hours" is a useful reminder of what a CVSS 9.2 pre-auth RCE actually means in practice: you don't need a public working exploit for mass scanning to start. Automated probing for the vulnerable surface is cheap, and it starts the moment a CVE ID and a rough description exist.</p>
+<div style="height:12px"></div>
+<h2>The Actual Takeaways</h2>
+<div style="height:12px"></div>
+<ul>
+<li><strong>Engine-level bugs break the "our code is fine" assumption.</strong> Clean application code is not a defense against a vulnerability in the runtime underneath it.</li>
+<li><strong>A combined nickname can hide two different fixes.</strong> PHP2Shell was two CVEs with two root causes and two separate stopgaps. Treat each advisory on its own terms, even when marketing (including security marketing) wants a single tidy name.</li>
+<li><strong>Patch, don't just mitigate.</strong> The interim config flags bought time; they were never a substitute for getting to a fixed PHP version, and for 5.x/7.x/8.0/8.1 installs, "getting to a fixed version" wasn't even an option without a platform upgrade.</li>
+<li><strong>Scanning starts before exploitation is proven.</strong> Honeypot data during this window is a good case study for why "no known exploit yet" is not a reason to deprioritize patching a 9.2.</li>
+<li><strong>A fifteen-year-old feature was the attack surface.</strong> <code>session.upload_progress</code> shipped in PHP 5.4. Old, boring, rarely-thought-about features are exactly where this kind of bug survives undisturbed for over a decade.</li>
+</ul>
+<div style="height:12px"></div>
+<hr>
+<div style="height:12px"></div>
+<p><em>Sources: <a href="https://sansec.io/research/php2shell" target="_blank" rel="noopener">Sansec</a>, <a href="https://www.bitdefender.com/en-us/blog/businessinsights/technical-advisory-php2shell-pre-auth-rce" target="_blank" rel="noopener">Bitdefender</a>, <a href="https://socradar.io/blog/php2shell-cve-2026-109618-cve-2026-109619/" target="_blank" rel="noopener">SOCRadar</a>, <a href="https://ellio.tech/en/blog/php2shell-what-we-observed-and-what-to-do/" target="_blank" rel="noopener">Ellio</a>, <a href="https://www.upwind.io/feed/initial-assessment-php2shell-two-critical-unpatched-php-rces-cve-2026-109618-cve-2026-109619" target="_blank" rel="noopener">Upwind</a>, <a href="https://watchtowr.com/intelligence/php-remote-code-execution-php2shell/" target="_blank" rel="noopener">watchTowr</a>, <a href="https://www.imperva.com/blog/php2shell-vulnerability-updates/" target="_blank" rel="noopener">Imperva</a>, <a href="https://blog.qualys.com/vulnerabilities-threat-research/2026/10/20/php-announces-critical-security-release-for-two-vulnerabilities" target="_blank" rel="noopener">Qualys</a>, <a href="https://arcticwolf.com/resources/blog/php2shell-critical-php-vulnerabilities-enable-unauthenticated-remote-code-execution/" target="_blank" rel="noopener">Arctic Wolf</a>, <a href="https://www.akamai.com/blog/security-research/understanding-php2shell-everything-you-need-to-know" target="_blank" rel="noopener">Akamai</a>, <a href="https://unit42.paloaltonetworks.com/cve-2026-109618-cve-2026-109619/" target="_blank" rel="noopener">Unit 42</a>, <a href="https://research.jfrog.com/post/php2shell-all-you-need-to-know-about-cve-2026-109618-and-cve-2026-109619/" target="_blank" rel="noopener">JFrog</a>. Verify CVE details against the official NVD/PHP advisories before acting on them operationally.</em></p>
+<div style="height:12px"></div>
+    </div>
+    <div class="art-body pt" hidden>
+<h1>PHP2Shell: 72 Horas de Pânico na Internet</h1>
+<div style="height:12px"></div>
+<blockquote><strong>Categoria:</strong> Segurança · Gestão de Vulnerabilidades · Resposta a Incidentes</blockquote>
+<blockquote><strong>Nível:</strong> Fundamental</blockquote>
+<div style="height:12px"></div>
+<hr>
+<div style="height:12px"></div>
+<p>No final de outubro de 2026, dois bugs críticos no próprio motor do PHP — não em nenhuma aplicação, framework ou plugin rodando em cima dele — colocaram uma fatia desconhecida, mas muito grande, da web em alerta. A comunidade de segurança apelidou a dupla de "PHP2Shell": <strong>CVE-2026-109618</strong> e <strong>CVE-2026-109619</strong>, ambas com nota 9.2 no CVSS v4.0, ambas não autenticadas, ambas de execução remota de código.</p>
+<div style="height:12px"></div>
+<p>Isso não é o relato de um incidente específico que eu trabalhei. É um olhar sobre o caos público daqueles dias — o vazamento da divulgação, a corrida de advisories, a mitigação que só resolvia metade do problema, e o que os dados de honeypot realmente mostraram quando a poeira baixou um pouco.</p>
+<div style="height:12px"></div>
+<hr>
+<div style="height:12px"></div>
+<h2>Por Que Esse Caso Foi Diferente</h2>
+<div style="height:12px"></div>
+<p>A maioria dos RCEs que lidamos no dia a dia vive no código da aplicação: uma falha de deserialização numa biblioteca, um path traversal num upload handler, uma regex ruim numa checagem de autenticação. Geralmente dá pra rastrear o bug até uma decisão que alguém tomou num código específico.</p>
+<div style="height:12px"></div>
+<p>O PHP2Shell vive no <code>session.upload_progress</code> — um recurso do próprio motor do PHP, presente desde o PHP 5.4. Isso significa que uma aplicação com código genuinamente limpo, input bem validado e nenhuma dependência vulnerável conhecida ainda assim poderia ser explorável, porque o bug está abaixo de tudo isso, no runtime que interpreta a requisição. As análises da época citaram especificamente plataformas de e-commerce como Magento, Shopware e WooCommerce como expostas <em>independente da qualidade do próprio código</em> — porque a falha dispara antes mesmo da lógica da aplicação rodar, em algumas configurações.</p>
+<div style="height:12px"></div>
+<h2>Dois Bugs, Dois Problemas de Memória Diferentes</h2>
+<div style="height:12px"></div>
+<p><strong>CVE-2026-109618</strong> é um problema de corrupção por falta de memória (out-of-memory). Quando uma condição de OOM interrompe uma operação vulnerável no meio do caminho, o PHP pode deixar dados de sessão apontando pra memória já liberada — e em certas condições, isso pode vazar endereços de memória, exatamente o que você precisa pra driblar o ASLR como passo intermediário rumo a um RCE completo.</p>
+<div style="height:12px"></div>
+<p><strong>CVE-2026-109619</strong> é outro animal: um bug de estado global obsoleto combinando um use-after-free no backtrace de erro fatal com confusão de tipo no OPcache. Uma requisição posterior tratada pelo mesmo worker pode acabar reutilizando memória que deveria ter sido liberada, com um caminho de backtrace de erro fatal que se aplica especificamente ao PHP 8.5.</p>
+<div style="height:12px"></div>
+<p>Causas raiz diferentes, caminhos de código diferentes — o que acabou importando muito quando as pessoas começaram a aplicar mitigações.</p>
+<div style="height:12px"></div>
+<h2>Divulgado Cedo, Corrigido Rápido</h2>
+<div style="height:12px"></div>
+<p>Os detalhes teriam vazado em 20 de outubro, antes da data coordenada de divulgação — o que forçou o PHP a antecipar o lançamento oficial, originalmente marcado pra 22 de outubro. As versões corrigidas saíram em 21 de outubro: <strong>8.5.12, 8.4.27, 8.3.36, 8.2.35</strong>. Backports foram reportados para 8.1, 8.0 e 7.4, mas qualquer coisa mais antiga — incluindo a cauda longa de instalações PHP 5.x ainda rodando silenciosamente em algum lugar — ficou sem correção oficial nenhuma.</p>
+<div style="height:12px"></div>
+<p>Esse cronograma comprimido é exatamente o que transforma um bug crítico numa correria: menos tempo pra coordenar a comunicação, menos tempo pra testar patches em escala, e uma divulgação que correu mais rápido do que quem deveria controlar o ritmo.</p>
+<div style="height:12px"></div>
+<h2>A Mitigação Que Só Resolvia Metade do Problema</h2>
+<div style="height:12px"></div>
+<p>Essa é a parte que tornou os dias seguintes genuinamente caóticos pra quem tentava responder rápido. A mitigação provisória mais divulgada foi setar <code>session.upload_progress.enabled=0</code> no <code>php.ini</code> e reiniciar todos os workers.</p>
+<div style="height:12px"></div>
+<p>Esse paliativo resolve a CVE-2026-109619. Ele não resolve totalmente a CVE-2026-109618 — segundo alguns relatos, o advisory da 109618 nem sequer menciona sessões como caminho de disparo. Duas falhas compartilhando um apelido e uma data de divulgação, precisando de dois paliativos diferentes, acabaram achatadas em muita orientação de primeira hora em "desliga o upload_progress e tá resolvido". Times que fizeram exatamente isso e deram o caso por encerrado continuavam carregando exposição da outra metade do PHP2Shell.</p>
+<div style="height:12px"></div>
+<p>Esse é um padrão que vale internalizar por si só: quando uma vulnerabilidade ganha um nome chamativo combinado, é tentador tratá-la como uma correção só. Leia além da manchete, entre nos advisories de verdade antes de declarar vitória.</p>
+<div style="height:12px"></div>
+<h2>A Correria da Indústria</h2>
+<div style="height:12px"></div>
+<p>Em aproximadamente 72 horas após a divulgação, advisories e análises técnicas saíram da watchTowr, Imperva, Qualys, Arctic Wolf, Akamai, SOCRadar, Unit 42, JFrog, Bitdefender, Ellio e Upwind, entre outras — além de empresas focadas em e-commerce, como a sansec, mirando especificamente a exposição de Magento/Shopware. Isso não é uma resposta incomum pra um CVE crítico, mas o volume e a velocidade são um bom indicador de quão a sério a indústria levou o ângulo "bug no motor, não na aplicação".</p>
+<div style="height:12px"></div>
+<p>Repositórios públicos de prova de conceito também apareceram rápido no GitHub, o que é parte do próprio ciclo de faca de dois gumes: útil pra quem defende validar exposição, e um atalho pra quem tem intenções menos boas.</p>
+<div style="height:12px"></div>
+<h2>O Que os Honeypots Realmente Viram</h2>
+<div style="height:12px"></div>
+<p>A própria equipe de segurança do PHP teria dito, no momento do lançamento, que nenhum exploit funcional era conhecido até então. Isso não durou muito. A rede de honeypots da watchTowr reportou atividade real de varredura no mundo real, e uma análise cravou 33 endereços de origem distintos enviando 743 requisições carregando o campo de progresso de upload de sessão até as 23h UTC do dia em que a atividade decolou. Parte desse tráfego foi tentativamente ligado por pesquisadores ao Potassium, um botnet derivado do Mirai — embora sem evidência confirmada de que payloads tenham realmente sido baixados ou executados a partir dessas sessões.</p>
+<div style="height:12px"></div>
+<p>A distância entre "nenhum exploit funcional conhecido" e "varredura oportunista em escala de internet em questão de horas" é um lembrete útil do que um RCE pré-autenticação com CVSS 9.2 realmente significa na prática: você não precisa de um exploit público funcionando pra que a varredura em massa comece. Sondagem automatizada pela superfície vulnerável é barata, e começa no momento em que existe um ID de CVE e uma descrição mínima.</p>
+<div style="height:12px"></div>
+<h2>Os Aprendizados de Verdade</h2>
+<div style="height:12px"></div>
+<ul>
+<li><strong>Bugs no nível do motor quebram a premissa de "nosso código tá limpo".</strong> Código de aplicação limpo não é defesa contra uma vulnerabilidade no runtime por baixo dele.</li>
+<li><strong>Um apelido combinado pode esconder duas correções diferentes.</strong> O PHP2Shell eram duas CVEs com duas causas raiz e dois paliativos separados. Trate cada advisory nos próprios termos, mesmo quando o marketing (inclusive o de segurança) quer um nome único e arrumadinho.</li>
+<li><strong>Corrija, não só mitigue.</strong> As flags de configuração provisórias compraram tempo; nunca foram substituto de chegar numa versão corrigida do PHP, e pra instalações 5.x/7.x/8.0/8.1, "chegar numa versão corrigida" nem era opção sem um upgrade de plataforma.</li>
+<li><strong>A varredura começa antes da exploração ser comprovada.</strong> Os dados de honeypot nessa janela são um bom estudo de caso de por que "nenhum exploit conhecido ainda" não é motivo pra despriorizar o patch de um 9.2.</li>
+<li><strong>Um recurso de quinze anos foi a superfície de ataque.</strong> O <code>session.upload_progress</code> foi lançado no PHP 5.4. Recursos antigos, chatos e raramente lembrados são exatamente onde esse tipo de bug sobrevive intocado por mais de uma década.</li>
+</ul>
+<div style="height:12px"></div>
+<hr>
+<div style="height:12px"></div>
+<p><em>Fontes: <a href="https://sansec.io/research/php2shell" target="_blank" rel="noopener">Sansec</a>, <a href="https://www.bitdefender.com/en-us/blog/businessinsights/technical-advisory-php2shell-pre-auth-rce" target="_blank" rel="noopener">Bitdefender</a>, <a href="https://socradar.io/blog/php2shell-cve-2026-109618-cve-2026-109619/" target="_blank" rel="noopener">SOCRadar</a>, <a href="https://ellio.tech/en/blog/php2shell-what-we-observed-and-what-to-do/" target="_blank" rel="noopener">Ellio</a>, <a href="https://www.upwind.io/feed/initial-assessment-php2shell-two-critical-unpatched-php-rces-cve-2026-109618-cve-2026-109619" target="_blank" rel="noopener">Upwind</a>, <a href="https://watchtowr.com/intelligence/php-remote-code-execution-php2shell/" target="_blank" rel="noopener">watchTowr</a>, <a href="https://www.imperva.com/blog/php2shell-vulnerability-updates/" target="_blank" rel="noopener">Imperva</a>, <a href="https://blog.qualys.com/vulnerabilities-threat-research/2026/10/20/php-announces-critical-security-release-for-two-vulnerabilities" target="_blank" rel="noopener">Qualys</a>, <a href="https://arcticwolf.com/resources/blog/php2shell-critical-php-vulnerabilities-enable-unauthenticated-remote-code-execution/" target="_blank" rel="noopener">Arctic Wolf</a>, <a href="https://www.akamai.com/blog/security-research/understanding-php2shell-everything-you-need-to-know" target="_blank" rel="noopener">Akamai</a>, <a href="https://unit42.paloaltonetworks.com/cve-2026-109618-cve-2026-109619/" target="_blank" rel="noopener">Unit 42</a>, <a href="https://research.jfrog.com/post/php2shell-all-you-need-to-know-about-cve-2026-109618-and-cve-2026-109619/" target="_blank" rel="noopener">JFrog</a>. Confira os detalhes das CVEs no NVD/advisories oficiais do PHP antes de agir operacionalmente com base neles.</em></p>
+<div style="height:12px"></div>
+    </div>
+  </div>
+
+  <footer>
+    <div class="footer-sig">ORUAM_OLIUJ</div>
+    <div class="footer-copy"><span class="en">&gt; oruam.cloud/writing · 2026_</span><span class="pt" hidden>&gt; oruam.cloud/writing · 2026_</span></div>
+  </footer>
+</div>
+
+<script>
+const canvas = document.getElementById('matrix-canvas');
+const ctx = canvas.getContext('2d');
+canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+window.addEventListener('resize', () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; init(); });
+const chars = 'アイウエオカキクケコ0123456789ABCDEF$#@%&';
+const fontSize = 16;
+let columns, drops;
+function init() { columns = Math.floor(canvas.width / fontSize); drops = Array(columns).fill(1); }
+function draw() {
+  const theme = document.documentElement.dataset.theme;
+  ctx.fillStyle = theme === 'green' ? 'rgba(0,3,0,0.04)' : theme === 'amber' ? 'rgba(2,1,0,0.04)' : theme === 'light' ? 'rgba(245,242,235,0.06)' : 'rgba(0,3,8,0.04)';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  ctx.fillStyle = theme === 'green' ? '#00ff41' : theme === 'amber' ? '#ff8c00' : theme === 'light' ? '#1a5c3a' : '#00b4ff';
+  ctx.font = fontSize + 'px Share Tech Mono';
+  for (let i = 0; i < drops.length; i++) {
+    const char = chars[Math.floor(Math.random() * chars.length)];
+    ctx.fillText(char, i * fontSize, drops[i] * fontSize);
+    if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
+    drops[i]++;
+  }
+}
+init(); setInterval(draw, 45);
+
+const themeNames = {
+  en: { green: '◈ Green', amber: '◈ Amber', blue: '◈ Blue', light: '◈ Light' },
+  pt: { green: '◈ Verde', amber: '◈ Âmbar', blue: '◈ Azul', light: '◈ Claro' },
+};
+function currentLang() { return localStorage.getItem('lang') === 'pt' ? 'pt' : 'en'; }
+function nextTheme(cur) { cur = cur || 'blue'; return cur==='blue'?'green':cur==='green'?'amber':cur==='amber'?'light':'blue'; }
+function updateThemeBtn(cur) { document.getElementById('theme-btn').textContent = themeNames[currentLang()][nextTheme(cur)]; }
+function toggleTheme() {
+  const html = document.documentElement;
+  const next = nextTheme(html.dataset.theme);
+  html.dataset.theme = next === 'blue' ? '' : next;
+  localStorage.setItem('theme', next);
+  updateThemeBtn(next);
+}
+
+function setLang(lang) {
+  document.querySelectorAll('.en').forEach(el => el.hidden = (lang !== 'en'));
+  document.querySelectorAll('.pt').forEach(el => el.hidden = (lang !== 'pt'));
+  document.getElementById('lang-btn').textContent = lang === 'en' ? 'PT-BR' : 'ENGLISH';
+  document.documentElement.lang = lang;
+  localStorage.setItem('lang', lang);
+  updateThemeBtn(document.documentElement.dataset.theme);
+}
+function toggleLang() { setLang(currentLang() === 'en' ? 'pt' : 'en'); }
+setLang(currentLang());
+</script>
+</body>
+</html>
