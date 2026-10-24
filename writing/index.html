@@ -18,6 +18,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
 <link rel="canonical" href="https://oruam.cloud/writing/">
+<link rel="alternate" type="application/rss+xml" title="Julio Cesar Mauro — Writing" href="https://oruam.cloud/feed.xml">
 <script>(function(){var t=localStorage.getItem('theme');if(t==='green'||t==='amber'||t==='light')document.documentElement.dataset.theme=t;})();</script>
 <style>
 :root {
@@ -612,6 +613,21 @@ footer {
   letter-spacing: 2px;
 }
 
+.footer-rss {
+  font-size: 11px;
+  letter-spacing: 2px;
+  color: var(--text-dim);
+  text-decoration: none;
+  border: 1px solid var(--border);
+  padding: 4px 10px;
+  transition: all 0.2s;
+}
+.footer-rss:hover {
+  color: var(--green);
+  border-color: var(--green-mid);
+  background: var(--green-dim);
+}
+
 @keyframes fadeUp {
   from { opacity: 0; transform: translateY(12px); }
   to   { opacity: 1; transform: translateY(0); }
@@ -857,6 +873,7 @@ body.piqad-active #article-content * {
 
   <footer>
     <div class="footer-sig">ORUAM_OLIUJ</div>
+    <a class="footer-rss" href="/feed.xml">RSS</a>
     <div class="footer-copy" data-i18n="footer-copy">> oruam.cloud/writing · 2026_</div>
   </footer>
 
@@ -864,37 +881,39 @@ body.piqad-active #article-content * {
 
 <script>
 // ── MATRIX RAIN ──
-const canvas = document.getElementById('matrix-canvas');
-const ctx = canvas.getContext('2d');
-canvas.width  = window.innerWidth;
-canvas.height = window.innerHeight;
-window.addEventListener('resize', () => {
+try {
+  const canvas = document.getElementById('matrix-canvas');
+  const ctx = canvas.getContext('2d');
   canvas.width  = window.innerWidth;
   canvas.height = window.innerHeight;
-  init();
-});
-const chars = 'アイウエオカキクケコ0123456789ABCDEF$#@%&';
-const fontSize = 16;
-let columns, drops;
-function init() {
-  columns = Math.floor(canvas.width / fontSize);
-  drops = Array(columns).fill(1);
-}
-function draw() {
-  const theme = document.documentElement.dataset.theme;
-  ctx.fillStyle = theme === 'green' ? 'rgba(0,3,0,0.04)' : theme === 'amber' ? 'rgba(2,1,0,0.04)' : theme === 'light' ? 'rgba(245,242,235,0.06)' : 'rgba(0,3,8,0.04)';
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
-  ctx.fillStyle = theme === 'green' ? '#00ff41' : theme === 'amber' ? '#ff8c00' : theme === 'light' ? '#1a5c3a' : '#00b4ff';
-  ctx.font = fontSize + 'px Share Tech Mono';
-  for (let i = 0; i < drops.length; i++) {
-    const char = chars[Math.floor(Math.random() * chars.length)];
-    ctx.fillText(char, i * fontSize, drops[i] * fontSize);
-    if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
-    drops[i]++;
+  window.addEventListener('resize', () => {
+    canvas.width  = window.innerWidth;
+    canvas.height = window.innerHeight;
+    init();
+  });
+  const chars = 'アイウエオカキクケコ0123456789ABCDEF$#@%&';
+  const fontSize = 16;
+  let columns, drops;
+  function init() {
+    columns = Math.floor(canvas.width / fontSize);
+    drops = Array(columns).fill(1);
   }
-}
-init();
-setInterval(draw, 45);
+  function draw() {
+    const theme = document.documentElement.dataset.theme;
+    ctx.fillStyle = theme === 'green' ? 'rgba(0,3,0,0.04)' : theme === 'amber' ? 'rgba(2,1,0,0.04)' : theme === 'light' ? 'rgba(245,242,235,0.06)' : 'rgba(0,3,8,0.04)';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = theme === 'green' ? '#00ff41' : theme === 'amber' ? '#ff8c00' : theme === 'light' ? '#1a5c3a' : '#00b4ff';
+    ctx.font = fontSize + 'px Share Tech Mono';
+    for (let i = 0; i < drops.length; i++) {
+      const char = chars[Math.floor(Math.random() * chars.length)];
+      ctx.fillText(char, i * fontSize, drops[i] * fontSize);
+      if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
+      drops[i]++;
+    }
+  }
+  init();
+  setInterval(draw, 45);
+} catch (e) { console.error('matrix rain init failed', e); }
 
 // ── LANGUAGE ──
 const i18n = {
@@ -1954,11 +1973,13 @@ function toggleLang() {
 }
 
 (function() {
-  const qp = new URLSearchParams(window.location.search);
-  const hp = new URLSearchParams(window.location.hash.includes('?') ? window.location.hash.split('?')[1] : '');
-  const urlLang = qp.get('lang') || hp.get('lang');
-  const lang = urlLang || localStorage.getItem('lang');
-  if (lang === 'en' || lang === 'pt' || lang === 'tlh') applyLang(lang);
+  try {
+    const qp = new URLSearchParams(window.location.search);
+    const hp = new URLSearchParams(window.location.hash.includes('?') ? window.location.hash.split('?')[1] : '');
+    const urlLang = qp.get('lang') || hp.get('lang');
+    const lang = urlLang || localStorage.getItem('lang');
+    if (lang === 'en' || lang === 'pt' || lang === 'tlh') applyLang(lang);
+  } catch (e) { console.error('lang init failed', e); }
 })();
 
 // ── THEME ──
@@ -1970,7 +1991,7 @@ function toggleTheme() {
   localStorage.setItem('theme', next);
   updateThemeBtn(next);
 }
-(function() { updateThemeBtn(localStorage.getItem('theme') || 'blue'); })();
+(function() { try { updateThemeBtn(localStorage.getItem('theme') || 'blue'); } catch (e) { console.error('theme init failed', e); } })();
 
 // ── FILTER ──
 function filter(tag) {
@@ -1989,11 +2010,13 @@ function filter(tag) {
 const RAW = 'https://raw.githubusercontent.com/juliomauro/sec-notes/main/';
 
 document.getElementById('article-list').addEventListener('click', e => {
-  const item = e.target.closest('.article-item');
-  if (!item || !item.dataset.path) return;
-  if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return; // let the browser open the real link (new tab, etc.)
-  e.preventDefault();
-  openArticle(item.dataset.path);
+  try {
+    const item = e.target.closest('.article-item');
+    if (!item || !item.dataset.path) return;
+    if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return; // let the browser open the real link (new tab, etc.)
+    e.preventDefault();
+    openArticle(item.dataset.path);
+  } catch (err) { console.error('article click failed', err); }
 });
 
 function renderArticle(md, lang) {
@@ -2086,21 +2109,25 @@ function shareTo(platform) {
 }
 
 window.addEventListener('popstate', () => {
-  const hash = window.location.hash.slice(1);
-  if (hash && SLUG_TO_PATH[hash]) {
-    openArticle(SLUG_TO_PATH[hash]);
-  } else {
-    currentPath = null;
-    document.getElementById('list-header').style.display = '';
-    document.getElementById('article-list').style.display = '';
-    document.getElementById('article-view').style.display = 'none';
-  }
+  try {
+    const hash = window.location.hash.slice(1);
+    if (hash && SLUG_TO_PATH[hash]) {
+      openArticle(SLUG_TO_PATH[hash]);
+    } else {
+      currentPath = null;
+      document.getElementById('list-header').style.display = '';
+      document.getElementById('article-list').style.display = '';
+      document.getElementById('article-view').style.display = 'none';
+    }
+  } catch (e) { console.error('popstate handler failed', e); }
 });
 
 // Open article from hash on direct load
 (function() {
-  const hash = window.location.hash.slice(1);
-  if (hash && SLUG_TO_PATH[hash]) openArticle(SLUG_TO_PATH[hash]);
+  try {
+    const hash = window.location.hash.slice(1);
+    if (hash && SLUG_TO_PATH[hash]) openArticle(SLUG_TO_PATH[hash]);
+  } catch (e) { console.error('hash-open init failed', e); }
 })();
 
 // ── MARKDOWN RENDERER ──

@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+<channel>
+  <title>Julio Cesar Mauro — Writing</title>
+  <link>https://oruam.cloud/writing/</link>
+  <description>Security and infrastructure articles by Julio Cesar Mauro.</description>
+  <language>en</language>
+  <atom:link href="https://oruam.cloud/feed.xml" rel="self" type="application/rss+xml"/>
+
+  <item>
+    <title>Relapse: The Browser Bug That Opened the PS5's Kernel</title>
+    <link>https://oruam.cloud/writing/relapse/</link>
+    <guid>https://oruam.cloud/writing/relapse/</guid>
+    <pubDate>Fri, 23 Oct 2026 18:48:20 -0300</pubDate>
+    <description>How the Relapse jailbreak chains a JavaScriptCore memory corruption bug with a kernel use-after-free race in aiomultiwait — and why every major public PS5 kernel exploit since 2022 traces back to FreeBSD, not Sony's own code.</description>
+  </item>
+
+  <item>
+    <title>PHP2Shell: 72 Hours of Internet-Wide Panic</title>
+    <link>https://oruam.cloud/writing/php2shell/</link>
+    <guid>https://oruam.cloud/writing/php2shell/</guid>
+    <pubDate>Fri, 23 Oct 2026 18:02:46 -0300</pubDate>
+    <description>How two critical pre-auth RCE bugs in PHP's engine itself (CVE-2026-109618 / CVE-2026-109619) turned into days of scrambled advisories, conflicting mitigations and honeypot-confirmed scanning across the internet.</description>
+  </item>
+
+  <item>
+    <title>Your Container's Identity Is Worth More Than Root</title>
+    <link>https://oruam.cloud/writing/container/</link>
+    <guid>https://oruam.cloud/writing/container/</guid>
+    <pubDate>Mon, 13 Jul 2026 18:09:11 -0300</pubDate>
+    <description>How a non-root container with limited file read access becomes the pivot point for cross-account IAM escalation via the metadata endpoint and image layer history.</description>
+  </item>
+
+  <item>
+    <title>One Wildcard in a Trust Policy</title>
+    <link>https://oruam.cloud/writing/wildcard/</link>
+    <guid>https://oruam.cloud/writing/wildcard/</guid>
+    <pubDate>Mon, 13 Jul 2026 18:09:11 -0300</pubDate>
+    <description>How StringLike with a glob pattern in an IAM trust policy condition turns a controlled role assumption into an open path — and why StringEquals matters.</description>
+  </item>
+
+  <item>
+    <title>The Header That Opened the Network</title>
+    <link>https://oruam.cloud/writing/header/</link>
+    <guid>https://oruam.cloud/writing/header/</guid>
+    <pubDate>Mon, 13 Jul 2026 18:09:11 -0300</pubDate>
+    <description>Why X-Forwarded-For should never be used for access control at the edge — and how one misconfigured Nginx directive led to full internal network access.</description>
+  </item>
+
+  <item>
+    <title>systemd as an Attack Surface</title>
+    <link>https://oruam.cloud/writing/systemd/</link>
+    <guid>https://oruam.cloud/writing/systemd/</guid>
+    <pubDate>Mon, 13 Jul 2026 18:09:11 -0300</pubDate>
+    <description>How services running as root that source files from user-influenced paths enable privilege escalation without a CVE — just a timer and a writable directory.</description>
+  </item>
+
+  <item>
+    <title>RBAC: When No Single Permission Seems Critical</title>
+    <link>https://oruam.cloud/writing/rbac/</link>
+    <guid>https://oruam.cloud/writing/rbac/</guid>
+    <pubDate>Mon, 13 Jul 2026 18:09:11 -0300</pubDate>
+    <description>How create Jobs combined with a permissive service account enables namespace lateral movement — and why Kubernetes RBAC must be reviewed as a permission graph, not individual rules.</description>
+  </item>
+
+  <item>
+    <title>MeshCore Brazil: Decentralized Communication Without Infrastructure</title>
+    <link>https://oruam.cloud/writing/meshcore/</link>
+    <guid>https://oruam.cloud/writing/meshcore/</guid>
+    <pubDate>Mon, 13 Jul 2026 18:09:11 -0300</pubDate>
+    <description>How LoRa radios and mesh networking enable community-driven communication over dozens of kilometers — without internet, cellular, or any centralized provider.</description>
+  </item>
+
+  <item>
+    <title>The "Misantropia" Incident: Brazil's National Alert System Failure</title>
+    <link>https://oruam.cloud/writing/misantropia/</link>
+    <guid>https://oruam.cloud/writing/misantropia/</guid>
+    <pubDate>Mon, 13 Jul 2026 18:09:11 -0300</pubDate>
+    <description>How a teenager with five-year-old leaked credentials shut down Brazil's national emergency alert system — and what the exposed debug mode, SQL injection, and missing MFA say about critical public infrastructure security.</description>
+  </item>
+
+  <item>
+    <title>The Hidden Danger of Judging by Appearances</title>
+    <link>https://oruam.cloud/writing/appearances/</link>
+    <guid>https://oruam.cloud/writing/appearances/</guid>
+    <pubDate>Mon, 13 Jul 2026 18:09:11 -0300</pubDate>
+    <description>How appearance-based cognitive biases become the social engineer's preferred attack vector — and why trusting the "packaging" over evidence hands the attacker a map of your weakest point.</description>
+  </item>
+
+</channel>
+</rss>
