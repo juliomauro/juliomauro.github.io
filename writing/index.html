@@ -989,7 +989,7 @@ const i18n = {
     'title-misantropia':'O Incidente "Misantropia": A Falha no Sistema Nacional de Alertas',
     'desc-misantropia': 'Como um adolescente com credenciais vazadas há cinco anos derrubou o sistema nacional de alertas de emergência do Brasil — e o que o debug mode exposto, SQL injection e ausência de MFA dizem sobre a segurança de infraestrutura pública crítica.',
     'title-bootrom':    'Vazamento do BootROM: A Chave Que 95 Milhões de PS5 Não Podem Trocar',
-    'desc-bootrom':     'O que realmente vazou quando material de chave do BootROM do PS5 surgiu online no fim de 2025 — por que uma chave gravada em silício não se corrige como um bug de kernel, e por que boa parte do pânico correu na frente da evidência.',
+    'desc-bootrom':     'O que realmente vazou quando uma chave do BootROM do PS5 surgiu online no fim de 2025 — por que uma chave gravada em silício não se corrige como um bug de kernel, e por que boa parte do pânico correu na frente da evidência.',
     'title-php2shell':  'PHP2Shell: 72 Horas de Pânico na Internet',
     'desc-php2shell':   'Como dois bugs críticos de RCE pré-autenticação no próprio motor do PHP (CVE-2026-109618 / CVE-2026-109619) viraram uma divulgação vazada, uma mitigação que só resolvia metade e varredura confirmada por honeypot em questão de horas.',
     'title-relapse':    'Relapse: O Bug de Navegador Que Abriu o Kernel do PS5',
@@ -1784,7 +1784,7 @@ Em suas decisões — seja no trabalho ou na vida pessoal — você está exigin
 
 ---
 
-Perto da virada do ano, material de chave supostamente vindo do BootROM do PS5 começou a circular online. As reportagens rastreiam a origem até dois handles conhecidos da cena de hacking de consoles, BrutalSam_ e Shadzey1. A Sony não confirmou nem negou nada. Seis anos na vida do console, esse silêncio já é parte da história.
+Perto da virada do ano, uma chave supostamente vazada do BootROM do PS5 começou a circular online. As reportagens rastreiam a origem até dois handles conhecidos da cena de hacking de consoles, BrutalSam_ e Shadzey1. A Sony não confirmou nem negou nada. Seis anos na vida do console, esse silêncio já é parte da história.
 
 ## O Que Realmente Vazou
 
@@ -1792,17 +1792,17 @@ A alegação é específica: uma chave embutida no BootROM do PS5, o primeiro c�
 
 No boot, é esse código que verifica a assinatura criptográfica da próxima etapa antes de passar a execução adiante. Quebre essa verificação, ou tenha a chave que torna essa verificação inútil, e você controla no que o console pode confiar desde a primeira instrução.
 
-Ninguém publicou um dump funcional, exploit de kernel ou firmware customizado construído sobre esse vazamento. O que circulou foi material de chave e alegações sobre sua autenticidade — não uma ferramenta.
+Ninguém publicou um dump funcional, exploit de kernel ou firmware customizado construído sobre esse vazamento. O que circulou foi uma chave e alegações sobre sua autenticidade — não uma ferramenta.
 
 ## Não É o Mesmo Vazamento de 2021
 
 Essa não é a primeira vez que chaves raiz do PS5 aparecem. Em novembro de 2021, o grupo fail0verflow disse ter extraído as chaves raiz simétricas do PS5 — incluindo a chave por console — decriptando firmware via software. Nunca divulgaram o método, e quando perguntados se as chaves podiam ser rotacionadas, disseram que não.
 
-Aquele vazamento de 2021 veio de engenharia reversa num sistema em execução. Esse é reportado de outro jeito: material de chave ligado à própria etapa do BootROM, a camada abaixo de tudo que o fail0verflow tocou. Se essa distinção se confirmar, não é uma versão mais profunda do mesmo problema. É uma camada diferente e mais baixa da mesma cadeia de confiança.
+Aquele vazamento de 2021 veio de engenharia reversa num sistema em execução. Esse é reportado de outro jeito: uma chave ligada à própria etapa do BootROM, a camada abaixo de tudo que o fail0verflow tocou. Se essa distinção se confirmar, não é uma versão mais profunda do mesmo problema. É uma camada diferente e mais baixa da mesma cadeia de confiança.
 
 ## O Que Isso Não Prova
 
-A cobertura mais cuidadosa também é a mais reservada. Material de chave vazado da etapa de ROM, por si só, não entrega a ninguém um escape de kernel, um bypass de hypervisor ou um firmware customizado persistente. Isso ainda exige exploits separados e específicos — do tipo que o Relapse precisou em setembro passado, encadeando um bug de navegador com um use-after-free de kernel só pra conseguir execução de código no kernel num console totalmente atualizado.
+A cobertura mais cuidadosa também é a mais reservada. Uma chave vazada da etapa de ROM, por si só, não entrega a ninguém um escape de kernel, um bypass de hypervisor ou um firmware customizado persistente. Isso ainda exige exploits separados e específicos — do tipo que o Relapse precisou em setembro passado, encadeando um bug de navegador com um use-after-free de kernel só pra conseguir execução de código no kernel num console totalmente atualizado.
 
 Veículos menos cuidadosos ignoraram essa distinção e foram direto pro "jailbreak imune a patch". Uma chave é um pré-requisito, não um payload. Confundir os dois é como um vazamento real vira pânico que corre na frente da evidência.
 
