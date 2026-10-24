@@ -536,15 +536,15 @@ body.piqad-active #article-content * {
 <div style="height:12px"></div>
 <hr>
 <div style="height:12px"></div>
-<p>Perto da virada do ano, uma chave supostamente vazada do BootROM do PS5 começou a circular online. As reportagens rastreiam a origem até dois handles conhecidos da cena de hacking de consoles, BrutalSam_ e Shadzey1. A Sony não confirmou nem negou nada. Seis anos na vida do console, esse silêncio já é parte da história.</p>
+<p>Perto da virada do ano, uma chave supostamente vazada do BootROM do PS5 começou a circular online. As reportagens apontam a origem para dois handles conhecidos da cena de hacking de consoles, BrutalSam_ e Shadzey1. A Sony não confirmou nem negou nada. O console está no mercado há seis anos, e esse silêncio já é parte da história.</p>
 <div style="height:12px"></div>
 <h2>O Que Realmente Vazou</h2>
 <div style="height:12px"></div>
-<p>A alegação é específica: uma chave embutida no BootROM do PS5, o primeiro código que o chip do console executa ao ligar, antes de qualquer sistema operacional existir. O BootROM vive em memória fisicamente somente-leitura — mask ROM, gravada durante a fabricação. Não dá pra sobrescrever com uma atualização de firmware, porque não é firmware. É silício.</p>
+<p>A alegação é específica: uma chave embutida no BootROM do PS5, o primeiro código que o chip do console executa ao ligar, antes de qualquer sistema operacional existir. O BootROM fica numa memória fisicamente somente leitura — mask ROM, gravada durante a fabricação. Não dá pra sobrescrever com uma atualização de firmware, porque não é firmware. É silício.</p>
 <div style="height:12px"></div>
-<p>No boot, é esse código que verifica a assinatura criptográfica da próxima etapa antes de passar a execução adiante. Quebre essa verificação, ou tenha a chave que torna essa verificação inútil, e você controla no que o console pode confiar desde a primeira instrução.</p>
+<p>No boot, é esse código que verifica a assinatura criptográfica da próxima etapa antes de repassar o controle adiante. Quebre essa verificação, ou tenha a chave que torna essa verificação inútil, e você decide em que o console pode confiar desde a primeira instrução.</p>
 <div style="height:12px"></div>
-<p>Ninguém publicou um dump funcional, exploit de kernel ou firmware customizado construído sobre esse vazamento. O que circulou foi uma chave e alegações sobre sua autenticidade — não uma ferramenta.</p>
+<p>Ninguém publicou um dump funcional, exploit de kernel ou firmware customizado a partir desse vazamento. O que circulou foi uma chave e alegações sobre sua autenticidade — não uma ferramenta.</p>
 <div style="height:12px"></div>
 <h2>Não É o Mesmo Vazamento de 2021</h2>
 <div style="height:12px"></div>
@@ -554,15 +554,15 @@ body.piqad-active #article-content * {
 <div style="height:12px"></div>
 <h2>O Que Isso Não Prova</h2>
 <div style="height:12px"></div>
-<p>A cobertura mais cuidadosa também é a mais reservada. Uma chave vazada da etapa de ROM, por si só, não entrega a ninguém um escape de kernel, um bypass de hypervisor ou um firmware customizado persistente. Isso ainda exige exploits separados e específicos — do tipo que o Relapse precisou em setembro passado, encadeando um bug de navegador com um use-after-free de kernel só pra conseguir execução de código no kernel num console totalmente atualizado.</p>
+<p>A cobertura mais cuidadosa também é a mais reservada. Uma chave vazada da etapa de ROM, por si só, não dá a ninguém um escape de kernel, um bypass de hypervisor ou um firmware customizado persistente. Isso ainda exige exploits separados e específicos — do tipo que o Relapse precisou em setembro passado, encadeando um bug de navegador com um use-after-free de kernel só pra conseguir execução de código no kernel num console totalmente atualizado.</p>
 <div style="height:12px"></div>
-<p>Veículos menos cuidadosos ignoraram essa distinção e foram direto pro "jailbreak imune a patch". Uma chave é um pré-requisito, não um payload. Confundir os dois é como um vazamento real vira pânico que corre na frente da evidência.</p>
+<p>Veículos menos cuidadosos ignoraram essa distinção e foram direto pro "jailbreak imune a patch". Uma chave é um pré-requisito, não um payload. Confundir os dois é como um vazamento real vira um pânico que atropela as evidências.</p>
 <div style="height:12px"></div>
 <h2>O Único Conserto Que a Sony Tem</h2>
 <div style="height:12px"></div>
-<p>Se a chave for real, as opções da Sony são estreitas. Ela não pode empurrar uma atualização de firmware pra mudar um valor gravado em silício em consoles que já estão nas casas das pessoas — mais de 95 milhões deles, segundo os próprios números de embarque da Sony em meados de 2026. O único conserto limpo é uma nova revisão de hardware com uma chave diferente, protegendo consoles que ainda não foram fabricados.</p>
+<p>Se a chave for real, a Sony tem pouquíssimas opções. Ela não pode empurrar uma atualização de firmware pra mudar um valor gravado em silício em consoles que já estão nas casas das pessoas — mais de 95 milhões deles, segundo os próprios números de embarque da Sony em meados de 2026. O único conserto limpo é uma nova revisão de hardware com uma chave diferente, protegendo consoles que ainda não foram fabricados.</p>
 <div style="height:12px"></div>
-<p>Pra tudo que já foi vendido, o manual de jogo da Sony parece o que ela fez depois do Relapse: mover o enforcement pra camada de serviço. O firmware 14.10 não tentou forçar todo console pra versão mais nova, amarrou o acesso à PSN a uma versão mínima. Um BootROM comprometido não muda o que a Sony ainda controla: quem fala com os servidores dela.</p>
+<p>Pra tudo que já foi vendido, a estratégia da Sony parece a mesma que ela usou depois do Relapse: mover o enforcement pra camada de serviço. O firmware 14.10 não tentou forçar todo console pra versão mais nova, amarrou o acesso à PSN a uma versão mínima. Um BootROM comprometido não muda o que a Sony ainda controla: quem fala com os servidores dela.</p>
 <div style="height:12px"></div>
 <p>Um bug de kernel tem ciclo de vida: achado, transformado em arma, corrigido, esquecido. Uma chave gravada em silício não tem esse ciclo. Ela só fica lá, certa ou não, por todo o tempo que o chip existir — que, pra um console já em 95 milhões de salas de estar, é mais tempo do que qualquer atualização de firmware que a Sony um dia vai lançar.</p>
 <div style="height:12px"></div>
