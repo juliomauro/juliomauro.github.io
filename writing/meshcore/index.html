@@ -372,6 +372,40 @@ h1 {
   color: var(--text-dim);
 }
 
+.share-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+  margin: 18px 0 0;
+}
+
+.share-label {
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+
+.share-btn {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  background: none;
+  border: 1px solid var(--border);
+  padding: 5px 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.share-btn:hover {
+  color: var(--green);
+  border-color: var(--green-mid);
+  background: var(--green-dim);
+  box-shadow: var(--glow);
+}
+
 .article-title {
   font-family: 'Orbitron', monospace;
   font-size: 15px;
@@ -649,6 +683,13 @@ body.piqad-active #article-content * {
       <span class="article-tag networking">Networking · Community · LoRa</span>
       <span class="article-level">// Foundational</span>
     </div>
+    <div class="share-row">
+      <span class="share-label"><span class="en">Share:</span><span class="pt" hidden>Compartilhar:</span></span>
+      <button class="share-btn" onclick="shareTo('linkedin')" type="button">LinkedIn</button>
+      <button class="share-btn" onclick="shareTo('whatsapp')" type="button">WhatsApp</button>
+      <button class="share-btn" onclick="shareTo('telegram')" type="button">Telegram</button>
+      <button class="share-btn" onclick="shareTo('signal')" type="button">Signal</button>
+    </div>
     <div class="art-body en">
 <h1>MeshCore Brazil: Decentralized Communication Without Infrastructure</h1>
 <div style="height:12px"></div>
@@ -819,6 +860,28 @@ function setLang(lang) {
   updateThemeBtn(document.documentElement.dataset.theme);
 }
 function toggleLang() { setLang(currentLang() === 'en' ? 'pt' : 'en'); }
+
+function shareTo(platform) {
+  const url = window.location.href;
+  const title = document.title.replace(/ \u2014 Julio Cesar Mauro$/, '');
+  const u = encodeURIComponent(url);
+  const t = encodeURIComponent(title);
+  if (platform === 'linkedin') {
+    window.open('https://www.linkedin.com/sharing/share-offsite/?url=' + u, '_blank', 'noopener');
+  } else if (platform === 'whatsapp') {
+    window.open('https://wa.me/?text=' + encodeURIComponent(title + ' ' + url), '_blank', 'noopener');
+  } else if (platform === 'telegram') {
+    window.open('https://t.me/share/url?url=' + u + '&text=' + t, '_blank', 'noopener');
+  } else if (platform === 'signal') {
+    const text = title + ' ' + url;
+    const btn = event.target;
+    const original = btn.textContent;
+    navigator.clipboard.writeText(text).then(() => {
+      btn.textContent = (currentLang() === 'pt') ? 'Link copiado!' : 'Link copied!';
+      setTimeout(() => { btn.textContent = original; }, 1800);
+    }).catch(() => { alert(text); });
+  }
+}
 setLang(currentLang());
 </script>
 </body>
