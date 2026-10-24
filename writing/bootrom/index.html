@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BootROM Leak: The Key 95 Million PS5s Can't Replace — Julio Cesar Mauro</title>
+<meta name="description" content="What actually leaked when PS5 BootROM key material surfaced online at the end of 2025 — why a key burned into silicon can't be patched like a kernel bug, and why most of the panic around it got ahead of the evidence.">
+<link rel="canonical" href="https://oruam.cloud/writing/bootrom/">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' fill='%23000308'/><text x='6' y='23' font-size='20' fill='%2300b4ff' font-family='monospace'>_</text></svg>">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://oruam.cloud/writing/bootrom/">
+<meta property="og:title" content="BootROM Leak: The Key 95 Million PS5s Can't Replace">
+<meta property="og:description" content="What actually leaked when PS5 BootROM key material surfaced online at the end of 2025 — why a key burned into silicon can't be patched like a kernel bug, and why most of the panic around it got ahead of the evidence.">
+<meta property="og:image" content="https://oruam.cloud/og/bootrom.png">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="BootROM Leak: The Key 95 Million PS5s Can't Replace">
+<meta name="twitter:description" content="What actually leaked when PS5 BootROM key material surfaced online at the end of 2025 — why a key burned into silicon can't be patched like a kernel bug, and why most of the panic around it got ahead of the evidence.">
+<meta name="twitter:image" content="https://oruam.cloud/og/bootrom.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+<script>(function(){var t=localStorage.getItem('theme');if(t==='green'||t==='amber'||t==='light')document.documentElement.dataset.theme=t;})();</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "BootROM Leak: The Key 95 Million PS5s Can't Replace",
+  "description": "What actually leaked when PS5 BootROM key material surfaced online at the end of 2025 — why a key burned into silicon can't be patched like a kernel bug, and why most of the panic around it got ahead of the evidence.",
+  "author": { "@type": "Person", "name": "Julio Cesar Mauro", "alternateName": "Julio Mauro", "url": "https://oruam.cloud" },
+  "publisher": { "@type": "Person", "name": "Julio Cesar Mauro" },
+  "mainEntityOfPage": { "@type": "WebPage", "@id": "https://oruam.cloud/writing/bootrom/" },
+  "image": "https://oruam.cloud/og/bootrom.png",
+  "inLanguage": "en"
+}
+</script>
+<style>
+:root {
+  --bg:          #000308;
+  --surface:     #020810;
+  --border:      #003388;
+  --green:       #00b4ff;
+  --green-mid:   #0088cc;
+  --green-dim:   #00b4ff22;
+  --text:        #00bbee;
+  --text-dim:    #0088bb;
+  --white:       #cce8ff;
+  --glow:        0 0 10px #00b4ff66, 0 0 20px #00b4ff33;
+  --glow-strong: 0 0 8px #00b4ff, 0 0 20px #00b4ff88, 0 0 40px #00b4ff44;
+}
+
+[data-theme="green"] {
+  --bg:          #000300;
+  --surface:     #020b02;
+  --border:      #003300;
+  --green:       #00ff41;
+  --green-mid:   #00cc33;
+  --green-dim:   #00aa2233;
+  --text:        #00cc33;
+  --text-dim:    #006622;
+  --white:       #ccffcc;
+  --glow:        0 0 10px #00ff4166, 0 0 20px #00ff4133;
+  --glow-strong: 0 0 8px #00ff41, 0 0 20px #00ff4188, 0 0 40px #00ff4144;
+}
+[data-theme="green"] nav { background: rgba(0,3,0,0.95); }
+
+[data-theme="amber"] {
+  --bg:          #020100;
+  --surface:     #0a0500;
+  --border:      #663300;
+  --green:       #ff8c00;
+  --green-mid:   #cc6600;
+  --green-dim:   #ff8c0033;
+  --text:        #ee7700;
+  --text-dim:    #bb5500;
+  --white:       #ffe8cc;
+  --glow:        0 0 10px #ff8c0066, 0 0 20px #ff8c0033;
+  --glow-strong: 0 0 8px #ff8c00, 0 0 20px #ff8c0088, 0 0 40px #ff8c0044;
+}
+[data-theme="amber"] nav { background: rgba(2,1,0,0.95); }
+
+[data-theme="light"] {
+  --bg:          #f5f2eb;
+  --surface:     #eae6db;
+  --border:      #b0a888;
+  --green:       #1a5c3a;
+  --green-mid:   #2a7a50;
+  --green-dim:   rgba(26,92,58,0.1);
+  --text:        #1a3a28;
+  --text-dim:    #5a7a68;
+  --white:       #0a1a10;
+  --glow:        none;
+  --glow-strong: none;
+}
+[data-theme="light"] body           { background: #f5f2eb; }
+[data-theme="light"] nav            { background: rgba(245,242,235,0.95); }
+[data-theme="light"] body::after    { background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.04) 2px, rgba(0,0,0,0.04) 4px); }
+[data-theme="light"] body::before   { background: radial-gradient(ellipse at center, transparent 60%, rgba(0,0,0,0.08) 100%); }
+[data-theme="light"] h1             { animation: none; color: var(--green); text-shadow: none; }
+[data-theme="light"] #matrix-canvas { opacity: 0.035; }
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Share Tech Mono', monospace;
+  line-height: 1.7;
+  overflow-x: hidden;
+  min-height: 100vh;
+}
+
+#matrix-canvas {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  z-index: 0;
+  opacity: 0.06;
+  pointer-events: none;
+}
+
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg, transparent, transparent 2px,
+    rgba(0,0,0,0.12) 2px, rgba(0,0,0,0.12) 4px
+  );
+  pointer-events: none;
+  z-index: 999;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(ellipse at center, transparent 60%, rgba(0,0,0,0.7) 100%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.wrap {
+  position: relative;
+  z-index: 10;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 0 32px;
+}
+
+nav {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(0,3,8,0.95);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--border);
+  padding: 14px 0;
+}
+
+.nav-inner {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+}
+
+.nav-home {
+  font-family: 'Orbitron', monospace;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--green);
+  text-decoration: none;
+  text-shadow: var(--glow);
+  letter-spacing: 2px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.nav-home::before { content: '←'; }
+
+nav a.nav-link {
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text);
+  text-decoration: none;
+  transition: all 0.2s;
+}
+
+nav a.nav-link:hover {
+  color: var(--green);
+  text-shadow: var(--glow);
+}
+
+.nav-controls {
+  margin-left: auto;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.theme-toggle {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  background: none;
+  border: 1px solid var(--border);
+  padding: 4px 10px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.theme-toggle:hover {
+  color: var(--green);
+  border-color: var(--green-mid);
+  background: var(--green-dim);
+}
+
+#article-view {
+  padding: 40px 0 80px;
+}
+
+.art-back {
+  margin-bottom: 40px;
+}
+
+.back-btn {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 12px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  background: none;
+  border: 1px solid var(--border);
+  padding: 6px 16px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.back-btn:hover {
+  color: var(--green);
+  border-color: var(--green-mid);
+  background: var(--green-dim);
+  box-shadow: var(--glow);
+}
+
+.art-body {
+  max-width: 760px;
+}
+
+.article-meta {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.article-tag {
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  padding: 3px 10px;
+  border: 1px solid var(--border);
+  color: var(--text-dim);
+}
+.article-tag.security { color: #ff6644; border-color: #ff664444; }
+
+.article-level {
+  font-size: 11px;
+  letter-spacing: 1px;
+  color: var(--text-dim);
+}
+
+.share-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+  margin: 18px 0 0;
+}
+
+.share-label {
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+
+.share-btn {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  background: none;
+  border: 1px solid var(--border);
+  padding: 5px 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.share-btn:hover {
+  color: var(--green);
+  border-color: var(--green-mid);
+  background: var(--green-dim);
+  box-shadow: var(--glow);
+}
+
+.art-body h1 {
+  font-family: 'Orbitron', monospace;
+  font-size: clamp(20px, 3vw, 30px);
+  font-weight: 900;
+  color: var(--green);
+  text-shadow: var(--glow-strong);
+  letter-spacing: 1px;
+  margin: 0 0 28px;
+  line-height: 1.3;
+}
+
+.art-body h2 {
+  font-family: 'Orbitron', monospace;
+  font-size: clamp(14px, 2vw, 18px);
+  font-weight: 700;
+  color: var(--green);
+  letter-spacing: 1px;
+  margin: 40px 0 14px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+}
+
+.art-body h3 {
+  font-size: 15px;
+  color: var(--text);
+  letter-spacing: 1px;
+  margin: 28px 0 10px;
+}
+
+.art-body p {
+  font-size: 15px;
+  color: var(--white);
+  line-height: 1.85;
+  margin-bottom: 16px;
+}
+
+.art-body ul, .art-body ol {
+  margin: 0 0 16px 24px;
+}
+
+.art-body li {
+  font-size: 15px;
+  color: var(--white);
+  line-height: 1.85;
+  margin-bottom: 6px;
+}
+
+.art-body li::marker { color: var(--green-mid); }
+
+.art-body blockquote {
+  border-left: 3px solid var(--green-mid);
+  padding: 8px 20px;
+  margin: 20px 0;
+  background: var(--surface);
+  color: var(--text-dim);
+  font-size: 14px;
+}
+
+.art-body pre {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--green-mid);
+  padding: 16px 20px;
+  margin: 20px 0;
+  overflow-x: auto;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.art-body pre code {
+  color: var(--text);
+  background: none;
+  padding: 0;
+  font-family: 'Share Tech Mono', monospace;
+}
+
+.art-body code {
+  color: var(--green);
+  background: var(--green-dim);
+  padding: 2px 6px;
+  font-size: 13px;
+  font-family: 'Share Tech Mono', monospace;
+}
+
+.art-body a {
+  color: var(--green-mid);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  transition: color 0.15s;
+}
+.art-body a:hover { color: var(--green); }
+
+.art-body hr {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 36px 0;
+}
+
+footer {
+  padding: 40px 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid var(--border);
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.footer-sig {
+  font-family: 'Orbitron', monospace;
+  font-size: 13px;
+  color: var(--green);
+  text-shadow: var(--glow);
+  letter-spacing: 2px;
+}
+
+.footer-copy {
+  font-size: 11px;
+  color: var(--text-dim);
+  letter-spacing: 2px;
+}
+
+@media (max-width: 640px) {
+  .wrap { padding: 0 16px; }
+  .nav-inner { gap: 8px; }
+  .nav-home { font-size: 10px; letter-spacing: 1px; }
+  nav a.nav-link { font-size: 10px; }
+  .theme-toggle { font-size: 9px; padding: 4px 7px; }
+}
+
+@font-face {
+  font-family: 'pIqaD';
+  src: url('/fonts/pIqaD.woff') format('woff');
+}
+body.piqad-active [data-i18n],
+body.piqad-active #article-content * {
+  font-family: 'pIqaD', monospace;
+  letter-spacing: 3px;
+}
+
+[hidden] { display: none !important; }
+</style>
+<script data-goatcounter="https://oruam.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</head>
+<body>
+
+<canvas id="matrix-canvas"></canvas>
+
+<nav>
+  <div class="wrap">
+    <div class="nav-inner">
+      <a href="/" class="nav-home">ORUAM.CLOUD</a>
+      <a href="/projects/" class="nav-link"><span class="en">Projects</span><span class="pt" hidden>Projetos</span></a>
+      <a href="/writing/" class="nav-link"><span class="en">Writing</span><span class="pt" hidden>Textos</span></a>
+      <div class="nav-controls">
+        <button class="theme-toggle" id="theme-btn" onclick="toggleTheme()">◈ Green</button>
+        <button class="theme-toggle" id="lang-btn" onclick="toggleLang()">PT-BR</button>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<div class="wrap">
+  <div id="article-view">
+    <div class="art-back">
+      <a class="back-btn" href="/writing/" style="display:inline-block; text-decoration:none;">
+        <span class="en">← Writing</span><span class="pt" hidden>← Textos</span>
+      </a>
+    </div>
+    <div class="article-meta" style="margin-bottom:20px;">
+      <span class="article-tag security">Security · Hardware Root of Trust · Console Hacking</span>
+      <span class="article-level">// Advanced</span>
+    </div>
+    <div class="share-row">
+      <span class="share-label"><span class="en">Share:</span><span class="pt" hidden>Compartilhar:</span></span>
+      <button class="share-btn" onclick="shareTo('linkedin')" type="button">LinkedIn</button>
+      <button class="share-btn" onclick="shareTo('whatsapp')" type="button">WhatsApp</button>
+      <button class="share-btn" onclick="shareTo('telegram')" type="button">Telegram</button>
+      <button class="share-btn" onclick="shareTo('signal')" type="button">Signal</button>
+    </div>
+    <div class="art-body en">
+<h1>BootROM Leak: The Key 95 Million PS5s Can't Replace</h1>
+<div style="height:12px"></div>
+<blockquote><strong>Category:</strong> Security · Hardware Root of Trust · Console Hacking</blockquote>
+<blockquote><strong>Level:</strong> Advanced</blockquote>
+<div style="height:12px"></div>
+<hr>
+<div style="height:12px"></div>
+<p>Around New Year's, key material said to come from the PS5's BootROM began circulating online. Reporting traces it to two established console-hacking handles, BrutalSam_ and Shadzey1. Sony has not confirmed or denied anything. Six years into the console's life, that silence is itself part of the story.</p>
+<div style="height:12px"></div>
+<h2>What Actually Leaked</h2>
+<div style="height:12px"></div>
+<p>The claim is specific: a key embedded in the PS5's BootROM, the first code the console's system-on-chip runs at power-on, before any operating system exists. BootROM lives in physically read-only memory — mask ROM, burned in during manufacturing. It can't be overwritten by a firmware update, because it isn't firmware. It's silicon.</p>
+<div style="height:12px"></div>
+<p>At boot, this is the code that checks the cryptographic signature of the next stage before handing off execution. Break that check, or hold the key that makes the check meaningless, and you control what the console is allowed to trust from the very first instruction onward.</p>
+<div style="height:12px"></div>
+<p>No one has published a working dump, kernel exploit, or custom firmware built on top of this leak. What's circulated is key material and claims about its authenticity — not a tool.</p>
+<div style="height:12px"></div>
+<h2>Not the Same Leak as 2021</h2>
+<div style="height:12px"></div>
+<p>This isn't the first time PS5 root keys have surfaced. In November 2021, the hacking group fail0verflow said it had extracted the PS5's symmetric root keys — including the per-console key — by decrypting firmware in software. They never disclosed the method, and when asked if the keys could be rotated, they said no.</p>
+<div style="height:12px"></div>
+<p>That 2021 leak came from reverse-engineering a running system. This one is reported differently: key material tied to the BootROM stage itself, the layer underneath everything fail0verflow touched. If that distinction holds, it isn't a deeper version of the same problem. It's a different, lower layer of the same trust chain.</p>
+<div style="height:12px"></div>
+<h2>What It Doesn't Prove</h2>
+<div style="height:12px"></div>
+<p>The more careful reporting is also the most reserved. Leaked ROM-stage key material, on its own, doesn't hand anyone a kernel escape, a hypervisor bypass, or a persistent custom firmware. Those still take separate, specific exploits — the kind Relapse needed last September, chaining a browser bug with a kernel use-after-free just to get kernel code execution on a fully updated console.</p>
+<div style="height:12px"></div>
+<p>Less careful outlets skipped that distinction and went straight to "unpatchable jailbreak." A key is a prerequisite, not a payload. Confusing the two is how a real leak turns into a panic that outruns the evidence.</p>
+<div style="height:12px"></div>
+<h2>The Only Fix Sony Has</h2>
+<div style="height:12px"></div>
+<p>If the key is real, Sony's options are narrow. It can't push a firmware update to change a value burned into silicon on consoles already in homes — more than 95 million of them, per Sony's own mid-2026 shipment figures. The only clean fix is a new hardware revision with a different key, protecting consoles that haven't been manufactured yet.</p>
+<div style="height:12px"></div>
+<p>For everything already sold, Sony's playbook looks like what it did after Relapse: move enforcement to the service layer. Firmware 14.10 didn't try to force every console onto the latest version — it tied PSN access to a minimum version instead. A compromised BootROM doesn't change what Sony can still control: who gets to talk to its servers.</p>
+<div style="height:12px"></div>
+<p>A kernel bug has a lifecycle: found, weaponized, patched, forgotten. A key burned into silicon doesn't have one. It just sits there, correct or not, for as long as the chip exists — which, for a console already in 95 million living rooms, is longer than any firmware update Sony will ever ship.</p>
+<div style="height:12px"></div>
+<hr>
+<div style="height:12px"></div>
+<p><em>Related: <a href="https://securityonline.info/the-unpatchable-leak-sonys-ps5-security-crumples-as-bootrom-keys-hit-the-web/" target="_blank" rel="noopener">securityonline.info — The Unpatchable Leak: Sony's PS5 Security Crumples as BootROM Keys Hit the Web</a></em></p>
+<div style="height:12px"></div>
+    </div>
+    <div class="art-body pt" hidden>
+<h1>Vazamento do BootROM: A Chave Que 95 Milhões de PS5 Não Podem Trocar</h1>
+<div style="height:12px"></div>
+<blockquote><strong>Categoria:</strong> Segurança · Raiz de Confiança em Hardware · Hacking de Console</blockquote>
+<blockquote><strong>Nível:</strong> Avançado</blockquote>
+<div style="height:12px"></div>
+<hr>
+<div style="height:12px"></div>
+<p>Perto da virada do ano, material de chave supostamente vindo do BootROM do PS5 começou a circular online. As reportagens rastreiam a origem até dois handles conhecidos da cena de hacking de consoles, BrutalSam_ e Shadzey1. A Sony não confirmou nem negou nada. Seis anos na vida do console, esse silêncio já é parte da história.</p>
+<div style="height:12px"></div>
+<h2>O Que Realmente Vazou</h2>
+<div style="height:12px"></div>
+<p>A alegação é específica: uma chave embutida no BootROM do PS5, o primeiro código que o chip do console executa ao ligar, antes de qualquer sistema operacional existir. O BootROM vive em memória fisicamente somente-leitura — mask ROM, gravada durante a fabricação. Não dá pra sobrescrever com uma atualização de firmware, porque não é firmware. É silício.</p>
+<div style="height:12px"></div>
+<p>No boot, é esse código que verifica a assinatura criptográfica da próxima etapa antes de passar a execução adiante. Quebre essa verificação, ou tenha a chave que torna essa verificação inútil, e você controla no que o console pode confiar desde a primeira instrução.</p>
+<div style="height:12px"></div>
+<p>Ninguém publicou um dump funcional, exploit de kernel ou firmware customizado construído sobre esse vazamento. O que circulou foi material de chave e alegações sobre sua autenticidade — não uma ferramenta.</p>
+<div style="height:12px"></div>
+<h2>Não É o Mesmo Vazamento de 2021</h2>
+<div style="height:12px"></div>
+<p>Essa não é a primeira vez que chaves raiz do PS5 aparecem. Em novembro de 2021, o grupo fail0verflow disse ter extraído as chaves raiz simétricas do PS5 — incluindo a chave por console — decriptando firmware via software. Nunca divulgaram o método, e quando perguntados se as chaves podiam ser rotacionadas, disseram que não.</p>
+<div style="height:12px"></div>
+<p>Aquele vazamento de 2021 veio de engenharia reversa num sistema em execução. Esse é reportado de outro jeito: material de chave ligado à própria etapa do BootROM, a camada abaixo de tudo que o fail0verflow tocou. Se essa distinção se confirmar, não é uma versão mais profunda do mesmo problema. É uma camada diferente e mais baixa da mesma cadeia de confiança.</p>
+<div style="height:12px"></div>
+<h2>O Que Isso Não Prova</h2>
+<div style="height:12px"></div>
+<p>A cobertura mais cuidadosa também é a mais reservada. Material de chave vazado da etapa de ROM, por si só, não entrega a ninguém um escape de kernel, um bypass de hypervisor ou um firmware customizado persistente. Isso ainda exige exploits separados e específicos — do tipo que o Relapse precisou em setembro passado, encadeando um bug de navegador com um use-after-free de kernel só pra conseguir execução de código no kernel num console totalmente atualizado.</p>
+<div style="height:12px"></div>
+<p>Veículos menos cuidadosos ignoraram essa distinção e foram direto pro "jailbreak imune a patch". Uma chave é um pré-requisito, não um payload. Confundir os dois é como um vazamento real vira pânico que corre na frente da evidência.</p>
+<div style="height:12px"></div>
+<h2>O Único Conserto Que a Sony Tem</h2>
+<div style="height:12px"></div>
+<p>Se a chave for real, as opções da Sony são estreitas. Ela não pode empurrar uma atualização de firmware pra mudar um valor gravado em silício em consoles que já estão nas casas das pessoas — mais de 95 milhões deles, segundo os próprios números de embarque da Sony em meados de 2026. O único conserto limpo é uma nova revisão de hardware com uma chave diferente, protegendo consoles que ainda não foram fabricados.</p>
+<div style="height:12px"></div>
+<p>Pra tudo que já foi vendido, o manual de jogo da Sony parece o que ela fez depois do Relapse: mover o enforcement pra camada de serviço. O firmware 14.10 não tentou forçar todo console pra versão mais nova, amarrou o acesso à PSN a uma versão mínima. Um BootROM comprometido não muda o que a Sony ainda controla: quem fala com os servidores dela.</p>
+<div style="height:12px"></div>
+<p>Um bug de kernel tem ciclo de vida: achado, transformado em arma, corrigido, esquecido. Uma chave gravada em silício não tem esse ciclo. Ela só fica lá, certa ou não, por todo o tempo que o chip existir — que, pra um console já em 95 milhões de salas de estar, é mais tempo do que qualquer atualização de firmware que a Sony um dia vai lançar.</p>
+<div style="height:12px"></div>
+<hr>
+<div style="height:12px"></div>
+<p><em>Relacionado: <a href="https://securityonline.info/the-unpatchable-leak-sonys-ps5-security-crumples-as-bootrom-keys-hit-the-web/" target="_blank" rel="noopener">securityonline.info — The Unpatchable Leak: Sony's PS5 Security Crumples as BootROM Keys Hit the Web</a></em></p>
+<div style="height:12px"></div>
+    </div>
+  </div>
+
+  <footer>
+    <div class="footer-sig">ORUAM_OLIUJ</div>
+    <div class="footer-copy"><span class="en">&gt; oruam.cloud/writing · 2026_</span><span class="pt" hidden>&gt; oruam.cloud/writing · 2026_</span></div>
+  </footer>
+</div>
+
+<script>
+const canvas = document.getElementById('matrix-canvas');
+const ctx = canvas.getContext('2d');
+canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+window.addEventListener('resize', () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; init(); });
+const chars = 'アイウエオカキクケコ0123456789ABCDEF$#@%&';
+const fontSize = 16;
+let columns, drops;
+function init() { columns = Math.floor(canvas.width / fontSize); drops = Array(columns).fill(1); }
+function draw() {
+  const theme = document.documentElement.dataset.theme;
+  ctx.fillStyle = theme === 'green' ? 'rgba(0,3,0,0.04)' : theme === 'amber' ? 'rgba(2,1,0,0.04)' : theme === 'light' ? 'rgba(245,242,235,0.06)' : 'rgba(0,3,8,0.04)';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  ctx.fillStyle = theme === 'green' ? '#00ff41' : theme === 'amber' ? '#ff8c00' : theme === 'light' ? '#1a5c3a' : '#00b4ff';
+  ctx.font = fontSize + 'px Share Tech Mono';
+  for (let i = 0; i < drops.length; i++) {
+    const char = chars[Math.floor(Math.random() * chars.length)];
+    ctx.fillText(char, i * fontSize, drops[i] * fontSize);
+    if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
+    drops[i]++;
+  }
+}
+init(); setInterval(draw, 45);
+
+const themeNames = {
+  en: { green: '◈ Green', amber: '◈ Amber', blue: '◈ Blue', light: '◈ Light' },
+  pt: { green: '◈ Verde', amber: '◈ Âmbar', blue: '◈ Azul', light: '◈ Claro' },
+};
+function currentLang() { return localStorage.getItem('lang') === 'pt' ? 'pt' : 'en'; }
+function nextTheme(cur) { cur = cur || 'blue'; return cur==='blue'?'green':cur==='green'?'amber':cur==='amber'?'light':'blue'; }
+function updateThemeBtn(cur) { document.getElementById('theme-btn').textContent = themeNames[currentLang()][nextTheme(cur)]; }
+function toggleTheme() {
+  const html = document.documentElement;
+  const next = nextTheme(html.dataset.theme);
+  html.dataset.theme = next === 'blue' ? '' : next;
+  localStorage.setItem('theme', next);
+  updateThemeBtn(next);
+}
+
+function setLang(lang) {
+  document.querySelectorAll('.en').forEach(el => el.hidden = (lang !== 'en'));
+  document.querySelectorAll('.pt').forEach(el => el.hidden = (lang !== 'pt'));
+  document.getElementById('lang-btn').textContent = lang === 'en' ? 'PT-BR' : 'ENGLISH';
+  document.documentElement.lang = lang;
+  localStorage.setItem('lang', lang);
+  updateThemeBtn(document.documentElement.dataset.theme);
+}
+function toggleLang() { setLang(currentLang() === 'en' ? 'pt' : 'en'); }
+
+function shareTo(platform) {
+  const url = window.location.href;
+  const title = document.title.replace(/ — Julio Cesar Mauro$/, '');
+  const u = encodeURIComponent(url);
+  const t = encodeURIComponent(title);
+  if (platform === 'linkedin') {
+    window.open('https://www.linkedin.com/sharing/share-offsite/?url=' + u, '_blank', 'noopener');
+  } else if (platform === 'whatsapp') {
+    window.open('https://wa.me/?text=' + encodeURIComponent(title + ' ' + url), '_blank', 'noopener');
+  } else if (platform === 'telegram') {
+    window.open('https://t.me/share/url?url=' + u + '&text=' + t, '_blank', 'noopener');
+  } else if (platform === 'signal') {
+    const text = title + ' ' + url;
+    const btn = event.target;
+    const original = btn.textContent;
+    navigator.clipboard.writeText(text).then(() => {
+      btn.textContent = (currentLang() === 'pt') ? 'Link copiado!' : 'Link copied!';
+      setTimeout(() => { btn.textContent = original; }, 1800);
+    }).catch(() => { alert(text); });
+  }
+}
+setLang(currentLang());
+</script>
+</body>
+</html>

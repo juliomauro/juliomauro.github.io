@@ -8,6 +8,14 @@
   <atom:link href="https://oruam.cloud/feed.xml" rel="self" type="application/rss+xml"/>
 
   <item>
+    <title>BootROM Leak: The Key 95 Million PS5s Can't Replace</title>
+    <link>https://oruam.cloud/writing/bootrom/</link>
+    <guid>https://oruam.cloud/writing/bootrom/</guid>
+    <pubDate>Sat, 24 Oct 2026 13:00:00 -0300</pubDate>
+    <description>What actually leaked when PS5 BootROM key material surfaced online at the end of 2025 — why a key burned into silicon can't be patched like a kernel bug, and why most of the panic around it got ahead of the evidence.</description>
+  </item>
+
+  <item>
     <title>Relapse: The Browser Bug That Opened the PS5's Kernel</title>
     <link>https://oruam.cloud/writing/relapse/</link>
     <guid>https://oruam.cloud/writing/relapse/</guid>
