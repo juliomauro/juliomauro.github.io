@@ -359,6 +359,40 @@ h1 {
   color: var(--text-dim);
 }
 
+.share-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+  margin: 0 0 24px;
+}
+
+.share-label {
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+
+.share-btn {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  background: none;
+  border: 1px solid var(--border);
+  padding: 5px 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.share-btn:hover {
+  color: var(--green);
+  border-color: var(--green-mid);
+  background: var(--green-dim);
+  box-shadow: var(--glow);
+}
+
 .article-title {
   font-family: 'Orbitron', monospace;
   font-size: 15px;
@@ -810,6 +844,13 @@ body.piqad-active #article-content * {
   <div id="article-view">
     <div class="art-back">
       <button class="back-btn" onclick="closeArticle()" data-i18n="back-btn">← Writing</button>
+    </div>
+    <div class="share-row">
+      <span class="share-label"><span class="en">Share:</span><span class="pt" hidden>Compartilhar:</span></span>
+      <button class="share-btn" onclick="shareTo('linkedin')" type="button">LinkedIn</button>
+      <button class="share-btn" onclick="shareTo('whatsapp')" type="button">WhatsApp</button>
+      <button class="share-btn" onclick="shareTo('telegram')" type="button">Telegram</button>
+      <button class="share-btn" onclick="shareTo('signal')" type="button">Signal</button>
     </div>
     <div id="article-content" class="art-body"></div>
   </div>
@@ -1795,6 +1836,8 @@ const ART_KEY = {
 const SLUG_TO_PATH = Object.fromEntries(Object.entries(ART_KEY).map(([path, slug]) => [slug, path]));
 
 let currentPath = null;
+let currentShareUrl = null;
+let currentShareTitle = null;
 
 const themeNames = {
   en:  { green: '◈ Green', amber: '◈ Amber', blue: '◈ Blue', light: '◈ Light' },
@@ -1979,6 +2022,12 @@ function openArticle(path) {
 
   const key = ART_KEY[path];
 
+  const shareSlug = key || slug;
+  currentShareUrl = 'https://oruam.cloud/writing/' + shareSlug + '/';
+  currentShareTitle = (i18n[lang] && i18n[lang]['title-' + shareSlug])
+    || (i18n.en && i18n.en['title-' + shareSlug])
+    || shareSlug;
+
   // PT-BR: use embedded translation
   if (lang === 'pt' && key && PT_ARTICLES[key]) {
     renderArticle(PT_ARTICLES[key], lang);
@@ -2005,11 +2054,35 @@ function openArticle(path) {
 
 function closeArticle() {
   currentPath = null;
+  currentShareUrl = null;
+  currentShareTitle = null;
   history.pushState(null, '', window.location.pathname);
   document.getElementById('list-header').style.display = '';
   document.getElementById('article-list').style.display = '';
   document.getElementById('article-view').style.display = 'none';
   window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function shareTo(platform) {
+  const url = currentShareUrl || window.location.href;
+  const title = currentShareTitle || document.title;
+  const u = encodeURIComponent(url);
+  const t = encodeURIComponent(title);
+  if (platform === 'linkedin') {
+    window.open('https://www.linkedin.com/sharing/share-offsite/?url=' + u, '_blank', 'noopener');
+  } else if (platform === 'whatsapp') {
+    window.open('https://wa.me/?text=' + encodeURIComponent(title + ' ' + url), '_blank', 'noopener');
+  } else if (platform === 'telegram') {
+    window.open('https://t.me/share/url?url=' + u + '&text=' + t, '_blank', 'noopener');
+  } else if (platform === 'signal') {
+    const text = title + ' ' + url;
+    const btn = event.target;
+    const original = btn.textContent;
+    navigator.clipboard.writeText(text).then(() => {
+      btn.textContent = ((localStorage.getItem('lang') || 'en') === 'pt') ? 'Link copiado!' : 'Link copied!';
+      setTimeout(() => { btn.textContent = original; }, 1800);
+    }).catch(() => { alert(text); });
+  }
 }
 
 window.addEventListener('popstate', () => {
