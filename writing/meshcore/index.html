@@ -688,7 +688,7 @@ body.piqad-active #article-content * {
       <button class="share-btn" onclick="shareTo('linkedin')" type="button">LinkedIn</button>
       <button class="share-btn" onclick="shareTo('whatsapp')" type="button">WhatsApp</button>
       <button class="share-btn" onclick="shareTo('telegram')" type="button">Telegram</button>
-      <button class="share-btn" onclick="shareTo('signal')" type="button">Signal</button>
+      <button class="share-btn" onclick="shareTo('copy')" type="button"><span class="en">Copy URL</span><span class="pt" hidden>Copiar link</span></button>
     </div>
     <div class="art-body en">
 <h1>MeshCore Brazil: Decentralized Communication Without Infrastructure</h1>
@@ -872,14 +872,13 @@ function shareTo(platform) {
     window.open('https://wa.me/?text=' + encodeURIComponent(title + ' ' + url), '_blank', 'noopener');
   } else if (platform === 'telegram') {
     window.open('https://t.me/share/url?url=' + u + '&text=' + t, '_blank', 'noopener');
-  } else if (platform === 'signal') {
-    const text = title + ' ' + url;
-    const btn = event.target;
-    const original = btn.textContent;
-    navigator.clipboard.writeText(text).then(() => {
-      btn.textContent = (currentLang() === 'pt') ? 'Link copiado!' : 'Link copied!';
-      setTimeout(() => { btn.textContent = original; }, 1800);
-    }).catch(() => { alert(text); });
+  } else if (platform === 'copy') {
+    const btn = event.target.closest('button');
+    const original = btn.innerHTML;
+    navigator.clipboard.writeText(url).then(() => {
+      btn.innerHTML = (currentLang() === 'pt') ? 'Link copiado!' : 'Link copied!';
+      setTimeout(() => { btn.innerHTML = original; }, 1800);
+    }).catch(() => { alert(url); });
   }
 }
 setLang(currentLang());
