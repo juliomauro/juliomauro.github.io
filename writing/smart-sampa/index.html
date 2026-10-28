@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Smart Sampa: Structural Cybersecurity Failures and Contractual Fragility — Julio Cesar Mauro</title>
+<meta name="description" content="An investigation into São Paulo's R$588 million facial-recognition camera program found exposed credentials, infostealer leaks dating to 2024, warnings ignored since 2022, and an AI vendor swapped into the contract by amendment months before the leak came to light.">
+<link rel="canonical" href="https://oruam.cloud/writing/smart-sampa/">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' fill='%23000308'/><text x='6' y='23' font-size='20' fill='%2300b4ff' font-family='monospace'>_</text></svg>">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://oruam.cloud/writing/smart-sampa/">
+<meta property="og:title" content="Smart Sampa: Structural Cybersecurity Failures and Contractual Fragility">
+<meta property="og:description" content="An investigation into São Paulo's R$588 million facial-recognition camera program found exposed credentials, infostealer leaks dating to 2024, warnings ignored since 2022, and an AI vendor swapped into the contract by amendment months before the leak came to light.">
+<meta property="og:image" content="https://oruam.cloud/og/smart-sampa.png">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Smart Sampa: Structural Cybersecurity Failures and Contractual Fragility">
+<meta name="twitter:description" content="An investigation into São Paulo's R$588 million facial-recognition camera program found exposed credentials, infostealer leaks dating to 2024, warnings ignored since 2022, and an AI vendor swapped into the contract by amendment months before the leak came to light.">
+<meta name="twitter:image" content="https://oruam.cloud/og/smart-sampa.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+<script>(function(){var t=localStorage.getItem('theme');if(t==='green'||t==='amber'||t==='light')document.documentElement.dataset.theme=t;})();</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "Smart Sampa: Structural Cybersecurity Failures and Contractual Fragility",
+  "description": "An investigation into São Paulo's R$588 million facial-recognition camera program found exposed credentials, infostealer leaks dating to 2024, warnings ignored since 2022, and an AI vendor swapped into the contract by amendment months before the leak came to light.",
+  "author": { "@type": "Person", "name": "Julio Cesar Mauro", "alternateName": "Julio Mauro", "url": "https://oruam.cloud" },
+  "publisher": { "@type": "Person", "name": "Julio Cesar Mauro" },
+  "mainEntityOfPage": { "@type": "WebPage", "@id": "https://oruam.cloud/writing/smart-sampa/" },
+  "image": "https://oruam.cloud/og/smart-sampa.png",
+  "inLanguage": "en"
+}
+</script>
+<style>
+:root {
+  --bg:          #000308;
+  --surface:     #020810;
+  --border:      #003388;
+  --green:       #00b4ff;
+  --green-mid:   #0088cc;
+  --green-dim:   #00b4ff22;
+  --text:        #00bbee;
+  --text-dim:    #0088bb;
+  --white:       #cce8ff;
+  --glow:        0 0 10px #00b4ff66, 0 0 20px #00b4ff33;
+  --glow-strong: 0 0 8px #00b4ff, 0 0 20px #00b4ff88, 0 0 40px #00b4ff44;
+}
+
+[data-theme="green"] {
+  --bg:          #000300;
+  --surface:     #020b02;
+  --border:      #003300;
+  --green:       #00ff41;
+  --green-mid:   #00cc33;
+  --green-dim:   #00aa2233;
+  --text:        #00cc33;
+  --text-dim:    #006622;
+  --white:       #ccffcc;
+  --glow:        0 0 10px #00ff4166, 0 0 20px #00ff4133;
+  --glow-strong: 0 0 8px #00ff41, 0 0 20px #00ff4188, 0 0 40px #00ff4144;
+}
+[data-theme="green"] nav { background: rgba(0,3,0,0.95); }
+
+[data-theme="amber"] {
+  --bg:          #020100;
+  --surface:     #0a0500;
+  --border:      #663300;
+  --green:       #ff8c00;
+  --green-mid:   #cc6600;
+  --green-dim:   #ff8c0033;
+  --text:        #ee7700;
+  --text-dim:    #bb5500;
+  --white:       #ffe8cc;
+  --glow:        0 0 10px #ff8c0066, 0 0 20px #ff8c0033;
+  --glow-strong: 0 0 8px #ff8c00, 0 0 20px #ff8c0088, 0 0 40px #ff8c0044;
+}
+[data-theme="amber"] nav { background: rgba(2,1,0,0.95); }
+
+[data-theme="light"] {
+  --bg:          #f5f2eb;
+  --surface:     #eae6db;
+  --border:      #b0a888;
+  --green:       #1a5c3a;
+  --green-mid:   #2a7a50;
+  --green-dim:   rgba(26,92,58,0.1);
+  --text:        #1a3a28;
+  --text-dim:    #5a7a68;
+  --white:       #0a1a10;
+  --glow:        none;
+  --glow-strong: none;
+}
+[data-theme="light"] body           { background: #f5f2eb; }
+[data-theme="light"] nav            { background: rgba(245,242,235,0.95); }
+[data-theme="light"] body::after    { background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.04) 2px, rgba(0,0,0,0.04) 4px); }
+[data-theme="light"] body::before   { background: radial-gradient(ellipse at center, transparent 60%, rgba(0,0,0,0.08) 100%); }
+[data-theme="light"] h1             { animation: none; color: var(--green); text-shadow: none; }
+[data-theme="light"] #matrix-canvas { opacity: 0.035; }
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Share Tech Mono', monospace;
+  line-height: 1.7;
+  overflow-x: hidden;
+  min-height: 100vh;
+}
+
+#matrix-canvas {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  z-index: 0;
+  opacity: 0.06;
+  pointer-events: none;
+}
+
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg, transparent, transparent 2px,
+    rgba(0,0,0,0.12) 2px, rgba(0,0,0,0.12) 4px
+  );
+  pointer-events: none;
+  z-index: 999;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(ellipse at center, transparent 60%, rgba(0,0,0,0.7) 100%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.wrap {
+  position: relative;
+  z-index: 10;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 0 32px;
+}
+
+nav {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(0,3,8,0.95);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--border);
+  padding: 14px 0;
+}
+
+.nav-inner {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+}
+
+.nav-home {
+  font-family: 'Orbitron', monospace;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--green);
+  text-decoration: none;
+  text-shadow: var(--glow);
+  letter-spacing: 2px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.nav-home::before { content: '←'; }
+
+nav a.nav-link {
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text);
+  text-decoration: none;
+  transition: all 0.2s;
+}
+
+nav a.nav-link:hover {
+  color: var(--green);
+  text-shadow: var(--glow);
+}
+
+.nav-controls {
+  margin-left: auto;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.theme-toggle {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  background: none;
+  border: 1px solid var(--border);
+  padding: 4px 10px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.theme-toggle:hover {
+  color: var(--green);
+  border-color: var(--green-mid);
+  background: var(--green-dim);
+}
+
+#article-view {
+  padding: 40px 0 80px;
+}
+
+.art-back {
+  margin-bottom: 40px;
+}
+
+.back-btn {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 12px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  background: none;
+  border: 1px solid var(--border);
+  padding: 6px 16px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.back-btn:hover {
+  color: var(--green);
+  border-color: var(--green-mid);
+  background: var(--green-dim);
+  box-shadow: var(--glow);
+}
+
+.art-body {
+  max-width: 760px;
+}
+
+.article-meta {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.article-tag {
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  padding: 3px 10px;
+  border: 1px solid var(--border);
+  color: var(--text-dim);
+}
+.article-tag.security { color: #ff6644; border-color: #ff664444; }
+
+.article-level {
+  font-size: 11px;
+  letter-spacing: 1px;
+  color: var(--text-dim);
+}
+
+.share-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+  margin: 18px 0 0;
+}
+
+.share-label {
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+
+.share-btn {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  background: none;
+  border: 1px solid var(--border);
+  padding: 5px 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.share-btn:hover {
+  color: var(--green);
+  border-color: var(--green-mid);
+  background: var(--green-dim);
+  box-shadow: var(--glow);
+}
+
+.art-body h1 {
+  font-family: 'Orbitron', monospace;
+  font-size: clamp(20px, 3vw, 30px);
+  font-weight: 900;
+  color: var(--green);
+  text-shadow: var(--glow-strong);
+  letter-spacing: 1px;
+  margin: 0 0 28px;
+  line-height: 1.3;
+}
+
+.art-body h2 {
+  font-family: 'Orbitron', monospace;
+  font-size: clamp(14px, 2vw, 18px);
+  font-weight: 700;
+  color: var(--green);
+  letter-spacing: 1px;
+  margin: 40px 0 14px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+}
+
+.art-body h3 {
+  font-size: 15px;
+  color: var(--text);
+  letter-spacing: 1px;
+  margin: 28px 0 10px;
+}
+
+.art-body p {
+  font-size: 15px;
+  color: var(--white);
+  line-height: 1.85;
+  margin-bottom: 16px;
+}
+
+.art-body ul, .art-body ol {
+  margin: 0 0 16px 24px;
+}
+
+.art-body li {
+  font-size: 15px;
+  color: var(--white);
+  line-height: 1.85;
+  margin-bottom: 6px;
+}
+
+.art-body li::marker { color: var(--green-mid); }
+
+.art-body blockquote {
+  border-left: 3px solid var(--green-mid);
+  padding: 8px 20px;
+  margin: 20px 0;
+  background: var(--surface);
+  color: var(--text-dim);
+  font-size: 14px;
+}
+
+.art-body pre {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--green-mid);
+  padding: 16px 20px;
+  margin: 20px 0;
+  overflow-x: auto;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.art-body pre code {
+  color: var(--text);
+  background: none;
+  padding: 0;
+  font-family: 'Share Tech Mono', monospace;
+}
+
+.art-body code {
+  color: var(--green);
+  background: var(--green-dim);
+  padding: 2px 6px;
+  font-size: 13px;
+  font-family: 'Share Tech Mono', monospace;
+}
+
+.art-body a {
+  color: var(--green-mid);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  transition: color 0.15s;
+}
+.art-body a:hover { color: var(--green); }
+
+.art-body hr {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 36px 0;
+}
+
+footer {
+  padding: 40px 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid var(--border);
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.footer-sig {
+  font-family: 'Orbitron', monospace;
+  font-size: 13px;
+  color: var(--green);
+  text-shadow: var(--glow);
+  letter-spacing: 2px;
+}
+
+.footer-copy {
+  font-size: 11px;
+  color: var(--text-dim);
+  letter-spacing: 2px;
+}
+
+@media (max-width: 640px) {
+  .wrap { padding: 0 16px; }
+  .nav-inner { gap: 8px; }
+  .nav-home { font-size: 10px; letter-spacing: 1px; }
+  nav a.nav-link { font-size: 10px; }
+  .theme-toggle { font-size: 9px; padding: 4px 7px; }
+}
+
+@font-face {
+  font-family: 'pIqaD';
+  src: url('/fonts/pIqaD.woff') format('woff');
+}
+body.piqad-active [data-i18n],
+body.piqad-active #article-content * {
+  font-family: 'pIqaD', monospace;
+  letter-spacing: 3px;
+}
+
+[hidden] { display: none !important; }
+</style>
+<script data-goatcounter="https://oruam.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</head>
+<body>
+
+<canvas id="matrix-canvas"></canvas>
+
+<nav>
+  <div class="wrap">
+    <div class="nav-inner">
+      <a href="/" class="nav-home">ORUAM.CLOUD</a>
+      <a href="/projects/" class="nav-link"><span class="en">Projects</span><span class="pt" hidden>Projetos</span></a>
+      <a href="/writing/" class="nav-link"><span class="en">Writing</span><span class="pt" hidden>Textos</span></a>
+      <div class="nav-controls">
+        <button class="theme-toggle" id="theme-btn" onclick="toggleTheme()">◈ Green</button>
+        <button class="theme-toggle" id="lang-btn" onclick="toggleLang()">PT-BR</button>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<div class="wrap">
+  <div id="article-view">
+    <div class="art-back">
+      <a class="back-btn" href="/writing/" style="display:inline-block; text-decoration:none;">
+        <span class="en">← Writing</span><span class="pt" hidden>← Textos</span>
+      </a>
+    </div>
+    <div class="article-meta" style="margin-bottom:20px;">
+      <span class="article-tag security">Security · Incident Analysis · Government Infrastructure</span>
+      <span class="article-level">// Foundational</span>
+    </div>
+    <div class="share-row">
+      <span class="share-label"><span class="en">Share:</span><span class="pt" hidden>Compartilhar:</span></span>
+      <button class="share-btn" onclick="shareTo('linkedin')" type="button">LinkedIn</button>
+      <button class="share-btn" onclick="shareTo('whatsapp')" type="button">WhatsApp</button>
+      <button class="share-btn" onclick="shareTo('telegram')" type="button">Telegram</button>
+      <button class="share-btn" onclick="shareTo('copy')" type="button"><span class="en">Copy URL</span><span class="pt" hidden>Copiar link</span></button>
+    </div>
+    <div class="art-body en">
+<h1>Smart Sampa: Structural Cybersecurity Failures and Contractual Fragility</h1>
+<div style="height:12px"></div>
+<blockquote><strong>Category:</strong> Security · Incident Analysis · Government Infrastructure</blockquote>
+<blockquote><strong>Level:</strong> Foundational</blockquote>
+<div style="height:12px"></div>
+<hr>
+<div style="height:12px"></div>
+<p>The crisis at <strong>Smart Sampa</strong>, São Paulo's ambitious facial-recognition video surveillance program budgeted at R$588 million, is far from an isolated case of individual misconduct or "leaked passwords." While the city administration attributes the incident to the unlawful conduct of a single employee, a technical review of the infrastructure and the program's backstory reveals an alarming picture of multi-layered vulnerabilities, bare-minimum credential hygiene, and opacity across the supplier chain.</p>
+<div style="height:12px"></div>
+<p>The case exposed, for roughly 11 months, credentials and real-time feeds from more than <strong>58,000 cameras</strong> spread across the capital, raising serious doubts about the public sector's ability to protect citizens' privacy and data.</p>
+<div style="height:12px"></div>
+<hr>
+<div style="height:12px"></div>
+<h2>Technical Diagnosis: Architectural Weaknesses</h2>
+<div style="height:12px"></div>
+<p>As revealed by the investigation published on the <strong>Penegui channel</strong> in the video <em>"Smart Sampa: fui investigar e achei MAIS do que SENHAS VAZADAS"</em> ("I went to investigate and found MORE than LEAKED PASSWORDS"), the system's problem is not limited to a public repository with 181 logins. The investigation detailed primary, systemic failures that strike directly at the platform's security architecture:</p>
+<div style="height:12px"></div>
+<ul>
+<li><strong>Primitive Credential Hygiene:</strong> active accounts were found where the username and password were exactly identical to the public agent's employee registration number. This kind of weakness violates the most basic principles of information security in critical infrastructure.</li>
+<li><strong>Prior Infostealer Leaks (2024):</strong> Penegui's investigation identified at least 15 credential and session-token records tied to the system, leaked by infostealer malware as far back as 2024. This shows the compromise of the access base predates the public repository exposure reported by the press by a wide margin.</li>
+<li><strong>VPN Exposure and Attack Surface:</strong> platform subdomains and VPN login pages were publicly visible on the internet. In networks where IP-address restriction is used as the only barrier, compromising a single VPN credential lets an attacker simulate authorized internal access.</li>
+<li><strong>Session and Authorization Failures (IDOR):</strong> changing an account's password did not automatically invalidate session tokens that were already active. The lack of rigorous permission checks across interfaces and endpoints, a risk associated with IDOR (Insecure Direct Object Reference) flaws, raises the suspicion that an account authorized in one region could access cameras and data from other areas without proper environment segregation.</li>
+</ul>
+<div style="height:12px"></div>
+<h2>Context: Alerts Ignored Since 2022</h2>
+<div style="height:12px"></div>
+<p>Smart Sampa's structural weaknesses did not appear with the 2026 leak. Idec, together with the Laboratório de Políticas Públicas e Internet (LAPIN) and other organizations, filed a complaint with the São Paulo Public Prosecutor's Office (MP-SP) back in 2022, shortly after the program's bidding notice was published, flagging the risk of algorithmic discrimination (racial bias in facial recognition) and the absence of social oversight of the technology.</p>
+<div style="height:12px"></div>
+<p>The city itself confirms a central point of that criticism: it has no access to the source code, the AI models, or the training data used by the system, and it does not run independent audits of those components. In other words, the city outsourced facial recognition over its population without ever being able to audit how that recognition is performed.</p>
+<div style="height:12px"></div>
+<p>A technical note published in February 2026 by LAPIN, the Instituto de Referência Negra Peregum, and Rede Liberdade, based on requests under Brazil's Freedom of Information law, had already documented the human cost of these failures even before the credential leak: at least 23 people were wrongly brought in to police stations due to facial-recognition inconsistencies, and 82 were arrested and later released. Municipal records gathered by the same investigation counted 268 such detention-then-release incidents between November 2024 and May 2026. A study by the Centro de Estudos de Segurança e Cidadania (CESeC), for its part, found no significant reduction in crime rates attributable to the program.</p>
+<div style="height:12px"></div>
+<p>After the leak, Idec itself summarized the problem in a line that captures this piece's central thesis, coming from an independent research organization and not merely from an individual investigation: "It is not enough to claim the platform is secure." The organization is asking the city to investigate the system's structural failures, not just the conduct of the employee who was removed.</p>
+<div style="height:12px"></div>
+<h2>Requirements Analysis: Where Software Engineering and Security Failed</h2>
+<div style="height:12px"></div>
+<p>From a software engineering and cybersecurity architecture standpoint, a critical R$588 million project demands a rigorous elicitation and specification of <strong>Functional and Non-Functional Requirements</strong>. The Smart Sampa case demonstrates systematic negligence at that planning stage:</p>
+<div style="height:12px"></div>
+<h3>Neglected Non-Functional Security Requirements</h3>
+<div style="height:12px"></div>
+<ul>
+<li><strong>Authentication and Access Control:</strong> the system never established Multi-Factor Authentication (MFA/2FA) as a mandatory requirement for any user level, allowing direct access with just a username and password.</li>
+<li><strong>Session Lifecycle Management:</strong> there was no specification for short token expiration or for immediate invalidation of active sessions the moment a password is reset.</li>
+<li><strong>Zero Trust and Defense in Depth:</strong> the architecture was designed on the assumption that the login perimeter was enough. In critical infrastructure systems, requirements must assume that every internal request is authenticated and authorized granularly.</li>
+<li><strong>Encryption and Data Protection:</strong> there were no clear requirements for end-to-end encryption of data in transit and at rest, nor for logical and physical segregation of the databases.</li>
+</ul>
+<div style="height:12px"></div>
+<h3>Governance and Vendor Qualification Requirements</h3>
+<div style="height:12px"></div>
+<ul>
+<li><strong>Contractor Qualification Criteria:</strong> the bidding notice and contracting requirements did not demand a proven track record from the vendor in developing complex, high-criticality software or cyber defense systems.</li>
+<li><strong>Source-Code Audits and Penetration Tests:</strong> independent penetration testing and transparent source-code auditing were never established as delivery requirements (quality gates) before launch.</li>
+</ul>
+<div style="height:12px"></div>
+<h3>LGPD Compliance and Privacy Requirements</h3>
+<div style="height:12px"></div>
+<ul>
+<li><strong>Traceability and Audit Logs:</strong> the system failed to guarantee immediate, automatic traceability of suspicious queries, allowing unauthorized access to persist for months without automatic alerts to the Security Operations Center (SOC).</li>
+<li><strong>Data Protection Impact Assessment (DPIA):</strong> the absence of a detailed prior DPIA prevented proper risk mapping when monitoring highly sensitive environments, such as daycare centers and public hospitals.</li>
+</ul>
+<div style="height:12px"></div>
+<hr>
+<div style="height:12px"></div>
+<h2>Deconstructing the "Honeypot" Narrative and Contractual Opacity</h2>
+<div style="height:12px"></div>
+<p>In response to the leaks, the city administration argued the system was secure and suggested the exposure might have been a deliberate "honeypot" to identify illegal access.</p>
+<div style="height:12px"></div>
+<p>That justification was technically challenged in the Penegui channel's video: a legitimate honeypot is a simulated, isolated structure with no connection to real production data. In Smart Sampa's case, the exposed credentials allowed real viewing of cameras in sensitive public locations and browsing of security agents' data. Children, patients, and officers on duty cannot be used as virtual "bait."</p>
+<div style="height:12px"></div>
+<p>The investigation also shed light on the supply chain:</p>
+<div style="height:12px"></div>
+<ul>
+<li><strong>Sentinel X:</strong> the company responsible for the program's technology was incorporated just 29 days after the original contract was signed, and had no track record in developing complex software or artificial intelligence.</li>
+<li><strong>Ties to CLD:</strong> the examination of the shareholders found ties to executives of the former CLD (Consladórcio), a company with a history in road infrastructure and speed-camera (radar) contracts, as well as involvement in legal disputes with an asset freeze exceeding R$1 billion tied to public-lighting contracts.</li>
+</ul>
+<div style="height:12px"></div>
+<p>Smart Sampa's original contract was signed in August 2023 with the Consórcio Smart City SP, then made up of CLD Construtora, Laços Detentores e Eletrônica, Flama Serviços, Camerite Sistemas, and PK9 Tecnologia, at a monthly cost of R$9.8 million. Already in the first phase, the consortium fell behind on delivery: of the 5,000 cameras planned, only 2,963 had their images made available on schedule. Sentinel X, the company now at the center of the facial-recognition controversy, did not take part in the original bid: it joined the consortium through a contract amendment signed in December 2025, replacing Camerite, effective January 2026. In other words, the AI vendor now underpinning the program was swapped in through an administrative amendment less than a year before the leak came to light, with no new competitive process.</p>
+<div style="height:12px"></div>
+<hr>
+<div style="height:12px"></div>
+<h2>The City's Response and What Was Left Out</h2>
+<div style="height:12px"></div>
+<p>After confirming the leak reported by UOL on October 20, 2026, the city announced a set of technical measures: taking down the exposed repository, adopting exclusive per-user passwords, two-factor authentication, and SMS-based codes for creating new passwords. In parallel, it stated that Smart Sampa is subject to periodic oversight by the Tribunal de Contas do Município (TCM), with audits and security testing provided for in the contract. As of this writing, there is no public TCM report specifically covering this episode, which leaves that claim resting solely on the official version.</p>
+<div style="height:12px"></div>
+<p>There is also a factual discrepancy worth noting: the city denies that the leaked material contained access passwords, while the original UOL report points to 181 exposed login-and-password combinations. That kind of contradiction between the institutional narrative and the data gathered by the press is, on its own, a symptom of the lack of transparency discussed throughout this piece.</p>
+<div style="height:12px"></div>
+<p>As of October 27, 2026, the state of the external investigations was as follows: the São Paulo Public Prosecutor's Office (MPSP) had opened only a preliminary inquiry ("Notícia de Fato"), not a formal civil investigation, to decide whether there is cause to proceed; the Brazilian data protection authority (ANPD) stated only that it is "monitoring the case within the scope of its legal authority," without detailing any concrete measures; and the independent technical examination ordered by the 3rd Public Treasury Court, in a ruling signed on October 5 (before the leak was even made public), was still awaiting formal confirmation from NEV-USP that it would take on the assignment, along with the naming of the responsible experts.</p>
+<div style="height:12px"></div>
+<p>One detail sums up well the gap between the city's cautious rhetoric and its actions: days after the leak, on October 27, 2026, the city itself announced new agreements with the Public Prosecutor's Office to expand Smart Sampa's use against organized crime. The system's use is expanding at the very moment its security and governance failures are under investigation, before the independent examination has even begun.</p>
+<div style="height:12px"></div>
+<h2>What Should Be Done: Independent Examination and Accountability</h2>
+<div style="height:12px"></div>
+<p>Given the findings and the actions brought by civil society organizations (such as LAPIN, Conectas, Idec, and the Public Defender's Office):</p>
+<div style="height:12px"></div>
+<ul>
+<li><strong>Independent Technical Examination Ordered by the Courts:</strong> the 3rd Public Treasury Court of São Paulo rejected the city's attempts to waive the technical evidence and ordered an independent examination of Smart Sampa. The Núcleo de Estudos da Violência at USP (NEV-USP) was named to assess information security, encryption, data governance, and the accuracy of the algorithms.</li>
+<li><strong>ANPD and MPSP Investigations:</strong> Brazil's national data protection authority (ANPD) is monitoring the incident and looking into the city's failure to provide formal notification, while the São Paulo Public Prosecutor's Office (MPSP) is weighing whether to open a civil investigation.</li>
+</ul>
+<div style="height:12px"></div>
+<p>The Smart Sampa case reinforces a fundamental lesson in cybersecurity: the effectiveness of technology in public safety does not depend on the number of cameras installed, but on the rigor of the software architecture, the requirements analysis, and the continuous protection of citizens' data.</p>
+<div style="height:12px"></div>
+<hr>
+<div style="height:12px"></div>
+<h2>Sources consulted for additional context</h2>
+<div style="height:12px"></div>
+<ul>
+<li><a href="https://www.youtube.com/watch?v=o1SA9DsKfZU" target="_blank" rel="noopener">Penegui: Smart Sampa, fui investigar e achei MAIS do que SENHAS VAZADAS</a></li>
+<li><a href="https://idec.org.br/imprensa/vazamento-dados-smart-sampa-cameras" target="_blank" rel="noopener">Idec: Vazamento no Smart Sampa reforça alerta feito desde 2022</a></li>
+<li><a href="https://agenciabrasil.ebc.com.br/geral/noticia/2026-02/pesquisa-aponta-problemas-e-prisoes-indevidas-partir-do-smart-sampa" target="_blank" rel="noopener">Agência Brasil: pesquisa aponta problemas e prisões indevidas a partir do Smart Sampa</a></li>
+<li><a href="https://geocracia.com/sao-paulo-reforca-controle-de-acesso-ao-smart-sampa-apos-vazamento/" target="_blank" rel="noopener">Geocracia: São Paulo reforça controle de acesso ao Smart Sampa após vazamento</a></li>
+<li><a href="https://www.cnnbrasil.com.br/nacional/sudeste/sp/smart-sampa-deve-passar-por-pericia-independente-apos-vazamento-de-dados/" target="_blank" rel="noopener">CNN Brasil: Smart Sampa deve passar por perícia independente após vazamento de dados</a></li>
+<li><a href="https://www.cnnbrasil.com.br/blogs/jairo-nascimento/nacional/sudeste/sp/mpsp-inicia-analise-dos-vazamentos-de-dados-do-smart-sampa/" target="_blank" rel="noopener">CNN Brasil: MPSP inicia análise dos vazamentos de dados do Smart Sampa</a></li>
+<li><a href="https://www.cnnbrasil.com.br/nacional/sudeste/sp/anpd-acompanha-invasao-e-exposicao-de-dados-do-sistema-smart-sampa/" target="_blank" rel="noopener">CNN Brasil: ANPD acompanha invasão e exposição de dados do sistema Smart Sampa</a></li>
+<li><a href="https://diarioesp.com.br/sao-paulo/2026/10/27/prefeitura-de-sp-firma-convenios-com-mp-para-usar-smart-sampa-contra-crime-organizado.html" target="_blank" rel="noopener">Diário ESP: Prefeitura de SP firma convênios com MP para usar Smart Sampa contra crime organizado</a></li>
+<li><a href="https://www.mobiletime.com.br/noticias/22/05/2023/idec-ve-risco-de-racismo-estrutural-com-projeto-de-cameras-e-reconhecimento-facial-em-sao-paulo/" target="_blank" rel="noopener">Mobile Time: Idec vê risco de racismo estrutural com projeto de câmeras e reconhecimento facial em São Paulo</a></li>
+<li><a href="https://prefeitura.sp.gov.br/w/noticia/prefeito-assina-contrato-para-o-inicio-do-smart-sampa-maior-programa-de-videomonitoramento-da-cidade-com-ate-40-mil-cameras-2" target="_blank" rel="noopener">Prefeitura de São Paulo: prefeito assina contrato para o início do Smart Sampa</a></li>
+<li><a href="https://jornal24horas.com.br/?p=69303" target="_blank" rel="noopener">Jornal 24 Horas: Smart Sampa, entenda o que vazou e quem são as empresas que operam o sistema</a></li>
+</ul>
+<div style="height:12px"></div>
+    </div>
+    <div class="art-body pt" hidden>
+<h1>Smart Sampa: Falhas Estruturais de Cibersegurança e Fragilidade Contratual</h1>
+<div style="height:12px"></div>
+<blockquote><strong>Categoria:</strong> Segurança · Análise de Incidente · Infraestrutura Governamental</blockquote>
+<blockquote><strong>Nível:</strong> Fundacional</blockquote>
+<div style="height:12px"></div>
+<hr>
+<div style="height:12px"></div>
+<p>A crise no <strong>Smart Sampa</strong>, o ambicioso sistema de videomonitoramento e reconhecimento facial da Prefeitura de São Paulo orçado em R$ 588 milhões, está longe de ser um caso isolado de desvio individual ou "senhas vazadas". Embora a administração municipal atribua o incidente à conduta ilícita de um único servidor, uma análise técnica da infraestrutura e dos bastidores do programa revela um cenário alarmante de vulnerabilidades em múltiplas camadas, higiene de credenciais primária e opacidade na cadeia de fornecedores.</p>
+<div style="height:12px"></div>
+<p>O caso expôs por cerca de 11 meses credenciais e transmissões em tempo real de mais de <strong>58 mil câmeras</strong> espalhadas pela capital, levantando dúvidas sobre a capacidade do poder público de proteger a privacidade e os dados dos cidadãos.</p>
+<div style="height:12px"></div>
+<hr>
+<div style="height:12px"></div>
+<h2>O Diagnóstico Técnico: Fragilidades na Arquitetura</h2>
+<div style="height:12px"></div>
+<p>Conforme revelado na investigação apresentada no <strong>canal do Penegui</strong> no vídeo <em>"Smart Sampa: fui investigar e achei MAIS do que SENHAS VAZADAS"</em>, o problema do sistema não se resume a um repositório público com 181 logins. A apuração detalhou falhas primárias e sistêmicas que atingem diretamente a arquitetura de segurança da plataforma:</p>
+<div style="height:12px"></div>
+<ul>
+<li><strong>Higiene de Credenciais Primitiva:</strong> foram identificadas contas ativas nas quais o nome de usuário e a senha eram exatamente idênticos ao número de matrícula do agente público. Esse tipo de fragilidade viola os princípios mais básicos de segurança da informação em infraestruturas críticas.</li>
+<li><strong>Vazamentos Prévios por Infostealers (2024):</strong> a investigação de Penegui identificou ao menos 15 registros de credenciais e tokens de sessão associados ao sistema vazados por malwares do tipo Infostealer ainda em 2024. Isso comprova que o comprometimento das bases de acesso antecede em muito a exposição do repositório público noticiada pela imprensa.</li>
+<li><strong>Exposição de VPNs e Superfície de Ataque:</strong> subdomínios da plataforma e páginas de login de VPNs estavam visíveis publicamente na internet. Em redes onde a restrição por endereço de IP é usada como única barreira, o comprometimento de uma credencial de VPN permite que o invasor simule um acesso autorizado interno.</li>
+<li><strong>Falhas de Gestão de Sessão e Autorização (IDOR):</strong> a alteração de senha de uma conta não invalidava automaticamente os tokens de sessão que já estavam ativos. A ausência de verificação rigorosa de permissões nas interfaces e rotas (endpoints), risco associado a falhas do tipo IDOR (Insecure Direct Object References), levanta a suspeita de que uma conta autorizada em uma região pudesse acessar câmeras e dados de outras áreas sem a devida segregação de ambiente.</li>
+</ul>
+<div style="height:12px"></div>
+<h2>Contexto: Alertas Ignorados Desde 2022</h2>
+<div style="height:12px"></div>
+<p>As falhas estruturais do Smart Sampa não surgiram com o vazamento de 2026. O Idec, em conjunto com o Laboratório de Políticas Públicas e Internet (LAPIN) e outras entidades, apresentou representação ao Ministério Público de São Paulo já em 2022, logo após a publicação do edital do programa, apontando risco de discriminação algorítmica (viés racial no reconhecimento facial) e ausência de controle social sobre a tecnologia.</p>
+<div style="height:12px"></div>
+<p>A própria Prefeitura confirma um ponto central dessa crítica: não tem acesso ao código-fonte, aos modelos de inteligência artificial nem às bases de treinamento usadas pelo sistema, e não realiza auditoria independente desses componentes. Ou seja, a cidade terceirizou a operação de reconhecimento facial sobre a população sem jamais ter podido auditar como esse reconhecimento é feito.</p>
+<div style="height:12px"></div>
+<p>Uma nota técnica publicada em fevereiro de 2026 pelo LAPIN, pelo Instituto de Referência Negra Peregum e pela Rede Liberdade, baseada em pedidos via Lei de Acesso à Informação, já havia documentado o custo humano dessas falhas antes mesmo do vazamento de credenciais: ao menos 23 pessoas foram conduzidas indevidamente a delegacias por inconsistências no reconhecimento facial, e 82 chegaram a ser presas e depois liberadas. Registros municipais levantados pela mesma apuração contabilizaram 268 conduções seguidas de liberação entre novembro de 2024 e maio de 2026. Um estudo do Centro de Estudos de Segurança e Cidadania (CESeC), por sua vez, não identificou redução significativa nos indicadores de criminalidade atribuível ao programa.</p>
+<div style="height:12px"></div>
+<p>Depois do vazamento, o próprio Idec resumiu o problema em uma frase que resume a tese central deste texto, vinda de uma entidade de pesquisa independente e não apenas de uma investigação individual: "Não basta afirmar que a plataforma é segura." A entidade pede que a Prefeitura investigue as falhas estruturais do sistema, não apenas a conduta do servidor afastado.</p>
+<div style="height:12px"></div>
+<h2>Análise de Requisitos: Onde a Engenharia de Software e a Segurança Falharam</h2>
+<div style="height:12px"></div>
+<p>Sob a ótica da engenharia de software e da arquitetura de cibersegurança, um projeto crítico de R$ 588 milhões exige um levantamento e especificação rigorosos de <strong>Requisitos Funcionais e Não-Funcionais</strong>. O caso Smart Sampa evidencia uma negligência sistemática nessa etapa de planejamento:</p>
+<div style="height:12px"></div>
+<h3>Requisitos Não-Funcionais de Segurança Negligenciados</h3>
+<div style="height:12px"></div>
+<ul>
+<li><strong>Autenticação e Controle de Acesso:</strong> o sistema não estabeleceu como requisito obrigatório a Autenticação Multifator (MFA/2FA) para todos os níveis de usuário, permitindo o acesso direto apenas com usuário e senha.</li>
+<li><strong>Gestão do Ciclo de Vida de Sessões:</strong> faltou a especificação de expiração curta de tokens e a invalidação imediata de sessões ativas no momento em que uma senha é redefinida.</li>
+<li><strong>Princípio de Zero Trust e Defesa em Profundidade:</strong> a arquitetura foi desenhada assumindo que o perímetro do login era suficiente. Em sistemas de infraestrutura crítica, os requisitos devem prever que cada requisição interna seja autenticada e autorizada de forma granular.</li>
+<li><strong>Criptografia e Proteção de Dados:</strong> faltaram requisitos claros de criptografia ponta a ponta para dados em trânsito e em repouso, assim como a segregação lógica e física dos bancos de dados.</li>
+</ul>
+<div style="height:12px"></div>
+<h3>Requisitos de Governança e Qualificação de Fornecedores</h3>
+<div style="height:12px"></div>
+<ul>
+<li><strong>Critérios de Homologação de Contratadas:</strong> o edital e os requisitos de contratação não exigiram histórico comprovado do fornecedor em desenvolvimento de software crítico de alta complexidade ou defesa cibernética.</li>
+<li><strong>Auditorias de Código-Fonte e Testes de Invasão (Pentests):</strong> não foram estabelecidos como requisitos de entrega (gateways de qualidade) a realização de testes de invasão independentes e a auditoria transparente do código-fonte antes do lançamento.</li>
+</ul>
+<div style="height:12px"></div>
+<h3>Requisitos de Conformidade com a LGPD e Privacidade</h3>
+<div style="height:12px"></div>
+<ul>
+<li><strong>Rastreabilidade e Logs de Auditoria:</strong> o sistema falhou ao não garantir a rastreabilidade imediata e automática de consultas suspeitas, permitindo que acessos indevidos persistissem por meses sem alertas automáticos ao Centro de Operações de Segurança (SOC).</li>
+<li><strong>Relatório de Impacto à Proteção de Dados (RIPD):</strong> a ausência de um RIPD prévio detalhado impediu o mapeamento dos riscos ao monitorar ambientes altamente sensíveis, como creches e hospitais públicos.</li>
+</ul>
+<div style="height:12px"></div>
+<hr>
+<div style="height:12px"></div>
+<h2>A Desconstrução do Discurso da "Isca" e a Opacidade Contratual</h2>
+<div style="height:12px"></div>
+<p>Em resposta aos vazamentos, a administração municipal argumentou que o sistema era seguro e sugeriu que a exposição faria parte de uma "isca" (um Honeypot) para identificar acessos ilegais.</p>
+<div style="height:12px"></div>
+<p>A justificativa foi contestada tecnicamente no vídeo do canal Penegui: um Honeypot legítimo é uma estrutura simulada, isolada e sem conexão com dados reais de produção. No Smart Sampa, as credenciais expostas permitiam a visualização real de câmeras em locais públicos sensíveis e a navegação por dados de agentes de segurança. Crianças, pacientes e policiais em serviço não podem ser utilizados como "iscas" virtuais.</p>
+<div style="height:12px"></div>
+<p>A investigação também lançou luz sobre a cadeia de fornecimento:</p>
+<div style="height:12px"></div>
+<ul>
+<li><strong>Sentinel X:</strong> a empresa responsável pela tecnologia do programa foi constituída apenas 29 dias após a assinatura do contrato original e não possuía histórico em desenvolvimento de softwares complexos ou inteligência artificial.</li>
+<li><strong>Ligação com a CLD:</strong> a apuração dos sócios apontou ligações com executivos da antiga CLD (Consladórcio), empresa com histórico voltado à infraestrutura viária e radares, além de envolvimento em disputas judiciais com bloqueio de bens superior a R$ 1 bilhão em contratos de iluminação pública.</li>
+</ul>
+<div style="height:12px"></div>
+<p>O contrato original do Smart Sampa foi assinado em agosto de 2023 com o Consórcio Smart City SP, então formado por CLD Construtora, Laços Detentores e Eletrônica, Flama Serviços, Camerite Sistemas e PK9 Tecnologia, pelo custo mensal de R$ 9,8 milhões. Já na primeira fase o consórcio atrasou a entrega: das 5 mil câmeras previstas, apenas 2.963 tiveram imagens disponibilizadas no prazo. A Sentinel X, a empresa hoje no centro da polêmica sobre o reconhecimento facial, não participou da disputa original: ela entrou no consórcio por aditivo contratual firmado em dezembro de 2025, substituindo a Camerite, com efeito a partir de janeiro de 2026. Ou seja, o fornecedor da tecnologia de IA que hoje sustenta o programa foi trocado por um aditivo administrativo menos de um ano antes do vazamento vir à tona, sem nova disputa competitiva.</p>
+<div style="height:12px"></div>
+<hr>
+<div style="height:12px"></div>
+<h2>A Resposta da Prefeitura e o Que Ficou de Fora</h2>
+<div style="height:12px"></div>
+<p>Depois de confirmar o vazamento denunciado pelo UOL em 20 de outubro de 2026, a Prefeitura anunciou um conjunto de medidas técnicas: retirada do repositório exposto na internet, adoção de senhas exclusivas por usuário, autenticação em dois fatores e uso de código enviado por SMS para a criação de novas senhas. Em paralelo, afirmou que o Smart Sampa está sujeito à fiscalização periódica do Tribunal de Contas do Município (TCM), com auditorias e testes de segurança previstos em contrato. Até a publicação deste texto, não há nenhum relatório público do TCM especificamente sobre este episódio, o que deixa essa alegação apenas na versão oficial.</p>
+<div style="height:12px"></div>
+<p>Há também uma divergência factual que merece destaque: a Prefeitura nega que o material vazado contivesse senhas de acesso, enquanto a reportagem original do UOL aponta 181 combinações de login e senha expostas. Esse tipo de contradição entre o discurso institucional e os dados levantados pela imprensa é, por si só, um sintoma da falta de transparência apontada ao longo deste texto.</p>
+<div style="height:12px"></div>
+<p>Até 27 de outubro de 2026, o quadro das apurações externas era o seguinte: o Ministério Público de São Paulo abriu apenas uma Notícia de Fato, não um inquérito civil formal, para decidir se há motivo para investigação; a ANPD informou apenas que "acompanha o caso no âmbito de suas competências legais", sem detalhar nenhuma medida concreta; e a perícia independente determinada pela 3ª Vara da Fazenda Pública, com decisão assinada em 5 de outubro (antes mesmo da revelação pública do vazamento), ainda aguardava confirmação formal do NEV-USP sobre a aceitação do encargo e a indicação dos peritos responsáveis.</p>
+<div style="height:12px"></div>
+<p>Um detalhe que resume bem a desproporção entre o discurso de cautela e a prática: dias após o vazamento, em 27 de outubro de 2026, a própria Prefeitura anunciou a assinatura de novos convênios com o Ministério Público para ampliar o uso do Smart Sampa no combate ao crime organizado. A expansão do uso do sistema avança no mesmo momento em que suas falhas de segurança e governança estão sob investigação, sem que a perícia independente tenha sequer começado.</p>
+<div style="height:12px"></div>
+<h2>O Que Deve Ser Feito: Perícia e Responsabilização</h2>
+<div style="height:12px"></div>
+<p>Diante dos apontamentos e das ações movidas por entidades da sociedade civil (como Lapin, Conectas, Idec e Defensoria Pública):</p>
+<div style="height:12px"></div>
+<ul>
+<li><strong>Perícia Técnica Independente Ordenada pela Justiça:</strong> a 3ª Vara da Fazenda Pública de SP rejeitou as tentativas da prefeitura de dispensar a prova técnica e ordenou uma perícia independente no Smart Sampa. O Núcleo de Estudos da Violência da USP (NEV-USP) foi indicado para avaliar a segurança da informação, a criptografia, a governança de dados e a precisão dos algoritmos.</li>
+<li><strong>Investigações da ANPD e MPSP:</strong> a Agência Nacional de Proteção de Dados (ANPD) acompanha o incidente e apura a falta de notificação formal pela prefeitura, enquanto o Ministério Público de São Paulo (MPSP) analisa a abertura de inquérito civil.</li>
+</ul>
+<div style="height:12px"></div>
+<p>O caso do Smart Sampa reforça uma lição fundamental da cibersegurança: a eficácia da tecnologia na segurança pública não depende da quantidade de câmeras instaladas, mas sim do rigor da arquitetura de software, da análise de requisitos e da proteção contínua dos dados dos cidadãos.</p>
+<div style="height:12px"></div>
+<hr>
+<div style="height:12px"></div>
+<h2>Fontes consultadas para o contexto adicional</h2>
+<div style="height:12px"></div>
+<ul>
+<li><a href="https://www.youtube.com/watch?v=o1SA9DsKfZU" target="_blank" rel="noopener">Penegui: Smart Sampa, fui investigar e achei MAIS do que SENHAS VAZADAS</a></li>
+<li><a href="https://idec.org.br/imprensa/vazamento-dados-smart-sampa-cameras" target="_blank" rel="noopener">Idec: Vazamento no Smart Sampa reforça alerta feito desde 2022</a></li>
+<li><a href="https://agenciabrasil.ebc.com.br/geral/noticia/2026-02/pesquisa-aponta-problemas-e-prisoes-indevidas-partir-do-smart-sampa" target="_blank" rel="noopener">Agência Brasil: pesquisa aponta problemas e prisões indevidas a partir do Smart Sampa</a></li>
+<li><a href="https://geocracia.com/sao-paulo-reforca-controle-de-acesso-ao-smart-sampa-apos-vazamento/" target="_blank" rel="noopener">Geocracia: São Paulo reforça controle de acesso ao Smart Sampa após vazamento</a></li>
+<li><a href="https://www.cnnbrasil.com.br/nacional/sudeste/sp/smart-sampa-deve-passar-por-pericia-independente-apos-vazamento-de-dados/" target="_blank" rel="noopener">CNN Brasil: Smart Sampa deve passar por perícia independente após vazamento de dados</a></li>
+<li><a href="https://www.cnnbrasil.com.br/blogs/jairo-nascimento/nacional/sudeste/sp/mpsp-inicia-analise-dos-vazamentos-de-dados-do-smart-sampa/" target="_blank" rel="noopener">CNN Brasil: MPSP inicia análise dos vazamentos de dados do Smart Sampa</a></li>
+<li><a href="https://www.cnnbrasil.com.br/nacional/sudeste/sp/anpd-acompanha-invasao-e-exposicao-de-dados-do-sistema-smart-sampa/" target="_blank" rel="noopener">CNN Brasil: ANPD acompanha invasão e exposição de dados do sistema Smart Sampa</a></li>
+<li><a href="https://diarioesp.com.br/sao-paulo/2026/10/27/prefeitura-de-sp-firma-convenios-com-mp-para-usar-smart-sampa-contra-crime-organizado.html" target="_blank" rel="noopener">Diário ESP: Prefeitura de SP firma convênios com MP para usar Smart Sampa contra crime organizado</a></li>
+<li><a href="https://www.mobiletime.com.br/noticias/22/05/2023/idec-ve-risco-de-racismo-estrutural-com-projeto-de-cameras-e-reconhecimento-facial-em-sao-paulo/" target="_blank" rel="noopener">Mobile Time: Idec vê risco de racismo estrutural com projeto de câmeras e reconhecimento facial em São Paulo</a></li>
+<li><a href="https://prefeitura.sp.gov.br/w/noticia/prefeito-assina-contrato-para-o-inicio-do-smart-sampa-maior-programa-de-videomonitoramento-da-cidade-com-ate-40-mil-cameras-2" target="_blank" rel="noopener">Prefeitura de São Paulo: prefeito assina contrato para o início do Smart Sampa</a></li>
+<li><a href="https://jornal24horas.com.br/?p=69303" target="_blank" rel="noopener">Jornal 24 Horas: Smart Sampa, entenda o que vazou e quem são as empresas que operam o sistema</a></li>
+</ul>
+<div style="height:12px"></div>
+    </div>
+  </div>
+
+  <footer>
+    <div class="footer-sig">ORUAM_OLIUJ</div>
+    <div class="footer-copy"><span class="en">&gt; oruam.cloud/writing · 2026_</span><span class="pt" hidden>&gt; oruam.cloud/writing · 2026_</span></div>
+  </footer>
+</div>
+
+<script>
+const canvas = document.getElementById('matrix-canvas');
+const ctx = canvas.getContext('2d');
+canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+window.addEventListener('resize', () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; init(); });
+const chars = 'アイウエオカキクケコ0123456789ABCDEF$#@%&';
+const fontSize = 16;
+let columns, drops;
+function init() { columns = Math.floor(canvas.width / fontSize); drops = Array(columns).fill(1); }
+function draw() {
+  const theme = document.documentElement.dataset.theme;
+  ctx.fillStyle = theme === 'green' ? 'rgba(0,3,0,0.04)' : theme === 'amber' ? 'rgba(2,1,0,0.04)' : theme === 'light' ? 'rgba(245,242,235,0.06)' : 'rgba(0,3,8,0.04)';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  ctx.fillStyle = theme === 'green' ? '#00ff41' : theme === 'amber' ? '#ff8c00' : theme === 'light' ? '#1a5c3a' : '#00b4ff';
+  ctx.font = fontSize + 'px Share Tech Mono';
+  for (let i = 0; i < drops.length; i++) {
+    const char = chars[Math.floor(Math.random() * chars.length)];
+    ctx.fillText(char, i * fontSize, drops[i] * fontSize);
+    if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
+    drops[i]++;
+  }
+}
+init(); setInterval(draw, 45);
+
+const themeNames = {
+  en: { green: '◈ Green', amber: '◈ Amber', blue: '◈ Blue', light: '◈ Light' },
+  pt: { green: '◈ Verde', amber: '◈ Âmbar', blue: '◈ Azul', light: '◈ Claro' },
+};
+function currentLang() { return localStorage.getItem('lang') === 'pt' ? 'pt' : 'en'; }
+function nextTheme(cur) { cur = cur || 'blue'; return cur==='blue'?'green':cur==='green'?'amber':cur==='amber'?'light':'blue'; }
+function updateThemeBtn(cur) { document.getElementById('theme-btn').textContent = themeNames[currentLang()][nextTheme(cur)]; }
+function toggleTheme() {
+  const html = document.documentElement;
+  const next = nextTheme(html.dataset.theme);
+  html.dataset.theme = next === 'blue' ? '' : next;
+  localStorage.setItem('theme', next);
+  updateThemeBtn(next);
+}
+
+function setLang(lang) {
+  document.querySelectorAll('.en').forEach(el => el.hidden = (lang !== 'en'));
+  document.querySelectorAll('.pt').forEach(el => el.hidden = (lang !== 'pt'));
+  document.getElementById('lang-btn').textContent = lang === 'en' ? 'PT-BR' : 'ENGLISH';
+  document.documentElement.lang = lang;
+  localStorage.setItem('lang', lang);
+  updateThemeBtn(document.documentElement.dataset.theme);
+}
+function toggleLang() { setLang(currentLang() === 'en' ? 'pt' : 'en'); }
+
+function shareTo(platform) {
+  const url = window.location.href;
+  const title = document.title.replace(/ — Julio Cesar Mauro$/, '');
+  const u = encodeURIComponent(url);
+  const t = encodeURIComponent(title);
+  if (platform === 'linkedin') {
+    window.open('https://www.linkedin.com/sharing/share-offsite/?url=' + u, '_blank', 'noopener');
+  } else if (platform === 'whatsapp') {
+    window.open('https://wa.me/?text=' + encodeURIComponent(title + ' ' + url), '_blank', 'noopener');
+  } else if (platform === 'telegram') {
+    window.open('https://t.me/share/url?url=' + u + '&text=' + t, '_blank', 'noopener');
+  } else if (platform === 'copy') {
+    const btn = event.target.closest('button');
+    const original = btn.innerHTML;
+    navigator.clipboard.writeText(url).then(() => {
+      btn.innerHTML = (currentLang() === 'pt') ? 'Link copiado!' : 'Link copied!';
+      setTimeout(() => { btn.innerHTML = original; }, 1800);
+    }).catch(() => { alert(url); });
+  }
+}
+setLang(currentLang());
+</script>
+</body>
+</html>

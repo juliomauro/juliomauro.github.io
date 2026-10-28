@@ -854,6 +854,21 @@ body.piqad-active #article-content * {
       </div>
     </a>
 
+    <a class="article-item" data-tag="security" href="/writing/smart-sampa/"
+         data-path="security/smart-sampa-structural-cybersecurity-failures-and-contractual-fragility.md">
+      <div class="article-inner">
+        <div>
+          <div class="article-meta">
+            <span class="article-tag security">Security · Incident Analysis · Government Infrastructure</span>
+            <span class="article-level">// Foundational</span>
+          </div>
+          <div class="article-title" data-i18n="title-smart-sampa">Smart Sampa: Structural Cybersecurity Failures and Contractual Fragility</div>
+          <div class="article-desc" data-i18n="desc-smart-sampa">An investigation into São Paulo's R$588 million facial-recognition camera program found exposed credentials, infostealer leaks dating to 2024, warnings ignored since 2022, and an AI vendor swapped into the contract by amendment months before the leak came to light.</div>
+        </div>
+        <div class="article-arrow">→</div>
+      </div>
+    </a>
+
     <a class="article-item" data-tag="security" href="/writing/appearances/"
          data-path="security/the-hidden-danger-of-judging-by-appearances.md">
       <div class="article-inner">
@@ -949,6 +964,8 @@ const i18n = {
     'section-latest':   'Latest',
     'title-misantropia':'The "Misantropia" Incident: Brazil\'s National Alert System Failure',
     'desc-misantropia': 'How a teenager with five-year-old leaked credentials shut down Brazil\'s national emergency alert system — and what the exposed debug mode, SQL injection, and missing MFA say about critical public infrastructure security.',
+    'title-smart-sampa':'Smart Sampa: Structural Cybersecurity Failures and Contractual Fragility',
+    'desc-smart-sampa': 'An investigation into São Paulo\'s R$588 million facial-recognition camera program found exposed credentials, infostealer leaks dating to 2024, warnings ignored since 2022, and an AI vendor swapped into the contract by amendment months before the leak came to light.',
     'title-bootrom':    'BootROM Leak: The Key 95 Million PS5s Can\'t Replace',
     'desc-bootrom':     'What actually leaked when PS5 BootROM key material surfaced online at the end of 2025 — why a key burned into silicon can\'t be patched like a kernel bug, and why most of the panic around it got ahead of the evidence.',
     'title-php2shell':  'PHP2Shell: 72 Hours of Internet-Wide Panic',
@@ -988,6 +1005,8 @@ const i18n = {
     'section-latest':   'Recente',
     'title-misantropia':'O Incidente "Misantropia": A Falha no Sistema Nacional de Alertas',
     'desc-misantropia': 'Como um adolescente com credenciais vazadas há cinco anos derrubou o sistema nacional de alertas de emergência do Brasil — e o que o debug mode exposto, SQL injection e ausência de MFA dizem sobre a segurança de infraestrutura pública crítica.',
+    'title-smart-sampa':'Smart Sampa: Falhas Estruturais de Cibersegurança e Fragilidade Contratual',
+    'desc-smart-sampa': 'Uma investigação sobre o programa de câmeras com reconhecimento facial de R$ 588 milhões da Prefeitura de São Paulo encontrou credenciais expostas, vazamentos por infostealer desde 2024, alertas ignorados desde 2022, e um fornecedor de IA trocado por aditivo contratual meses antes do vazamento vir à tona.',
     'title-bootrom':    'Vazamento do BootROM: A Chave Que 95 Milhões de PS5 Não Podem Trocar',
     'desc-bootrom':     'O que realmente vazou quando uma chave do BootROM do PS5 surgiu online no fim de 2025 — por que uma chave gravada em silício não se corrige como um bug de kernel, e por que boa parte do pânico atropelou as evidências.',
     'title-php2shell':  'PHP2Shell: 72 Horas de Pânico na Internet',
@@ -1027,6 +1046,8 @@ const i18n = {
     'section-latest':   'chu\'',
     'title-misantropia':'\'Misantropia\' — Brazil QaD pat Qagh',
     'desc-misantropia': 'wa\' loD De\' ngeD lo\' — Brazil QaD pat HoHmoH. debug mode, SQL injection, MFA pagh.',
+    'title-smart-sampa': 'Smart Sampa — mInDu\' bachHa\' QaD pat Qagh',
+    'desc-smart-sampa': 'camera wa\'maHSochmaH loS SaD De\' ngeD lo\' — jar wa\'maH wa\'. password pagh jatlh ghotpu\'.',
     'title-bootrom':    'BootROM mI\' — PS5 95 million rur Hoch',
     'desc-bootrom':     'chaw\' veS lujlu\'ta\' — patch Qotlh, ghantoH rur.',
     'title-php2shell':  'PHP2Shell — Internet Hoch tuj',
@@ -1149,6 +1170,111 @@ Este incidente evidencia que infraestruturas críticas para a segurança públic
 * **Revogação de Credenciais:** Entidades governamentais devem monitorar proativamente violações de dados públicos e fóruns da dark web para invalidar contas administrativas comprometidas antes que sejam exploradas.
 * **Suspensão e Auditoria do Sistema:** A plataforma deve permanecer offline até que uma revisão completa de código, remediação de vulnerabilidades e implementação de MFA sejam concluídas.
 * **Restauração da Confiança Pública:** Uma campanha de comunicação transparente é necessária para explicar as correções técnicas e garantir que os cidadãos não desativem as notificações de emergência em seus dispositivos, o que pode colocar vidas em risco durante desastres reais.`,
+
+  'smart-sampa': `# Smart Sampa: Falhas Estruturais de Cibersegurança e Fragilidade Contratual
+
+> **Categoria:** Segurança · Análise de Incidente · Infraestrutura Governamental
+> **Nível:** Fundacional
+
+---
+
+A crise no **Smart Sampa**, o ambicioso sistema de videomonitoramento e reconhecimento facial da Prefeitura de São Paulo orçado em R$ 588 milhões, está longe de ser um caso isolado de desvio individual ou "senhas vazadas". Embora a administração municipal atribua o incidente à conduta ilícita de um único servidor, uma análise técnica da infraestrutura e dos bastidores do programa revela um cenário alarmante de vulnerabilidades em múltiplas camadas, higiene de credenciais primária e opacidade na cadeia de fornecedores.
+
+O caso expôs por cerca de 11 meses credenciais e transmissões em tempo real de mais de **58 mil câmeras** espalhadas pela capital, levantando dúvidas sobre a capacidade do poder público de proteger a privacidade e os dados dos cidadãos.
+
+---
+
+## O Diagnóstico Técnico: Fragilidades na Arquitetura
+
+Conforme revelado na investigação apresentada no **canal do Penegui** no vídeo *"Smart Sampa: fui investigar e achei MAIS do que SENHAS VAZADAS"*, o problema do sistema não se resume a um repositório público com 181 logins. A apuração detalhou falhas primárias e sistêmicas que atingem diretamente a arquitetura de segurança da plataforma:
+
+* **Higiene de Credenciais Primitiva:** foram identificadas contas ativas nas quais o nome de usuário e a senha eram exatamente idênticos ao número de matrícula do agente público. Esse tipo de fragilidade viola os princípios mais básicos de segurança da informação em infraestruturas críticas.
+* **Vazamentos Prévios por Infostealers (2024):** a investigação de Penegui identificou ao menos 15 registros de credenciais e tokens de sessão associados ao sistema vazados por malwares do tipo Infostealer ainda em 2024. Isso comprova que o comprometimento das bases de acesso antecede em muito a exposição do repositório público noticiada pela imprensa.
+* **Exposição de VPNs e Superfície de Ataque:** subdomínios da plataforma e páginas de login de VPNs estavam visíveis publicamente na internet. Em redes onde a restrição por endereço de IP é usada como única barreira, o comprometimento de uma credencial de VPN permite que o invasor simule um acesso autorizado interno.
+* **Falhas de Gestão de Sessão e Autorização (IDOR):** a alteração de senha de uma conta não invalidava automaticamente os tokens de sessão que já estavam ativos. A ausência de verificação rigorosa de permissões nas interfaces e rotas (endpoints), risco associado a falhas do tipo IDOR (Insecure Direct Object References), levanta a suspeita de que uma conta autorizada em uma região pudesse acessar câmeras e dados de outras áreas sem a devida segregação de ambiente.
+
+## Contexto: Alertas Ignorados Desde 2022
+
+As falhas estruturais do Smart Sampa não surgiram com o vazamento de 2026. O Idec, em conjunto com o Laboratório de Políticas Públicas e Internet (LAPIN) e outras entidades, apresentou representação ao Ministério Público de São Paulo já em 2022, logo após a publicação do edital do programa, apontando risco de discriminação algorítmica (viés racial no reconhecimento facial) e ausência de controle social sobre a tecnologia.
+
+A própria Prefeitura confirma um ponto central dessa crítica: não tem acesso ao código-fonte, aos modelos de inteligência artificial nem às bases de treinamento usadas pelo sistema, e não realiza auditoria independente desses componentes. Ou seja, a cidade terceirizou a operação de reconhecimento facial sobre a população sem jamais ter podido auditar como esse reconhecimento é feito.
+
+Uma nota técnica publicada em fevereiro de 2026 pelo LAPIN, pelo Instituto de Referência Negra Peregum e pela Rede Liberdade, baseada em pedidos via Lei de Acesso à Informação, já havia documentado o custo humano dessas falhas antes mesmo do vazamento de credenciais: ao menos 23 pessoas foram conduzidas indevidamente a delegacias por inconsistências no reconhecimento facial, e 82 chegaram a ser presas e depois liberadas. Registros municipais levantados pela mesma apuração contabilizaram 268 conduções seguidas de liberação entre novembro de 2024 e maio de 2026. Um estudo do Centro de Estudos de Segurança e Cidadania (CESeC), por sua vez, não identificou redução significativa nos indicadores de criminalidade atribuível ao programa.
+
+Depois do vazamento, o próprio Idec resumiu o problema em uma frase que resume a tese central deste texto, vinda de uma entidade de pesquisa independente e não apenas de uma investigação individual: "Não basta afirmar que a plataforma é segura." A entidade pede que a Prefeitura investigue as falhas estruturais do sistema, não apenas a conduta do servidor afastado.
+
+## Análise de Requisitos: Onde a Engenharia de Software e a Segurança Falharam
+
+Sob a ótica da engenharia de software e da arquitetura de cibersegurança, um projeto crítico de R$ 588 milhões exige um levantamento e especificação rigorosos de **Requisitos Funcionais e Não-Funcionais**. O caso Smart Sampa evidencia uma negligência sistemática nessa etapa de planejamento:
+
+### Requisitos Não-Funcionais de Segurança Negligenciados
+
+* **Autenticação e Controle de Acesso:** o sistema não estabeleceu como requisito obrigatório a Autenticação Multifator (MFA/2FA) para todos os níveis de usuário, permitindo o acesso direto apenas com usuário e senha.
+* **Gestão do Ciclo de Vida de Sessões:** faltou a especificação de expiração curta de tokens e a invalidação imediata de sessões ativas no momento em que uma senha é redefinida.
+* **Princípio de Zero Trust e Defesa em Profundidade:** a arquitetura foi desenhada assumindo que o perímetro do login era suficiente. Em sistemas de infraestrutura crítica, os requisitos devem prever que cada requisição interna seja autenticada e autorizada de forma granular.
+* **Criptografia e Proteção de Dados:** faltaram requisitos claros de criptografia ponta a ponta para dados em trânsito e em repouso, assim como a segregação lógica e física dos bancos de dados.
+
+### Requisitos de Governança e Qualificação de Fornecedores
+
+* **Critérios de Homologação de Contratadas:** o edital e os requisitos de contratação não exigiram histórico comprovado do fornecedor em desenvolvimento de software crítico de alta complexidade ou defesa cibernética.
+* **Auditorias de Código-Fonte e Testes de Invasão (Pentests):** não foram estabelecidos como requisitos de entrega (gateways de qualidade) a realização de testes de invasão independentes e a auditoria transparente do código-fonte antes do lançamento.
+
+### Requisitos de Conformidade com a LGPD e Privacidade
+
+* **Rastreabilidade e Logs de Auditoria:** o sistema falhou ao não garantir a rastreabilidade imediata e automática de consultas suspeitas, permitindo que acessos indevidos persistissem por meses sem alertas automáticos ao Centro de Operações de Segurança (SOC).
+* **Relatório de Impacto à Proteção de Dados (RIPD):** a ausência de um RIPD prévio detalhado impediu o mapeamento dos riscos ao monitorar ambientes altamente sensíveis, como creches e hospitais públicos.
+
+---
+
+## A Desconstrução do Discurso da "Isca" e a Opacidade Contratual
+
+Em resposta aos vazamentos, a administração municipal argumentou que o sistema era seguro e sugeriu que a exposição faria parte de uma "isca" (um Honeypot) para identificar acessos ilegais.
+
+A justificativa foi contestada tecnicamente no vídeo do canal Penegui: um Honeypot legítimo é uma estrutura simulada, isolada e sem conexão com dados reais de produção. No Smart Sampa, as credenciais expostas permitiam a visualização real de câmeras em locais públicos sensíveis e a navegação por dados de agentes de segurança. Crianças, pacientes e policiais em serviço não podem ser utilizados como "iscas" virtuais.
+
+A investigação também lançou luz sobre a cadeia de fornecimento:
+
+* **Sentinel X:** a empresa responsável pela tecnologia do programa foi constituída apenas 29 dias após a assinatura do contrato original e não possuía histórico em desenvolvimento de softwares complexos ou inteligência artificial.
+* **Ligação com a CLD:** a apuração dos sócios apontou ligações com executivos da antiga CLD (Consladórcio), empresa com histórico voltado à infraestrutura viária e radares, além de envolvimento em disputas judiciais com bloqueio de bens superior a R$ 1 bilhão em contratos de iluminação pública.
+
+O contrato original do Smart Sampa foi assinado em agosto de 2023 com o Consórcio Smart City SP, então formado por CLD Construtora, Laços Detentores e Eletrônica, Flama Serviços, Camerite Sistemas e PK9 Tecnologia, pelo custo mensal de R$ 9,8 milhões. Já na primeira fase o consórcio atrasou a entrega: das 5 mil câmeras previstas, apenas 2.963 tiveram imagens disponibilizadas no prazo. A Sentinel X, a empresa hoje no centro da polêmica sobre o reconhecimento facial, não participou da disputa original: ela entrou no consórcio por aditivo contratual firmado em dezembro de 2025, substituindo a Camerite, com efeito a partir de janeiro de 2026. Ou seja, o fornecedor da tecnologia de IA que hoje sustenta o programa foi trocado por um aditivo administrativo menos de um ano antes do vazamento vir à tona, sem nova disputa competitiva.
+
+---
+
+## A Resposta da Prefeitura e o Que Ficou de Fora
+
+Depois de confirmar o vazamento denunciado pelo UOL em 20 de outubro de 2026, a Prefeitura anunciou um conjunto de medidas técnicas: retirada do repositório exposto na internet, adoção de senhas exclusivas por usuário, autenticação em dois fatores e uso de código enviado por SMS para a criação de novas senhas. Em paralelo, afirmou que o Smart Sampa está sujeito à fiscalização periódica do Tribunal de Contas do Município (TCM), com auditorias e testes de segurança previstos em contrato. Até a publicação deste texto, não há nenhum relatório público do TCM especificamente sobre este episódio, o que deixa essa alegação apenas na versão oficial.
+
+Há também uma divergência factual que merece destaque: a Prefeitura nega que o material vazado contivesse senhas de acesso, enquanto a reportagem original do UOL aponta 181 combinações de login e senha expostas. Esse tipo de contradição entre o discurso institucional e os dados levantados pela imprensa é, por si só, um sintoma da falta de transparência apontada ao longo deste texto.
+
+Até 27 de outubro de 2026, o quadro das apurações externas era o seguinte: o Ministério Público de São Paulo abriu apenas uma Notícia de Fato, não um inquérito civil formal, para decidir se há motivo para investigação; a ANPD informou apenas que "acompanha o caso no âmbito de suas competências legais", sem detalhar nenhuma medida concreta; e a perícia independente determinada pela 3ª Vara da Fazenda Pública, com decisão assinada em 5 de outubro (antes mesmo da revelação pública do vazamento), ainda aguardava confirmação formal do NEV-USP sobre a aceitação do encargo e a indicação dos peritos responsáveis.
+
+Um detalhe que resume bem a desproporção entre o discurso de cautela e a prática: dias após o vazamento, em 27 de outubro de 2026, a própria Prefeitura anunciou a assinatura de novos convênios com o Ministério Público para ampliar o uso do Smart Sampa no combate ao crime organizado. A expansão do uso do sistema avança no mesmo momento em que suas falhas de segurança e governança estão sob investigação, sem que a perícia independente tenha sequer começado.
+
+## O Que Deve Ser Feito: Perícia e Responsabilização
+
+Diante dos apontamentos e das ações movidas por entidades da sociedade civil (como Lapin, Conectas, Idec e Defensoria Pública):
+
+* **Perícia Técnica Independente Ordenada pela Justiça:** a 3ª Vara da Fazenda Pública de SP rejeitou as tentativas da prefeitura de dispensar a prova técnica e ordenou uma perícia independente no Smart Sampa. O Núcleo de Estudos da Violência da USP (NEV-USP) foi indicado para avaliar a segurança da informação, a criptografia, a governança de dados e a precisão dos algoritmos.
+* **Investigações da ANPD e MPSP:** a Agência Nacional de Proteção de Dados (ANPD) acompanha o incidente e apura a falta de notificação formal pela prefeitura, enquanto o Ministério Público de São Paulo (MPSP) analisa a abertura de inquérito civil.
+
+O caso do Smart Sampa reforça uma lição fundamental da cibersegurança: a eficácia da tecnologia na segurança pública não depende da quantidade de câmeras instaladas, mas sim do rigor da arquitetura de software, da análise de requisitos e da proteção contínua dos dados dos cidadãos.
+
+---
+
+## Fontes consultadas para o contexto adicional
+
+* [Penegui: Smart Sampa, fui investigar e achei MAIS do que SENHAS VAZADAS](https://www.youtube.com/watch?v=o1SA9DsKfZU)
+* [Idec: Vazamento no Smart Sampa reforça alerta feito desde 2022](https://idec.org.br/imprensa/vazamento-dados-smart-sampa-cameras)
+* [Agência Brasil: pesquisa aponta problemas e prisões indevidas a partir do Smart Sampa](https://agenciabrasil.ebc.com.br/geral/noticia/2026-02/pesquisa-aponta-problemas-e-prisoes-indevidas-partir-do-smart-sampa)
+* [Geocracia: São Paulo reforça controle de acesso ao Smart Sampa após vazamento](https://geocracia.com/sao-paulo-reforca-controle-de-acesso-ao-smart-sampa-apos-vazamento/)
+* [CNN Brasil: Smart Sampa deve passar por perícia independente após vazamento de dados](https://www.cnnbrasil.com.br/nacional/sudeste/sp/smart-sampa-deve-passar-por-pericia-independente-apos-vazamento-de-dados/)
+* [CNN Brasil: MPSP inicia análise dos vazamentos de dados do Smart Sampa](https://www.cnnbrasil.com.br/blogs/jairo-nascimento/nacional/sudeste/sp/mpsp-inicia-analise-dos-vazamentos-de-dados-do-smart-sampa/)
+* [CNN Brasil: ANPD acompanha invasão e exposição de dados do sistema Smart Sampa](https://www.cnnbrasil.com.br/nacional/sudeste/sp/anpd-acompanha-invasao-e-exposicao-de-dados-do-sistema-smart-sampa/)
+* [Diário ESP: Prefeitura de SP firma convênios com MP para usar Smart Sampa contra crime organizado](https://diarioesp.com.br/sao-paulo/2026/10/27/prefeitura-de-sp-firma-convenios-com-mp-para-usar-smart-sampa-contra-crime-organizado.html)
+* [Mobile Time: Idec vê risco de racismo estrutural com projeto de câmeras e reconhecimento facial em São Paulo](https://www.mobiletime.com.br/noticias/22/05/2023/idec-ve-risco-de-racismo-estrutural-com-projeto-de-cameras-e-reconhecimento-facial-em-sao-paulo/)
+* [Prefeitura de São Paulo: prefeito assina contrato para o início do Smart Sampa](https://prefeitura.sp.gov.br/w/noticia/prefeito-assina-contrato-para-o-inicio-do-smart-sampa-maior-programa-de-videomonitoramento-da-cidade-com-ate-40-mil-cameras-2)
+* [Jornal 24 Horas: Smart Sampa, entenda o que vazou e quem são as empresas que operam o sistema](https://jornal24horas.com.br/?p=69303)`,
 
   container: `# A Identidade do Seu Container Vale Mais Que Root
 
@@ -1906,6 +2032,7 @@ const ART_KEY = {
   'security/php2shell-72-hours-of-internet-wide-panic.md':   'php2shell',
   'security/relapse-the-browser-bug-that-opened-the-ps5-kernel.md': 'relapse',
   'security/misantropia-Security-Incident-and-the-Brazillian-National-Alert-System-Failure.md': 'misantropia',
+  'security/smart-sampa-structural-cybersecurity-failures-and-contractual-fragility.md': 'smart-sampa',
   'cloud/your-container-identity-is-worth-more-than-root.md': 'container',
   'cloud/one-wildcard-in-a-trust-policy.md':                  'wildcard',
   'linux/the-header-that-opened-the-network.md':              'header',
