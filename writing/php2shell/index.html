@@ -607,7 +607,12 @@ const themeNames = {
   en: { green: '◈ Green', amber: '◈ Amber', blue: '◈ Blue', light: '◈ Light' },
   pt: { green: '◈ Verde', amber: '◈ Âmbar', blue: '◈ Azul', light: '◈ Claro' },
 };
-function currentLang() { return localStorage.getItem('lang') === 'pt' ? 'pt' : 'en'; }
+function currentLang() {
+  const qp = new URLSearchParams(window.location.search);
+  const urlLang = qp.get('lang');
+  if (urlLang === 'en' || urlLang === 'pt') return urlLang;
+  return localStorage.getItem('lang') === 'pt' ? 'pt' : 'en';
+}
 function nextTheme(cur) { cur = cur || 'blue'; return cur==='blue'?'green':cur==='green'?'amber':cur==='amber'?'light':'blue'; }
 function updateThemeBtn(cur) { document.getElementById('theme-btn').textContent = themeNames[currentLang()][nextTheme(cur)]; }
 function toggleTheme() {
