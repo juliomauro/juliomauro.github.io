@@ -175,7 +175,7 @@ body::before {
 
 /* ── HEADER ── */
 header {
-  padding: 80px 0 60px;
+  padding: 80px 0 32px;
   border-bottom: 1px solid var(--border);
   position: relative;
 }
@@ -305,6 +305,51 @@ h1 {
   opacity: 0;
 }
 .header-links.go + .pgp-fingerprint { animation: fadeIn 0.5s ease 0.9s forwards; }
+
+.latest-box {
+  margin-top: 24px;
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  width: fit-content;
+  max-width: 100%;
+  padding: 10px 16px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  text-decoration: none;
+  opacity: 0;
+  transition: all 0.2s;
+}
+.latest-box.go { animation: fadeIn 0.5s ease 0.5s forwards; }
+.latest-box:hover {
+  border-color: var(--green-mid);
+  background: var(--green-dim);
+  box-shadow: var(--glow);
+}
+.latest-label {
+  font-size: 10px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  white-space: nowrap;
+}
+.latest-post-title {
+  font-size: 13px;
+  color: var(--green-mid);
+  font-weight: 600;
+  transition: color 0.2s;
+}
+.latest-box:hover .latest-post-title { color: var(--green); text-shadow: var(--glow); }
+.latest-arrow {
+  color: var(--green-mid);
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+@media (max-width: 640px) {
+  .latest-box { flex-wrap: wrap; }
+  .latest-arrow { display: none; }
+}
 
 .link-pill {
   font-size: 11px;
@@ -1132,6 +1177,11 @@ body.piqad-active [data-i18n] {
       <div>
         <h1 id="hero-name">JULIO CESAR MAURO</h1>
         <p class="subtitle" data-i18n="subtitle"><span>Head of Infrastructure, Cloud &amp; Security</span><br>+25 years managing critical environments<br>São Paulo, Brazil</p>
+        <a href="/writing/smart-sampa/" class="latest-box">
+          <span class="latest-label" data-i18n="latest-label">LATEST WRITE-UP</span>
+          <span class="latest-post-title" data-i18n="latest-title">Smart Sampa: Structural Cybersecurity Failures and Contractual Fragility</span>
+          <span class="latest-arrow">→</span>
+        </a>
         <div class="header-links">
           <a href="https://github.com/juliomauro" target="_blank" class="link-pill">⌥ GitHub</a>
           <a href="https://linkedin.com/in/juliomauro" target="_blank" class="link-pill">⌥ LinkedIn</a>
@@ -1506,6 +1556,8 @@ const i18n = {
     'lang-en-level': 'B2 · Advanced',
     'lang-en-cert': 'Certified by Lingopass · ID: 1673770441JM',
     'link-cv': '⌥ CV (PDF)',
+    'latest-label': 'Latest write-up',
+    'latest-title': 'Smart Sampa: Structural Cybersecurity Failures and Contractual Fragility',
     'footer-copy': '&gt; 2026_',
     'hint-1': '// static on the line_',
     'hint-2': '// some codes never age — four letters from a very old shooter',
@@ -1580,6 +1632,8 @@ const i18n = {
     'lang-en-level': 'B2 · Avançado',
     'lang-en-cert': 'Certificado pela Lingopass · ID: 1673770441JM',
     'link-cv': '⌥ Currículo (PDF)',
+    'latest-label': 'Último texto publicado',
+    'latest-title': 'Smart Sampa: Falhas Estruturais de Cibersegurança e Fragilidade Contratual',
     'footer-copy': '&gt; 2026_',
     'hint-1': '// estática na linha_',
     'hint-2': '// alguns códigos nunca envelhecem — quatro letras de um jogo de tiro bem antigo',
@@ -1769,6 +1823,7 @@ function toggleTheme() {
     bootSeq.classList.add('go');
     setTimeout(function() {
       document.querySelector('.header-main').classList.add('go');
+      document.querySelector('.latest-box').classList.add('go');
       document.querySelector('.header-links').classList.add('go');
     }, 1400);
   }
@@ -1777,6 +1832,7 @@ function toggleTheme() {
     intro.remove();
     bootSeq.classList.add('go');
     document.querySelector('.header-main').classList.add('go');
+    document.querySelector('.latest-box').classList.add('go');
     document.querySelector('.header-links').classList.add('go');
   } else {
     typeAll(0);
