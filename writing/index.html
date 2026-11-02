@@ -643,15 +643,6 @@ footer {
   .theme-toggle { font-size: 9px; padding: 4px 7px; }
 }
 
-@font-face {
-  font-family: 'pIqaD';
-  src: url('/fonts/pIqaD.woff') format('woff');
-}
-body.piqad-active [data-i18n],
-body.piqad-active #article-content * {
-  font-family: 'pIqaD', monospace;
-  letter-spacing: 3px;
-}
 </style>
 <script data-goatcounter="https://oruam.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 </head>
@@ -1029,47 +1020,6 @@ const i18n = {
     'desc-appearances': 'Como vieses cognitivos baseados em aparência se tornam o vetor de ataque preferido da engenharia social — e por que confiar na "embalagem" em vez de evidências entrega ao atacante o mapa do seu ponto mais fraco.',
     'footer-copy':      '&gt; oruam.cloud/writing · 2026_',
   },
-  tlh: {
-    '_title':           'ghItlh — Julio Cesar Mauro',
-    'nav-projects':     'ta\'mey',
-    'nav-writing':      'ghItlh',
-    'header-tag':       'Oruam Oliuj · QaD \'ej pat',
-    'header-sub':       '&gt; Qob De\' — Sov \'ej jatlh_',
-    'filter-all':       'Hoch',
-    'filter-networking':'network',
-    'filter-security':  'QaD',
-    'section-networking':'network',
-    'section-security': 'QaD',
-    'back-btn':         '← ghItlh',
-    'art-loading':      '> De\' ngeD...',
-    'art-error':        '> Qagh — github.com/juliomauro/sec-notes yIlegh',
-    'section-latest':   'chu\'',
-    'title-misantropia':'\'Misantropia\' — Brazil QaD pat Qagh',
-    'desc-misantropia': 'wa\' loD De\' ngeD lo\' — Brazil QaD pat HoHmoH. debug mode, SQL injection, MFA pagh.',
-    'title-smart-sampa': 'Smart Sampa — mInDu\' bachHa\' QaD pat Qagh',
-    'desc-smart-sampa': 'camera wa\'maHSochmaH loS SaD De\' ngeD lo\' — jar wa\'maH wa\'. password pagh jatlh ghotpu\'.',
-    'title-bootrom':    'BootROM mI\' — PS5 95 million rur Hoch',
-    'desc-bootrom':     'chaw\' veS lujlu\'ta\' — patch Qotlh, ghantoH rur.',
-    'title-php2shell':  'PHP2Shell — Internet Hoch tuj',
-    'desc-php2shell':   'PHP runtime cha\' Qagh — CVE-2026-109618, CVE-2026-109619. mitigation wa\'maH — honeypot legh.',
-    'title-relapse':    'Relapse — PS5 pub veng poS',
-    'desc-relapse':     'JavaScriptCore Qagh, kernel use-after-free lo\'. FreeBSD Qagh — Sony ghItlhbe\'.',
-    'title-container':  'De\'wI\' ngeD ghaH law\' root ghaH puS',
-    'title-wildcard':   'wa\' Hoch voq nab',
-    'title-header':     'network poSmoH HoS',
-    'title-systemd':    'systemd HIv tera\'',
-    'title-rbac':       'RBAC: pagh nob QaQ\'a\'',
-    'title-meshcore':   'MeshCore Brazil: De\' ngeD pat pagh',
-    'title-appearances':'legh \'ej Qob DajQo\'',
-    'desc-container':   'De\'wI\' ngeD root ghobe\' — \'ach metadata endpoint lo\' IAM HoS law\' chenmoH.',
-    'desc-wildcard':    'StringLike glob IAM trust policy — assume role poS. StringEquals potlh.',
-    'desc-header':      'X-Forwarded-For QaD QaHbe\' — Nginx ghobe\' chenmoH — network Hoch poS.',
-    'desc-systemd':     'root Qu\' wej CVE — timer \'ej Daqmey ghItlh — HoS law\' chen.',
-    'desc-rbac':        'create Jobs \'ej service account permissive — namespace yIt — RBAC graph HaD potlh.',
-    'desc-meshcore':    'LoRa radio \'ej mesh network — internet pagh — kilometers law\'. Santo André, Jundiaí, Sorocaba, Campinas.',
-    'desc-appearances': 'DaleghDI\' Davoq — social engineer QaD Daj — packaging ghobe\' Sov.',
-    'footer-copy':      '&gt; oruam.cloud/ghItlh · 2026_ Qapla\'!',
-  }
 };
 
 // ── PT-BR ARTICLE TRANSLATIONS ──
@@ -2050,7 +2000,6 @@ let currentShareTitle = null;
 const themeNames = {
   en:  { green: '◈ Green', amber: '◈ Amber', blue: '◈ Blue', light: '◈ Light' },
   pt:  { green: '◈ Verde', amber: '◈ Âmbar', blue: '◈ Azul', light: '◈ Claro' },
-  tlh: { green: '◈ SuD',   amber: '◈ Doq',   blue: '◈ SuD',  light: '◈ wov'   },
 };
 function updateThemeBtn(currentTheme) {
   const btn = document.getElementById('theme-btn');
@@ -2059,98 +2008,14 @@ function updateThemeBtn(currentTheme) {
   btn.textContent = (themeNames[localStorage.getItem('lang') || 'en'] || themeNames.en)[next];
 }
 
-var pIqaDmap = [
-  ['tlh',''],['ch',''],['gh',''],['ng',''],
-  ['a',''],['b',''],['D',''],['e',''],
-  ['H',''],['I',''],['j',''],['l',''],
-  ['m',''],['n',''],['o',''],['p',''],
-  ['q',''],['Q',''],['r',''],['S',''],
-  ['t',''],['u',''],['v',''],['w',''],
-  ['y',''],["'",''],
-  ['0',''],['1',''],['2',''],['3',''],
-  ['4',''],['5',''],['6',''],['7',''],
-  ['8',''],['9','']
-];
-function toPlqaD(str) {
-  var out = '', i = 0;
-  while (i < str.length) {
-    var hit = false;
-    for (var j = 0; j < pIqaDmap.length; j++) {
-      var k = pIqaDmap[j][0];
-      if (str.substr(i, k.length) === k) { out += pIqaDmap[j][1]; i += k.length; hit = true; break; }
-    }
-    if (!hit) { out += str[i++]; }
-  }
-  return out;
-}
-function pIqaDwalk(el) {
-  el.childNodes.forEach(function(n) {
-    if (n.nodeType === 3) n.nodeValue = toPlqaD(n.nodeValue);
-    else if (n.nodeType === 1) pIqaDwalk(n);
-  });
-}
-// Full pIqaD map — built at runtime from pIqaDmap so values are guaranteed correct.
-// The pIqaD font only has glyphs for U+F8D0–U+F8FF (KLI CSUR private-use area).
-// Every unmapped English letter is routed to the nearest Klingon phoneme glyph.
-var pIqaDmapFull = (function() {
-  var m = {};
-  pIqaDmap.forEach(function(p) { m[p[0]] = p[1]; });
-  return [
-    ['tlh',m.tlh],['ch',m.ch],['gh',m.gh],['ng',m.ng],
-    ['Ch',m.ch],['CH',m.ch],['Gh',m.gh],['GH',m.gh],
-    ['Ng',m.ng],['NG',m.ng],['Tlh',m.tlh],['TLH',m.tlh],
-    ['a',m.a],['b',m.b],['D',m.D],['e',m.e],
-    ['H',m.H],['I',m.I],['j',m.j],['l',m.l],
-    ['m',m.m],['n',m.n],['o',m.o],['p',m.p],
-    ['q',m.q],['Q',m.Q],['r',m.r],['S',m.S],
-    ['t',m.t],['u',m.u],['v',m.v],['w',m.w],
-    ['y',m.y],["'",m["'"]],
-    ['c',m.S],['d',m.D],['f',m.v],['g',m.gh],
-    ['h',m.H],['i',m.I],['k',m.q],['s',m.S],
-    ['x',m.ng],['z',m.S],
-    ['A',m.a],['B',m.b],['C',m.ch],['E',m.e],
-    ['F',m.v],['G',m.gh],['J',m.j],['K',m.q],
-    ['L',m.l],['M',m.m],['N',m.n],['O',m.o],
-    ['P',m.p],['R',m.r],['T',m.t],['U',m.u],
-    ['V',m.v],['W',m.w],['X',m.ng],['Y',m.y],
-    ['Z',m.S],
-    ['0',m['0']],['1',m['1']],['2',m['2']],['3',m['3']],
-    ['4',m['4']],['5',m['5']],['6',m['6']],['7',m['7']],
-    ['8',m['8']],['9',m['9']],
-  ];
-})();
-function toPlqaDfull(str) {
-  var out = '', i = 0;
-  while (i < str.length) {
-    var hit = false;
-    for (var j = 0; j < pIqaDmapFull.length; j++) {
-      var k = pIqaDmapFull[j][0];
-      if (str.substr(i, k.length) === k) { out += pIqaDmapFull[j][1]; i += k.length; hit = true; break; }
-    }
-    if (!hit) { out += str[i++]; }
-  }
-  return out;
-}
-function pIqaDwalkFull(el) {
-  el.childNodes.forEach(function(n) {
-    if (n.nodeType === 3) n.nodeValue = toPlqaDfull(n.nodeValue);
-    else if (n.nodeType === 1) pIqaDwalkFull(n);
-  });
-}
 function applyLang(lang) {
   document.querySelectorAll('[data-i18n]').forEach(el => {
     const v = i18n[lang]?.[el.dataset.i18n];
     if (v !== undefined) el.innerHTML = v;
   });
-  if (lang === 'tlh') {
-    document.querySelectorAll('[data-i18n]').forEach(function(el) { pIqaDwalkFull(el); });
-    document.body.classList.add('piqad-active');
-  } else {
-    document.body.classList.remove('piqad-active');
-  }
   if (i18n[lang]._title) document.title = i18n[lang]._title;
   const btn = document.getElementById('lang-btn');
-  if (btn) btn.textContent = lang === 'en' ? '◈ PT-BR' : lang === 'pt' ? '◈ Klingon' : '◈ English';
+  if (btn) btn.textContent = lang === 'en' ? '◈ PT-BR' : '◈ English';
   localStorage.setItem('lang', lang);
   updateThemeBtn(document.documentElement.dataset.theme || 'blue');
   if (currentPath) openArticle(currentPath);
@@ -2158,7 +2023,7 @@ function applyLang(lang) {
 
 function toggleLang() {
   const cur = localStorage.getItem('lang') || 'en';
-  applyLang(cur === 'en' ? 'pt' : cur === 'pt' ? 'tlh' : 'en');
+  applyLang(cur === 'en' ? 'pt' : 'en');
 }
 
 (function() {
@@ -2167,7 +2032,7 @@ function toggleLang() {
     const hp = new URLSearchParams(window.location.hash.includes('?') ? window.location.hash.split('?')[1] : '');
     const urlLang = qp.get('lang') || hp.get('lang');
     const lang = urlLang || localStorage.getItem('lang');
-    if (lang === 'en' || lang === 'pt' || lang === 'tlh') applyLang(lang);
+    if (lang === 'en' || lang === 'pt') applyLang(lang);
   } catch (e) { console.error('lang init failed', e); }
 })();
 
@@ -2212,7 +2077,6 @@ function renderArticle(md, lang) {
   const content = document.getElementById('article-content');
   content.innerHTML = '';
   renderMarkdownWeb(md, content);
-  if (lang === 'tlh') pIqaDwalkFull(content);
 }
 
 function openArticle(path) {
@@ -2246,7 +2110,7 @@ function openArticle(path) {
     return;
   }
 
-  // EN or TLH: fetch from GitHub (tlh = English text + pIqaD font)
+  // EN: fetch from GitHub
   const loading = document.createElement('div');
   loading.className = 'art-loading';
   loading.textContent = (i18n[lang] || i18n.en)['art-loading'];

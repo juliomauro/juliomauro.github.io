@@ -946,14 +946,6 @@ h1 { animation: glitch 8s ease infinite; }
   .tl-bullets li { font-size: 13px; }
 }
 
-@font-face {
-  font-family: 'pIqaD';
-  src: url('/fonts/pIqaD.woff') format('woff');
-}
-body.piqad-active [data-i18n] {
-  font-family: 'pIqaD', monospace;
-  letter-spacing: 3px;
-}
 
 #godmode-overlay {
   position: fixed;
@@ -1643,76 +1635,11 @@ const i18n = {
     'hint-6': '// a verdade tem uma pasta. digite o nome dela.',
     'hint-7': '// toque no nome como se fosse de verdade. cinco vezes.',
   },
-  tlh: {
-    '_title': 'Julio Cesar Mauro — tlhIngan De\'wI\' QaD SuvwI\'',
-    'boot-1': '&gt; RA\'NAH QAP\'LA\'... [HIja\']',
-    'boot-2': '&gt; De\' ngeD: juliomauro [HIja\']',
-    'boot-3': '&gt; QaD nob batlh: Qapla\' [HIja\']',
-    'boot-5': '&gt; yIchu\' jo\'...',
-    'subtitle': '<span>HoD ra\' pat, muD \'ej QaD</span><br>+25 DIS batlh vIta\'<br>San pIn, tera\'',
-    'nav-summary': 'De\' potlh',
-    'nav-skills': 'laHmey',
-    'nav-experience': 'Sov yIn',
-    'nav-education': 'ghojmeH',
-    'nav-projects': 'ta\'mey',
-    'nav-writing': 'ghItlh',
-    'section-summary': 'De\' potlh',
-    'section-competencies': 'laHmey QaQ',
-    'section-experience': 'Sov yIn batlh',
-    'section-education': 'ghojmeH Sov',
-    'summary-text': '25 DIS law\' <strong>De\'wI\' Sov</strong> vIghaj. DaH muD QaD vIra\' — VMP HoD jIH. AWS GCP muD law\' Qob nab, ra\', ta\' batlh. mIwmey QaQ chenmoH — muD QaD API lo\', Qu\' nap. <strong>nItbe\' jIHtaH, batlh jIta\'taH</strong> — Qob DoH, nIteb ta\'.',
-    'comp-leadership': 'ghomvam DevwI\'',
-    'comp-infra': 'nab pat',
-    'comp-ir': 'Qob tetlh',
-    'comp-ti': 'jagh Sov',
-    'comp-secops': 'QaD Qu\'',
-    'comp-vm': 'pagh Qub ra\'',
-    'comp-cloud': 'muD QaD · AWS · GCP',
-    'comp-zt': 'pagh voq mIw',
-    'comp-iac': 'Terraform · Ansible',
-    'comp-siem': 'SIEM · EDR · XDR',
-    'comp-pentest': 'muD QaD DuH',
-    'comp-devsecops': 'DevSecOps',
-    'comp-governance': 'ra\'taH \'ej nob',
-    'comp-cost': 'QaD mIwmey API',
-    'exp-sinch-role1': 'QaD po\'wI\' · 2023–DaH',
-    'exp-sinch-ul1': '<li>VMP HoD — muD law\' AWS GCP. Qob nab, ra\', ta\' batlh.</li><li>mIwmey QaQ chenmoH — muD QaD API lo\'. 40% Qu\' nap.</li><li>muD QaD DuH — IAM voq, network DoH, Qu\' joQ, container QaD.</li><li>CVE Qob HaD — Qub, DoH, jagh tu\'. DevwI\' \'ej chenmoHwI\' ra\'.</li><li>Hegh lughmeH EDR lo\' — jagh DaQaw\', DoH batlh.</li><li>Hoch QaD ra\' — DoH, IAM lateral jagh tu\'be\'.</li>',
-    'exp-sinch-role2': 'pat po\'wI\' · 2019–2023',
-    'exp-sinch-ul2': '<li>pat chenmoH — muD law\' \'ej nIteb.</li><li>SLA 99.998% — batlh HoS.</li><li>chu\' pat yIchu\' \'ej Huch nap.</li>',
-    'exp-cvc-role': 'pat ra\'wI\'',
-    'exp-cvc-ul': '<li>chu\' pat \'ej AWS yIchu\'.</li><li>ERP chenmoH: JDE + Weblogic + Oracle.</li><li>pat ngeD chu\' Daq.</li>',
-    'exp-folha-role': 'ra\'wI\'',
-    'exp-folha-ul': '<li>XEN joq VMware — chu\' web \'ej Dochvam.</li><li>2014 DIS — elections \'ej bID FIFA.</li>',
-    'exp-estadao-role': 'VMware po\'wI\' \'ej Linux HaDwI\'',
-    'exp-estadao-ul': '<li>VMware vSphere \'ej HP P4000 iSCSI.</li><li>Varnish \'ej Akamai CDN HA.</li>',
-    'exp-sterling-role': 'GIS \'ej Unix HaDwI\' QaQ',
-    'exp-sterling-ul': '<li>Itaú, HSBC, Votorantim, CEMIG — De\' ngeD.</li><li>Linux, Unix, Solaris HA — HoD patmey.</li>',
-    'exp-interdot-role': 'Linux HaDwI\'',
-    'exp-interdot-ul': '<li>network ra\' \'ej Windows joq Linux.</li><li>SLA boQ ngeD.</li>',
-    'edu-fasp': 'De\'wI\' chenmoHwI\' ghojmeH',
-    'edu-kaplan': 'DIvI\' Hol SIQ · Toronto, Canada',
-    'edu-fecap': 'De\' nab Qap ghojmeH',
-    'section-certs': 'batlh paq',
-    'section-languages': 'Hol',
-    'cert-cybersec': 'QaD ghojmoH',
-    'cert-offensive': 'HIv QaD ghojmoH',
-    'cert-defensive': 'DoH QaD ghojmoH',
-    'cert-sqs': 'AWS SQS: De\' ngeD',
-    'cert-leadership': 'DevwI\': Qu\' \'ej batlh',
-    'cert-governance': 'ra\'taH: Qu\' nab',
-    'lang-pt-name': 'portugheSHol',
-    'lang-pt-level': 'nativHol',
-    'lang-en-name': 'DIvI\' Hol',
-    'lang-en-level': 'B2 · po\'wI\'',
-    'lang-en-cert': 'Lingopass batlh · ID: 1673770441JM',
-    'footer-copy': '&gt; 2026_ Qapla\'!',
-  }
 };
 
 const themeNames = {
   en:  { green: '◈ Green', amber: '◈ Amber', blue: '◈ Blue',  light: '◈ Light' },
   pt:  { green: '◈ Verde', amber: '◈ Âmbar', blue: '◈ Azul',  light: '◈ Claro' },
-  tlh: { green: '◈ SuD',   amber: '◈ Doq',   blue: '◈ SuD',   light: '◈ wov'   },
 };
 function updateThemeBtn(currentTheme) {
   const btn = document.getElementById('theme-btn');
@@ -1721,65 +1648,29 @@ function updateThemeBtn(currentTheme) {
   btn.textContent = (themeNames[localStorage.getItem('lang') || 'en'] || themeNames.en)[next];
 }
 
-var pIqaDmap = [
-  ['tlh',''],['ch',''],['gh',''],['ng',''],
-  ['a',''],['b',''],['D',''],['e',''],
-  ['H',''],['I',''],['j',''],['l',''],
-  ['m',''],['n',''],['o',''],['p',''],
-  ['q',''],['Q',''],['r',''],['S',''],
-  ['t',''],['u',''],['v',''],['w',''],
-  ['y',''],["'",''],
-  ['0',''],['1',''],['2',''],['3',''],
-  ['4',''],['5',''],['6',''],['7',''],
-  ['8',''],['9','']
-];
-function toPlqaD(str) {
-  var out = '', i = 0;
-  while (i < str.length) {
-    var hit = false;
-    for (var j = 0; j < pIqaDmap.length; j++) {
-      var k = pIqaDmap[j][0];
-      if (str.substr(i, k.length) === k) { out += pIqaDmap[j][1]; i += k.length; hit = true; break; }
-    }
-    if (!hit) { out += str[i++]; }
-  }
-  return out;
-}
-function pIqaDwalk(el) {
-  el.childNodes.forEach(function(n) {
-    if (n.nodeType === 3) n.nodeValue = toPlqaD(n.nodeValue);
-    else if (n.nodeType === 1) pIqaDwalk(n);
-  });
-}
 function applyLang(lang) {
   document.querySelectorAll('[data-i18n]').forEach(el => {
     const v = i18n[lang]?.[el.dataset.i18n];
     if (v !== undefined) el.innerHTML = v;
   });
-  if (lang === 'tlh') {
-    document.querySelectorAll('[data-i18n]').forEach(function(el) { pIqaDwalk(el); });
-    document.body.classList.add('piqad-active');
-  } else {
-    document.body.classList.remove('piqad-active');
-  }
   if (i18n[lang]._title) document.title = i18n[lang]._title;
   const cvLink = document.getElementById('cv-link');
   if (cvLink) cvLink.href = lang === 'pt' ? '/cv/Julio-Mauro-CV-PT.pdf' : '/cv/Julio-Mauro-CV-EN.pdf';
   const btn = document.getElementById('lang-btn');
-  if (btn) btn.textContent = lang === 'en' ? '◈ PT-BR' : lang === 'pt' ? '◈ Klingon' : '◈ English';
+  if (btn) btn.textContent = lang === 'en' ? '◈ PT-BR' : '◈ English';
   localStorage.setItem('lang', lang);
   updateThemeBtn(document.documentElement.dataset.theme || 'blue');
 }
 function toggleLang() {
   const cur = localStorage.getItem('lang') || 'en';
-  applyLang(cur === 'en' ? 'pt' : cur === 'pt' ? 'tlh' : 'en');
+  applyLang(cur === 'en' ? 'pt' : 'en');
 }
 (function() {
   const qp = new URLSearchParams(window.location.search);
   const hp = new URLSearchParams(window.location.hash.includes('?') ? window.location.hash.split('?')[1] : '');
   const urlLang = qp.get('lang') || hp.get('lang');
   const lang = urlLang || localStorage.getItem('lang');
-  if (lang === 'en' || lang === 'pt' || lang === 'tlh') applyLang(lang);
+  if (lang === 'en' || lang === 'pt') applyLang(lang);
 })();
 
 function toggleTheme() {
