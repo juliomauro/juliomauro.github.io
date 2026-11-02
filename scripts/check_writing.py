@@ -25,8 +25,8 @@ def main():
     art_key_block = re.search(r"const ART_KEY = \{(.*?)\};", html, re.S).group(1)
     pairs = re.findall(r"'([^']+\.md)':\s*'([^']+)'", art_key_block)
 
-    i18n_titles = set(re.findall(r"'title-([a-z0-9]+)':", html))
-    i18n_descs = set(re.findall(r"'desc-([a-z0-9]+)':", html))
+    i18n_titles = set(re.findall(r"'title-([a-z0-9-]+)':", html))
+    i18n_descs = set(re.findall(r"'desc-([a-z0-9-]+)':", html))
     sitemap = (ROOT / "sitemap.xml").read_text(encoding="utf-8")
     feed = (ROOT / "feed.xml").read_text(encoding="utf-8") if (ROOT / "feed.xml").exists() else ""
 

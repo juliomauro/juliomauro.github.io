@@ -685,16 +685,16 @@ footer {
 
     <div class="section-label" data-i18n="section-latest">Latest</div>
 
-    <a class="article-item" data-tag="security" href="/writing/smart-sampa/"
-         data-path="security/smart-sampa-structural-cybersecurity-failures-and-contractual-fragility.md">
+    <a class="article-item" data-tag="security" href="/writing/broccoli2shell/"
+         data-path="security/broccoli2shell-one-vulnerability-three-names.md">
       <div class="article-inner">
         <div>
           <div class="article-meta">
-            <span class="article-tag security">Security · Incident Analysis · Government Infrastructure</span>
+            <span class="article-tag security">Security · Vulnerability Management · Supply Chain</span>
             <span class="article-level">// Foundational</span>
           </div>
-          <div class="article-title" data-i18n="title-smart-sampa">Smart Sampa: Structural Cybersecurity Failures and Contractual Fragility</div>
-          <div class="article-desc" data-i18n="desc-smart-sampa">An investigation into São Paulo's R$588 million facial-recognition camera program found exposed credentials, infostealer leaks dating to 2024, warnings ignored since 2022, and an AI vendor swapped into the contract by amendment months before the leak came to light.</div>
+          <div class="article-title" data-i18n="title-broccoli2shell">Broccoli2Shell: One Vulnerability, Three Names</div>
+          <div class="article-desc" data-i18n="desc-broccoli2shell">CVE-2026-111497, a 9.2-CVSS out-of-bounds write in Google's Brotli decoder, shipped under three different names across Node.js, .NET and Python — and what that naming confusion says about auditing transitive dependencies.</div>
         </div>
         <div class="article-arrow">→</div>
       </div>
@@ -800,6 +800,36 @@ footer {
 
     <div class="section-label" data-i18n="section-security">Security</div>
 
+    <a class="article-item" data-tag="security" href="/writing/smart-sampa/"
+         data-path="security/smart-sampa-structural-cybersecurity-failures-and-contractual-fragility.md">
+      <div class="article-inner">
+        <div>
+          <div class="article-meta">
+            <span class="article-tag security">Security · Incident Analysis · Government Infrastructure</span>
+            <span class="article-level">// Foundational</span>
+          </div>
+          <div class="article-title" data-i18n="title-smart-sampa">Smart Sampa: Structural Cybersecurity Failures and Contractual Fragility</div>
+          <div class="article-desc" data-i18n="desc-smart-sampa">An investigation into São Paulo's R$588 million facial-recognition camera program found exposed credentials, infostealer leaks dating to 2024, warnings ignored since 2022, and an AI vendor swapped into the contract by amendment months before the leak came to light.</div>
+        </div>
+        <div class="article-arrow">→</div>
+      </div>
+    </a>
+
+    <a class="article-item" data-tag="security" href="/writing/bootrom/"
+         data-path="security/bootrom-leak-the-key-95-million-ps5s-cant-replace.md">
+      <div class="article-inner">
+        <div>
+          <div class="article-meta">
+            <span class="article-tag security">Security · Hardware Root of Trust · Console Hacking</span>
+            <span class="article-level">// Advanced</span>
+          </div>
+          <div class="article-title" data-i18n="title-bootrom">BootROM Leak: The Key 95 Million PS5s Can't Replace</div>
+          <div class="article-desc" data-i18n="desc-bootrom">What actually leaked when PS5 BootROM key material surfaced online at the end of 2025 — why a key burned into silicon can't be patched like a kernel bug, and why most of the panic around it got ahead of the evidence.</div>
+        </div>
+        <div class="article-arrow">→</div>
+      </div>
+    </a>
+
     <a class="article-item" data-tag="security" href="/writing/relapse/"
          data-path="security/relapse-the-browser-bug-that-opened-the-ps5-kernel.md">
       <div class="article-inner">
@@ -840,21 +870,6 @@ footer {
           </div>
           <div class="article-title" data-i18n="title-misantropia">The "Misantropia" Incident: Brazil's National Alert System Failure</div>
           <div class="article-desc" data-i18n="desc-misantropia">How a teenager with five-year-old leaked credentials shut down Brazil's national emergency alert system — and what the exposed debug mode, SQL injection, and missing MFA say about critical public infrastructure security.</div>
-        </div>
-        <div class="article-arrow">→</div>
-      </div>
-    </a>
-
-    <a class="article-item" data-tag="security" href="/writing/bootrom/"
-         data-path="security/bootrom-leak-the-key-95-million-ps5s-cant-replace.md">
-      <div class="article-inner">
-        <div>
-          <div class="article-meta">
-            <span class="article-tag security">Security · Hardware Root of Trust · Console Hacking</span>
-            <span class="article-level">// Advanced</span>
-          </div>
-          <div class="article-title" data-i18n="title-bootrom">BootROM Leak: The Key 95 Million PS5s Can't Replace</div>
-          <div class="article-desc" data-i18n="desc-bootrom">What actually leaked when PS5 BootROM key material surfaced online at the end of 2025 — why a key burned into silicon can't be patched like a kernel bug, and why most of the panic around it got ahead of the evidence.</div>
         </div>
         <div class="article-arrow">→</div>
       </div>
@@ -957,6 +972,8 @@ const i18n = {
     'desc-misantropia': 'How a teenager with five-year-old leaked credentials shut down Brazil\'s national emergency alert system — and what the exposed debug mode, SQL injection, and missing MFA say about critical public infrastructure security.',
     'title-smart-sampa':'Smart Sampa: Structural Cybersecurity Failures and Contractual Fragility',
     'desc-smart-sampa': 'An investigation into São Paulo\'s R$588 million facial-recognition camera program found exposed credentials, infostealer leaks dating to 2024, warnings ignored since 2022, and an AI vendor swapped into the contract by amendment months before the leak came to light.',
+    'title-broccoli2shell':'Broccoli2Shell: One Vulnerability, Three Names',
+    'desc-broccoli2shell': 'CVE-2026-111497, a 9.2-CVSS out-of-bounds write in Google\'s Brotli decoder, shipped under three different names across Node.js, .NET and Python — and what that naming confusion says about auditing transitive dependencies.',
     'title-bootrom':    'BootROM Leak: The Key 95 Million PS5s Can\'t Replace',
     'desc-bootrom':     'What actually leaked when PS5 BootROM key material surfaced online at the end of 2025 — why a key burned into silicon can\'t be patched like a kernel bug, and why most of the panic around it got ahead of the evidence.',
     'title-php2shell':  'PHP2Shell: 72 Hours of Internet-Wide Panic',
@@ -998,6 +1015,8 @@ const i18n = {
     'desc-misantropia': 'Como um adolescente com credenciais vazadas há cinco anos derrubou o sistema nacional de alertas de emergência do Brasil — e o que o debug mode exposto, SQL injection e ausência de MFA dizem sobre a segurança de infraestrutura pública crítica.',
     'title-smart-sampa':'Smart Sampa: Falhas Estruturais de Cibersegurança e Fragilidade Contratual',
     'desc-smart-sampa': 'Uma investigação sobre o programa de câmeras com reconhecimento facial de R$ 588 milhões da Prefeitura de São Paulo encontrou credenciais expostas, vazamentos por infostealer desde 2024, alertas ignorados desde 2022, e um fornecedor de IA trocado por aditivo contratual meses antes do vazamento vir à tona.',
+    'title-broccoli2shell':'Broccoli2Shell: Uma Falha, Três Nomes',
+    'desc-broccoli2shell': 'CVE-2026-111497, um out-of-bounds write nota 9.2 no CVSS no decoder Brotli do Google, apareceu com três nomes diferentes em Node.js, .NET e Python — e o que essa confusão de nomenclatura diz sobre auditar dependências transitivas.',
     'title-bootrom':    'Vazamento do BootROM: A Chave Que 95 Milhões de PS5 Não Podem Trocar',
     'desc-bootrom':     'O que realmente vazou quando uma chave do BootROM do PS5 surgiu online no fim de 2025 — por que uma chave gravada em silício não se corrige como um bug de kernel, e por que boa parte do pânico atropelou as evidências.',
     'title-php2shell':  'PHP2Shell: 72 Horas de Pânico na Internet',
@@ -1120,6 +1139,51 @@ Este incidente evidencia que infraestruturas críticas para a segurança públic
 * **Revogação de Credenciais:** Entidades governamentais devem monitorar proativamente violações de dados públicos e fóruns da dark web para invalidar contas administrativas comprometidas antes que sejam exploradas.
 * **Suspensão e Auditoria do Sistema:** A plataforma deve permanecer offline até que uma revisão completa de código, remediação de vulnerabilidades e implementação de MFA sejam concluídas.
 * **Restauração da Confiança Pública:** Uma campanha de comunicação transparente é necessária para explicar as correções técnicas e garantir que os cidadãos não desativem as notificações de emergência em seus dispositivos, o que pode colocar vidas em risco durante desastres reais.`,
+
+  broccoli2shell: `# Broccoli2Shell: Uma Falha, Três Nomes
+
+> **Categoria:** Segurança · Gestão de Vulnerabilidades · Cadeia de Suprimentos
+> **Nível:** Fundamental
+
+---
+
+**CVE-2026-111497** é um out-of-bounds write no decoder Brotli do Google, nota 9.2 no CVSS v4.0, e já apareceu na imprensa de segurança com três apelidos diferentes: **Broccoli2Shell**, **Node2Shell** e **HTTP2Shell**. Nenhum vendor concordou em usar o mesmo nome, e isso diz mais sobre a falha do que parece à primeira vista: Brotli não é uma biblioteca de um produto, é uma biblioteca de compressão que está dentro de praticamente tudo que fala HTTP. O nome "HTTP2Shell" nem é preciso — a falha não tem nada de específico com HTTP/2, só reflete o jeito mais comum de entregar o payload.
+
+A falha afeta libbrotli 1.0.3 a 1.0.9, 1.1.0 e 1.2.0. Google e o projeto Node.js lançaram correção em 21 de outubro, cobrindo as linhas 22.x, 24.x e 26.x. A Microsoft seguiu quatro dias depois com patch fora do ciclo normal: .NET 8.0.33, 9.0.22, 10.0.14, e a Release Candidate 3 do .NET 11. Os pacotes Python \`brotli\` e \`brotlicffi\` também já têm release corrigida.
+
+## Por Que Não é Culpa do Seu Código
+
+Assim como o PHP2Shell, essa não é uma falha que nasce de uma decisão ruim na sua aplicação. É um bug no decoder de descompressão em si — a parte do código que roda quando seu servidor (ou seu runtime) recebe uma resposta comprimida com Brotli e precisa descomprimir ela antes de fazer qualquer outra coisa. Ter Node.js instalado não te deixa vulnerável sozinho: o requisito é que a aplicação descomprima dados Brotli vindos de alguém que você não controla — exatamente o que acontece o tempo todo em requisições HTTP com \`Content-Encoding: br\`.
+
+## O Que Realmente Quebra
+
+O decoder Brotli lê o stream comprimido em blocos, trocando de estado conforme avança. Um stream malformado consegue forçar uma troca de bloco inválida que o decoder não rejeita — ele trata como um pedido legítimo por mais input. Dependendo de como a aplicação reage a esse estado inconsistente, o resultado vai de crash do processo a vazamento de memória, até execução remota de código.
+
+Quem assinou a descoberta foi o Red Team da Imperva, que batizou a falha de "Node2Shell" em relatório técnico publicado em 22 de outubro, demonstrando execução de código contra a imagem oficial do Node.js 24.22.0 em Linux ARM64 — a própria Imperva reconheceu que precisou de várias tentativas pra conseguir, não é um exploit trivial de primeira tacada. Uma prova de conceito pública que circulou no mesmo dia só conseguiu execução de código numa build de teste deliberadamente enfraquecida; contra uma build padrão, o resultado era crash e leitura limitada de memória, não RCE direto. É o mesmo padrão do PHP2Shell: a primeira onda de PoC sempre parece pior (ou melhor, do ponto de vista do atacante) do que realmente é, até alguém testar contra um alvo de verdade.
+
+## Uma Biblioteca, Dúzias de Patches
+
+O que esse incidente expõe bem é a cadeia de dependência transitiva que ninguém audita. Brotli não é algo que a maioria dos times escolhe conscientemente — ele vem embutido no runtime (Node.js), no framework (.NET), na linguagem (os bindings Python), silenciosamente, como parte do suporte nativo a \`Content-Encoding: br\`. Corrigir essa falha não foi um patch, foram vários patches, publicados em dias diferentes, por vendors diferentes, cada um correndo atrás da mesma causa raiz vinda de um projeto que a maioria dos seus desenvolvedores nunca ouviu falar.
+
+Tem uma pegadinha a mais aqui que vale destacar pra quem trabalha com gestão de vulnerabilidades: atualizar a Brotli do sistema operacional **não resolve** aplicações que empacotam sua própria cópia estática da biblioteca. Se o seu inventário rastreia só os pacotes de primeiro nível do \`package.json\` ou do gerenciador de pacotes do SO, essa é exatamente o tipo de exposição que passa batido — a dependência vulnerável não está na sua lista de dependências diretas, está duas ou três camadas abaixo, e pode estar duplicada: uma cópia do sistema já corrigida, e uma cópia vendorizada dentro de um binário que ninguém pensou em re-escanear.
+
+## O Que se Sabe Sobre Exploração
+
+A linha do tempo de exploração seguiu o roteiro clássico de todo CVE com CVSS alto e vetor relativamente simples de reproduzir. Em 23 de outubro, pesquisadores ainda diziam não haver exploração confirmada em produção. Em 27 de outubro isso mudou: a CISA adicionou o CVE-2026-111497 ao catálogo KEV (Known Exploited Vulnerabilities), com prazo de remediação até 10 de novembro pra agências federais americanas — sem detalhar os ataques observados. No mesmo dia, a empresa de honeypots Previdian registrou uma tentativa de exploração vinda de um IP nos EUA, mas a própria análise concluiu que o exploit usado estava quebrado; como a Previdian mesma ressalta, um honeypot captar uma tentativa não significa que ela teria funcionado contra um alvo real.
+
+Em resumo: PoC pública desde 22 de outubro, listagem na KEV em 27, volume de tentativas registradas ainda baixo e majoritariamente malsucedido — mas o padrão de sempre se repete. Assim que existe um CVE com CVSS alto, varredura automatizada normalmente já está rodando antes da cobertura da imprensa se estabilizar, e esperar por confirmação de exploração "séria" antes de patchear é sempre a aposta errada.
+
+## Mitigar Sem Atualizar
+
+Pra quem não consegue atualizar na hora, a mitigação de borda é mais direta que a do PHP2Shell: bloquear requisições com \`Content-Encoding: br\` no proxy reverso ou firewall, ou desabilitar o suporte a Brotli no runtime até aplicar o patch. Isso funciona porque, diferente do \`session.upload_progress\`, o vetor de ataque passa por um cabeçalho HTTP padrão e visível — mais fácil de filtrar na borda do que um recurso enterrado no motor da aplicação.
+
+## Compressão é Infraestrutura Invisível
+
+Ninguém escolhe o Brotli. Ele vem ligado por padrão, faz seu trabalho sem chamar atenção, e por isso nunca entra na conversa de "quais bibliotecas de terceiros a gente audita". É o mesmo padrão do \`session.upload_progress\` no PHP2Shell: o componente mais perigoso não é o que você escolheu usar, é o que já estava ligado antes de você decidir qualquer coisa — só que dessa vez, espalhado por três ecossistemas de linguagem diferentes ao mesmo tempo.
+
+---
+
+*Relacionado: [BleepingComputer — CISA warns of hackers now exploiting critical Node2Shell flaw](https://bleepingcomputer.com/news/security/cisa-warns-of-hackers-now-exploiting-critical-node2shell-flaw) · [SecurityWeek — CISA Warns of Node2Shell Exploitation as Honeypots Log Attack Attempts](https://www.securityweek.com/cisa-warns-of-node2shell-exploitation-as-honeypots-log-attack-attempts/amp/) · [Sysdig — Detecting the Node.js Brotli RCE](https://www.sysdig.com/blog/node2shell-cve-2026-111497-detecting-the-node-js-brotli-rce)*`,
 
   'smart-sampa': `# Smart Sampa: Falhas Estruturais de Cibersegurança e Fragilidade Contratual
 
@@ -1978,6 +2042,7 @@ Separadamente, um vazamento das chaves do BootROM do PS5 no fim de 2025 não hab
 };
 
 const ART_KEY = {
+  'security/broccoli2shell-one-vulnerability-three-names.md': 'broccoli2shell',
   'security/bootrom-leak-the-key-95-million-ps5s-cant-replace.md': 'bootrom',
   'security/php2shell-72-hours-of-internet-wide-panic.md':   'php2shell',
   'security/relapse-the-browser-bug-that-opened-the-ps5-kernel.md': 'relapse',

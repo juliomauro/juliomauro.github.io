@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Broccoli2Shell: One Vulnerability, Three Names — Julio Cesar Mauro</title>
+<meta name="description" content="CVE-2026-111497, a 9.2-CVSS out-of-bounds write in Google's Brotli decoder, shipped under three different names across Node.js, .NET and Python — and what that naming confusion says about auditing transitive dependencies.">
+<link rel="canonical" href="https://oruam.cloud/writing/broccoli2shell/">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' fill='%23000308'/><text x='6' y='23' font-size='20' fill='%2300b4ff' font-family='monospace'>_</text></svg>">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://oruam.cloud/writing/broccoli2shell/">
+<meta property="og:title" content="Broccoli2Shell: One Vulnerability, Three Names">
+<meta property="og:description" content="CVE-2026-111497, a 9.2-CVSS out-of-bounds write in Google's Brotli decoder, shipped under three different names across Node.js, .NET and Python — and what that naming confusion says about auditing transitive dependencies.">
+<meta property="og:image" content="https://oruam.cloud/og/broccoli2shell.png">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Broccoli2Shell: One Vulnerability, Three Names">
+<meta name="twitter:description" content="CVE-2026-111497, a 9.2-CVSS out-of-bounds write in Google's Brotli decoder, shipped under three different names across Node.js, .NET and Python — and what that naming confusion says about auditing transitive dependencies.">
+<meta name="twitter:image" content="https://oruam.cloud/og/broccoli2shell.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+<script>(function(){var t=localStorage.getItem('theme');if(t==='green'||t==='amber'||t==='light')document.documentElement.dataset.theme=t;})();</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "Broccoli2Shell: One Vulnerability, Three Names",
+  "description": "CVE-2026-111497, a 9.2-CVSS out-of-bounds write in Google's Brotli decoder, shipped under three different names across Node.js, .NET and Python — and what that naming confusion says about auditing transitive dependencies.",
+  "author": { "@type": "Person", "name": "Julio Cesar Mauro", "alternateName": "Julio Mauro", "url": "https://oruam.cloud" },
+  "publisher": { "@type": "Person", "name": "Julio Cesar Mauro" },
+  "mainEntityOfPage": { "@type": "WebPage", "@id": "https://oruam.cloud/writing/broccoli2shell/" },
+  "image": "https://oruam.cloud/og/broccoli2shell.png",
+  "inLanguage": "en"
+}
+</script>
+<style>
+:root {
+  --bg:          #000308;
+  --surface:     #020810;
+  --border:      #003388;
+  --green:       #00b4ff;
+  --green-mid:   #0088cc;
+  --green-dim:   #00b4ff22;
+  --text:        #00bbee;
+  --text-dim:    #0088bb;
+  --white:       #cce8ff;
+  --glow:        0 0 10px #00b4ff66, 0 0 20px #00b4ff33;
+  --glow-strong: 0 0 8px #00b4ff, 0 0 20px #00b4ff88, 0 0 40px #00b4ff44;
+}
+
+[data-theme="green"] {
+  --bg:          #000300;
+  --surface:     #020b02;
+  --border:      #003300;
+  --green:       #00ff41;
+  --green-mid:   #00cc33;
+  --green-dim:   #00aa2233;
+  --text:        #00cc33;
+  --text-dim:    #006622;
+  --white:       #ccffcc;
+  --glow:        0 0 10px #00ff4166, 0 0 20px #00ff4133;
+  --glow-strong: 0 0 8px #00ff41, 0 0 20px #00ff4188, 0 0 40px #00ff4144;
+}
+[data-theme="green"] nav { background: rgba(0,3,0,0.95); }
+
+[data-theme="amber"] {
+  --bg:          #020100;
+  --surface:     #0a0500;
+  --border:      #663300;
+  --green:       #ff8c00;
+  --green-mid:   #cc6600;
+  --green-dim:   #ff8c0033;
+  --text:        #ee7700;
+  --text-dim:    #bb5500;
+  --white:       #ffe8cc;
+  --glow:        0 0 10px #ff8c0066, 0 0 20px #ff8c0033;
+  --glow-strong: 0 0 8px #ff8c00, 0 0 20px #ff8c0088, 0 0 40px #ff8c0044;
+}
+[data-theme="amber"] nav { background: rgba(2,1,0,0.95); }
+
+[data-theme="light"] {
+  --bg:          #f5f2eb;
+  --surface:     #eae6db;
+  --border:      #b0a888;
+  --green:       #1a5c3a;
+  --green-mid:   #2a7a50;
+  --green-dim:   rgba(26,92,58,0.1);
+  --text:        #1a3a28;
+  --text-dim:    #5a7a68;
+  --white:       #0a1a10;
+  --glow:        none;
+  --glow-strong: none;
+}
+[data-theme="light"] body           { background: #f5f2eb; }
+[data-theme="light"] nav            { background: rgba(245,242,235,0.95); }
+[data-theme="light"] body::after    { background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.04) 2px, rgba(0,0,0,0.04) 4px); }
+[data-theme="light"] body::before   { background: radial-gradient(ellipse at center, transparent 60%, rgba(0,0,0,0.08) 100%); }
+[data-theme="light"] h1             { animation: none; color: var(--green); text-shadow: none; }
+[data-theme="light"] #matrix-canvas { opacity: 0.035; }
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Share Tech Mono', monospace;
+  line-height: 1.7;
+  overflow-x: hidden;
+  min-height: 100vh;
+}
+
+#matrix-canvas {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  z-index: 0;
+  opacity: 0.06;
+  pointer-events: none;
+}
+
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg, transparent, transparent 2px,
+    rgba(0,0,0,0.12) 2px, rgba(0,0,0,0.12) 4px
+  );
+  pointer-events: none;
+  z-index: 999;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(ellipse at center, transparent 60%, rgba(0,0,0,0.7) 100%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.wrap {
+  position: relative;
+  z-index: 10;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 0 32px;
+}
+
+nav {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(0,3,8,0.95);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--border);
+  padding: 14px 0;
+}
+
+.nav-inner {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+}
+
+.nav-home {
+  font-family: 'Orbitron', monospace;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--green);
+  text-decoration: none;
+  text-shadow: var(--glow);
+  letter-spacing: 2px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.nav-home::before { content: '←'; }
+
+nav a.nav-link {
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text);
+  text-decoration: none;
+  transition: all 0.2s;
+}
+
+nav a.nav-link:hover {
+  color: var(--green);
+  text-shadow: var(--glow);
+}
+
+.nav-controls {
+  margin-left: auto;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.theme-toggle {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  background: none;
+  border: 1px solid var(--border);
+  padding: 4px 10px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.theme-toggle:hover {
+  color: var(--green);
+  border-color: var(--green-mid);
+  background: var(--green-dim);
+}
+
+#article-view {
+  padding: 40px 0 80px;
+}
+
+.art-back {
+  margin-bottom: 40px;
+}
+
+.back-btn {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 12px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  background: none;
+  border: 1px solid var(--border);
+  padding: 6px 16px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.back-btn:hover {
+  color: var(--green);
+  border-color: var(--green-mid);
+  background: var(--green-dim);
+  box-shadow: var(--glow);
+}
+
+.art-body {
+  max-width: 760px;
+}
+
+.article-meta {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.article-tag {
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  padding: 3px 10px;
+  border: 1px solid var(--border);
+  color: var(--text-dim);
+}
+.article-tag.security { color: #ff6644; border-color: #ff664444; }
+
+.article-level {
+  font-size: 11px;
+  letter-spacing: 1px;
+  color: var(--text-dim);
+}
+
+.share-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+  margin: 18px 0 0;
+}
+
+.share-label {
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+
+.share-btn {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  background: none;
+  border: 1px solid var(--border);
+  padding: 5px 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.share-btn:hover {
+  color: var(--green);
+  border-color: var(--green-mid);
+  background: var(--green-dim);
+  box-shadow: var(--glow);
+}
+
+.art-body h1 {
+  font-family: 'Orbitron', monospace;
+  font-size: clamp(20px, 3vw, 30px);
+  font-weight: 900;
+  color: var(--green);
+  text-shadow: var(--glow-strong);
+  letter-spacing: 1px;
+  margin: 0 0 28px;
+  line-height: 1.3;
+}
+
+.art-body h2 {
+  font-family: 'Orbitron', monospace;
+  font-size: clamp(14px, 2vw, 18px);
+  font-weight: 700;
+  color: var(--green);
+  letter-spacing: 1px;
+  margin: 40px 0 14px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+}
+
+.art-body h3 {
+  font-size: 15px;
+  color: var(--text);
+  letter-spacing: 1px;
+  margin: 28px 0 10px;
+}
+
+.art-body p {
+  font-size: 15px;
+  color: var(--white);
+  line-height: 1.85;
+  margin-bottom: 16px;
+}
+
+.art-body ul, .art-body ol {
+  margin: 0 0 16px 24px;
+}
+
+.art-body li {
+  font-size: 15px;
+  color: var(--white);
+  line-height: 1.85;
+  margin-bottom: 6px;
+}
+
+.art-body li::marker { color: var(--green-mid); }
+
+.art-body blockquote {
+  border-left: 3px solid var(--green-mid);
+  padding: 8px 20px;
+  margin: 20px 0;
+  background: var(--surface);
+  color: var(--text-dim);
+  font-size: 14px;
+}
+
+.art-body pre {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--green-mid);
+  padding: 16px 20px;
+  margin: 20px 0;
+  overflow-x: auto;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.art-body pre code {
+  color: var(--text);
+  background: none;
+  padding: 0;
+  font-family: 'Share Tech Mono', monospace;
+}
+
+.art-body code {
+  color: var(--green);
+  background: var(--green-dim);
+  padding: 2px 6px;
+  font-size: 13px;
+  font-family: 'Share Tech Mono', monospace;
+}
+
+.art-body a {
+  color: var(--green-mid);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  transition: color 0.15s;
+}
+.art-body a:hover { color: var(--green); }
+
+.art-body hr {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 36px 0;
+}
+
+footer {
+  padding: 40px 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid var(--border);
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.footer-sig {
+  font-family: 'Orbitron', monospace;
+  font-size: 13px;
+  color: var(--green);
+  text-shadow: var(--glow);
+  letter-spacing: 2px;
+}
+
+.footer-copy {
+  font-size: 11px;
+  color: var(--text-dim);
+  letter-spacing: 2px;
+}
+
+@media (max-width: 640px) {
+  .wrap { padding: 0 16px; }
+  .nav-inner { gap: 8px; }
+  .nav-home { font-size: 10px; letter-spacing: 1px; }
+  nav a.nav-link { font-size: 10px; }
+  .theme-toggle { font-size: 9px; padding: 4px 7px; }
+}
+
+
+[hidden] { display: none !important; }
+</style>
+<script data-goatcounter="https://oruam.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</head>
+<body>
+
+<canvas id="matrix-canvas"></canvas>
+
+<nav>
+  <div class="wrap">
+    <div class="nav-inner">
+      <a href="/" class="nav-home">ORUAM.CLOUD</a>
+      <a href="/projects/" class="nav-link"><span class="en">Projects</span><span class="pt" hidden>Projetos</span></a>
+      <a href="/writing/" class="nav-link"><span class="en">Writing</span><span class="pt" hidden>Textos</span></a>
+      <div class="nav-controls">
+        <button class="theme-toggle" id="theme-btn" onclick="toggleTheme()">◈ Green</button>
+        <button class="theme-toggle" id="lang-btn" onclick="toggleLang()">PT-BR</button>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<div class="wrap">
+  <div id="article-view">
+    <div class="art-back">
+      <a class="back-btn" href="/writing/" style="display:inline-block; text-decoration:none;">
+        <span class="en">← Writing</span><span class="pt" hidden>← Textos</span>
+      </a>
+    </div>
+    <div class="article-meta" style="margin-bottom:20px;">
+      <span class="article-tag security">Security · Vulnerability Management · Supply Chain</span>
+      <span class="article-level">// Foundational</span>
+    </div>
+    <div class="share-row">
+      <span class="share-label"><span class="en">Share:</span><span class="pt" hidden>Compartilhar:</span></span>
+      <button class="share-btn" onclick="shareTo('linkedin')" type="button">LinkedIn</button>
+      <button class="share-btn" onclick="shareTo('whatsapp')" type="button">WhatsApp</button>
+      <button class="share-btn" onclick="shareTo('telegram')" type="button">Telegram</button>
+      <button class="share-btn" onclick="shareTo('copy')" type="button"><span class="en">Copy URL</span><span class="pt" hidden>Copiar link</span></button>
+    </div>
+    <div class="art-body en">
+<h1>Broccoli2Shell: One Vulnerability, Three Names</h1>
+<div style="height:12px"></div>
+<blockquote><strong>Category:</strong> Security · Vulnerability Management · Supply Chain</blockquote>
+<blockquote><strong>Level:</strong> Foundational</blockquote>
+<div style="height:12px"></div>
+<hr>
+<div style="height:12px"></div>
+<p><strong>CVE-2026-111497</strong> is an out-of-bounds write in Google's Brotli decoder, scored 9.2 on CVSS v4.0, and it's already shown up in security coverage under three different nicknames: <strong>Broccoli2Shell</strong>, <strong>Node2Shell</strong>, and <strong>HTTP2Shell</strong>. No vendor settled on the same name, and that says more about the bug than it first looks like: Brotli isn't a library one product uses, it's a compression library sitting inside almost anything that speaks HTTP. The "HTTP2Shell" name isn't even accurate — the bug has nothing specific to do with HTTP/2, it just reflects the most common way the payload gets delivered.</p>
+<div style="height:12px"></div>
+<p>The flaw affects libbrotli 1.0.3 through 1.0.9, 1.1.0, and 1.2.0. Google and the Node.js project shipped fixes on October 21, covering the 22.x, 24.x, and 26.x release lines. Microsoft followed four days later with an out-of-band patch: .NET 8.0.33, 9.0.22, 10.0.14, and the Release Candidate 3 of .NET 11. The Python <code>brotli</code> and <code>brotlicffi</code> packages also have patched releases out.</p>
+<div style="height:12px"></div>
+<h2>Why This Isn't Your Code's Fault</h2>
+<div style="height:12px"></div>
+<p>Like PHP2Shell, this isn't a bug born from a bad decision in your application. It lives in the decompression decoder itself — the part of the code that runs when your server (or your runtime) receives a Brotli-compressed response and has to decompress it before anything else happens. Having Node.js installed doesn't make you vulnerable on its own: the requirement is that the application decompresses Brotli data coming from someone you don't control — exactly what happens constantly in HTTP requests carrying <code>Content-Encoding: br</code>.</p>
+<div style="height:12px"></div>
+<h2>What Actually Breaks</h2>
+<div style="height:12px"></div>
+<p>The Brotli decoder reads the compressed stream in blocks, switching state as it goes. A malformed stream can force an invalid block switch that the decoder doesn't reject — it treats it as a legitimate request for more input. Depending on how the application reacts to that inconsistent state, the result ranges from a process crash to memory disclosure, up to remote code execution.</p>
+<div style="height:12px"></div>
+<p>Imperva's Red Team is credited with the discovery, coining the name "Node2Shell" in a technical report published October 22, demonstrating real code execution against the official Node.js 24.22.0 image on Linux ARM64 — Imperva itself noted the run took several attempts, this isn't a trivial, first-try exploit. A public proof of concept that circulated the same day only achieved code execution against a deliberately weakened test build; against a standard build, the result was a crash and limited memory reads, not direct RCE. It's the same pattern as PHP2Shell: the first wave of PoC always looks worse (or better, from an attacker's perspective) than it actually is, until someone tests it against a real target.</p>
+<div style="height:12px"></div>
+<h2>One Library, Dozens of Patches</h2>
+<div style="height:12px"></div>
+<p>What this incident exposes well is the transitive dependency chain nobody audits. Brotli isn't something most teams consciously choose — it ships embedded in the runtime (Node.js), in the framework (.NET), in the language bindings (Python), silently, as part of native support for <code>Content-Encoding: br</code>. Fixing this bug wasn't one patch, it was several patches, published on different days, by different vendors, each chasing the same root cause coming from a project most of their own developers have never heard of.</p>
+<div style="height:12px"></div>
+<p>There's an extra catch worth calling out for anyone doing vulnerability management: patching the operating system's Brotli library does <strong>not</strong> fix applications that bundle their own static copy of the library. If your inventory only tracks top-level packages in <code>package.json</code> or the OS package manager, this is exactly the kind of exposure that slips through — the vulnerable dependency isn't on your list of direct dependencies, it's two or three layers down, and it may be duplicated: a system copy already patched, and a vendored copy inside a binary nobody thought to rescan.</p>
+<div style="height:12px"></div>
+<h2>What's Known About Exploitation</h2>
+<div style="height:12px"></div>
+<p>The exploitation timeline followed the usual script for any high-CVSS, relatively easy-to-reproduce CVE. On October 23, researchers still said there was no confirmed exploitation in production. That changed on October 27: CISA added CVE-2026-111497 to its Known Exploited Vulnerabilities (KEV) catalog, with a remediation deadline of November 10 for US federal agencies — without detailing the observed attacks. The same day, honeypot firm Previdian logged an exploitation attempt from a US-based IP, but its own analysis found the exploit used was broken; as Previdian itself notes, a honeypot catching an attempt doesn't mean it would have worked against a real target.</p>
+<div style="height:12px"></div>
+<p>In short: public PoC since October 22, KEV listing on the 27th, recorded attempt volume still low and mostly unsuccessful — but the usual pattern repeats anyway. The moment a high-CVSS CVE exists, automated scanning is usually already running before press coverage settles, and waiting for confirmation of "serious" exploitation before patching is always the wrong bet.</p>
+<div style="height:12px"></div>
+<h2>Mitigating Without Patching</h2>
+<div style="height:12px"></div>
+<p>For anyone who can't update right away, the edge mitigation here is more direct than PHP2Shell's: block requests carrying <code>Content-Encoding: br</code> at the reverse proxy or firewall, or disable Brotli support in the runtime until the patch is applied. That works because, unlike <code>session.upload_progress</code>, this attack vector rides on a standard, visible HTTP header — easier to filter at the edge than a feature buried in the application engine.</p>
+<div style="height:12px"></div>
+<h2>Compression Is Invisible Infrastructure</h2>
+<div style="height:12px"></div>
+<p>Nobody chooses Brotli. It ships enabled by default, does its job without drawing attention, and because of that it never enters the conversation about "which third-party libraries do we audit." It's the same pattern as <code>session.upload_progress</code> in PHP2Shell: the most dangerous component isn't the one you chose to use, it's the one that was already switched on before you decided anything — except this time, spread across three different language ecosystems at once.</p>
+<div style="height:12px"></div>
+<hr>
+<div style="height:12px"></div>
+<p><em>Related: <a href="https://bleepingcomputer.com/news/security/cisa-warns-of-hackers-now-exploiting-critical-node2shell-flaw" target="_blank" rel="noopener">BleepingComputer — CISA warns of hackers now exploiting critical Node2Shell flaw</a> · <a href="https://www.securityweek.com/cisa-warns-of-node2shell-exploitation-as-honeypots-log-attack-attempts/amp/" target="_blank" rel="noopener">SecurityWeek — CISA Warns of Node2Shell Exploitation as Honeypots Log Attack Attempts</a> · <a href="https://www.sysdig.com/blog/node2shell-cve-2026-111497-detecting-the-node-js-brotli-rce" target="_blank" rel="noopener">Sysdig — Detecting the Node.js Brotli RCE</a></em></p>
+<div style="height:12px"></div>
+    </div>
+    <div class="art-body pt" hidden>
+<h1>Broccoli2Shell: Uma Falha, Três Nomes</h1>
+<div style="height:12px"></div>
+<blockquote><strong>Categoria:</strong> Segurança · Gestão de Vulnerabilidades · Cadeia de Suprimentos</blockquote>
+<blockquote><strong>Nível:</strong> Fundamental</blockquote>
+<div style="height:12px"></div>
+<hr>
+<div style="height:12px"></div>
+<p><strong>CVE-2026-111497</strong> é um out-of-bounds write no decoder Brotli do Google, nota 9.2 no CVSS v4.0, e já apareceu na imprensa de segurança com três apelidos diferentes: <strong>Broccoli2Shell</strong>, <strong>Node2Shell</strong> e <strong>HTTP2Shell</strong>. Nenhum vendor concordou em usar o mesmo nome, e isso diz mais sobre a falha do que parece à primeira vista: Brotli não é uma biblioteca de um produto, é uma biblioteca de compressão que está dentro de praticamente tudo que fala HTTP. O nome "HTTP2Shell" nem é preciso — a falha não tem nada de específico com HTTP/2, só reflete o jeito mais comum de entregar o payload.</p>
+<div style="height:12px"></div>
+<p>A falha afeta libbrotli 1.0.3 a 1.0.9, 1.1.0 e 1.2.0. Google e o projeto Node.js lançaram correção em 21 de outubro, cobrindo as linhas 22.x, 24.x e 26.x. A Microsoft seguiu quatro dias depois com patch fora do ciclo normal: .NET 8.0.33, 9.0.22, 10.0.14, e a Release Candidate 3 do .NET 11. Os pacotes Python <code>brotli</code> e <code>brotlicffi</code> também já têm release corrigida.</p>
+<div style="height:12px"></div>
+<h2>Por Que Não é Culpa do Seu Código</h2>
+<div style="height:12px"></div>
+<p>Assim como o PHP2Shell, essa não é uma falha que nasce de uma decisão ruim na sua aplicação. É um bug no decoder de descompressão em si — a parte do código que roda quando seu servidor (ou seu runtime) recebe uma resposta comprimida com Brotli e precisa descomprimir ela antes de fazer qualquer outra coisa. Ter Node.js instalado não te deixa vulnerável sozinho: o requisito é que a aplicação descomprima dados Brotli vindos de alguém que você não controla — exatamente o que acontece o tempo todo em requisições HTTP com <code>Content-Encoding: br</code>.</p>
+<div style="height:12px"></div>
+<h2>O Que Realmente Quebra</h2>
+<div style="height:12px"></div>
+<p>O decoder Brotli lê o stream comprimido em blocos, trocando de estado conforme avança. Um stream malformado consegue forçar uma troca de bloco inválida que o decoder não rejeita — ele trata como um pedido legítimo por mais input. Dependendo de como a aplicação reage a esse estado inconsistente, o resultado vai de crash do processo a vazamento de memória, até execução remota de código.</p>
+<div style="height:12px"></div>
+<p>Quem assinou a descoberta foi o Red Team da Imperva, que batizou a falha de "Node2Shell" em relatório técnico publicado em 22 de outubro, demonstrando execução de código contra a imagem oficial do Node.js 24.22.0 em Linux ARM64 — a própria Imperva reconheceu que precisou de várias tentativas pra conseguir, não é um exploit trivial de primeira tacada. Uma prova de conceito pública que circulou no mesmo dia só conseguiu execução de código numa build de teste deliberadamente enfraquecida; contra uma build padrão, o resultado era crash e leitura limitada de memória, não RCE direto. É o mesmo padrão do PHP2Shell: a primeira onda de PoC sempre parece pior (ou melhor, do ponto de vista do atacante) do que realmente é, até alguém testar contra um alvo de verdade.</p>
+<div style="height:12px"></div>
+<h2>Uma Biblioteca, Dúzias de Patches</h2>
+<div style="height:12px"></div>
+<p>O que esse incidente expõe bem é a cadeia de dependência transitiva que ninguém audita. Brotli não é algo que a maioria dos times escolhe conscientemente — ele vem embutido no runtime (Node.js), no framework (.NET), na linguagem (os bindings Python), silenciosamente, como parte do suporte nativo a <code>Content-Encoding: br</code>. Corrigir essa falha não foi um patch, foram vários patches, publicados em dias diferentes, por vendors diferentes, cada um correndo atrás da mesma causa raiz vinda de um projeto que a maioria dos seus desenvolvedores nunca ouviu falar.</p>
+<div style="height:12px"></div>
+<p>Tem uma pegadinha a mais aqui que vale destacar pra quem trabalha com gestão de vulnerabilidades: atualizar a Brotli do sistema operacional <strong>não resolve</strong> aplicações que empacotam sua própria cópia estática da biblioteca. Se o seu inventário rastreia só os pacotes de primeiro nível do <code>package.json</code> ou do gerenciador de pacotes do SO, essa é exatamente o tipo de exposição que passa batido — a dependência vulnerável não está na sua lista de dependências diretas, está duas ou três camadas abaixo, e pode estar duplicada: uma cópia do sistema já corrigida, e uma cópia vendorizada dentro de um binário que ninguém pensou em re-escanear.</p>
+<div style="height:12px"></div>
+<h2>O Que se Sabe Sobre Exploração</h2>
+<div style="height:12px"></div>
+<p>A linha do tempo de exploração seguiu o roteiro clássico de todo CVE com CVSS alto e vetor relativamente simples de reproduzir. Em 23 de outubro, pesquisadores ainda diziam não haver exploração confirmada em produção. Em 27 de outubro isso mudou: a CISA adicionou o CVE-2026-111497 ao catálogo KEV (Known Exploited Vulnerabilities), com prazo de remediação até 10 de novembro pra agências federais americanas — sem detalhar os ataques observados. No mesmo dia, a empresa de honeypots Previdian registrou uma tentativa de exploração vinda de um IP nos EUA, mas a própria análise concluiu que o exploit usado estava quebrado; como a Previdian mesma ressalta, um honeypot captar uma tentativa não significa que ela teria funcionado contra um alvo real.</p>
+<div style="height:12px"></div>
+<p>Em resumo: PoC pública desde 22 de outubro, listagem na KEV em 27, volume de tentativas registradas ainda baixo e majoritariamente malsucedido — mas o padrão de sempre se repete. Assim que existe um CVE com CVSS alto, varredura automatizada normalmente já está rodando antes da cobertura da imprensa se estabilizar, e esperar por confirmação de exploração "séria" antes de patchear é sempre a aposta errada.</p>
+<div style="height:12px"></div>
+<h2>Mitigar Sem Atualizar</h2>
+<div style="height:12px"></div>
+<p>Pra quem não consegue atualizar na hora, a mitigação de borda é mais direta que a do PHP2Shell: bloquear requisições com <code>Content-Encoding: br</code> no proxy reverso ou firewall, ou desabilitar o suporte a Brotli no runtime até aplicar o patch. Isso funciona porque, diferente do <code>session.upload_progress</code>, o vetor de ataque passa por um cabeçalho HTTP padrão e visível — mais fácil de filtrar na borda do que um recurso enterrado no motor da aplicação.</p>
+<div style="height:12px"></div>
+<h2>Compressão é Infraestrutura Invisível</h2>
+<div style="height:12px"></div>
+<p>Ninguém escolhe o Brotli. Ele vem ligado por padrão, faz seu trabalho sem chamar atenção, e por isso nunca entra na conversa de "quais bibliotecas de terceiros a gente audita". É o mesmo padrão do <code>session.upload_progress</code> no PHP2Shell: o componente mais perigoso não é o que você escolheu usar, é o que já estava ligado antes de você decidir qualquer coisa — só que dessa vez, espalhado por três ecossistemas de linguagem diferentes ao mesmo tempo.</p>
+<div style="height:12px"></div>
+<hr>
+<div style="height:12px"></div>
+<p><em>Relacionado: <a href="https://bleepingcomputer.com/news/security/cisa-warns-of-hackers-now-exploiting-critical-node2shell-flaw" target="_blank" rel="noopener">BleepingComputer — CISA warns of hackers now exploiting critical Node2Shell flaw</a> · <a href="https://www.securityweek.com/cisa-warns-of-node2shell-exploitation-as-honeypots-log-attack-attempts/amp/" target="_blank" rel="noopener">SecurityWeek — CISA Warns of Node2Shell Exploitation as Honeypots Log Attack Attempts</a> · <a href="https://www.sysdig.com/blog/node2shell-cve-2026-111497-detecting-the-node-js-brotli-rce" target="_blank" rel="noopener">Sysdig — Detecting the Node.js Brotli RCE</a></em></p>
+<div style="height:12px"></div>
+    </div>
+  </div>
+
+  <footer>
+    <div class="footer-sig">ORUAM_OLIUJ</div>
+    <div class="footer-copy"><span class="en">&gt; oruam.cloud/writing · 2026_</span><span class="pt" hidden>&gt; oruam.cloud/writing · 2026_</span></div>
+  </footer>
+</div>
+
+<script>
+const canvas = document.getElementById('matrix-canvas');
+const ctx = canvas.getContext('2d');
+canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+window.addEventListener('resize', () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; init(); });
+const chars = 'アイウエオカキクケコ0123456789ABCDEF$#@%&';
+const fontSize = 16;
+let columns, drops;
+function init() { columns = Math.floor(canvas.width / fontSize); drops = Array(columns).fill(1); }
+function draw() {
+  const theme = document.documentElement.dataset.theme;
+  ctx.fillStyle = theme === 'green' ? 'rgba(0,3,0,0.04)' : theme === 'amber' ? 'rgba(2,1,0,0.04)' : theme === 'light' ? 'rgba(245,242,235,0.06)' : 'rgba(0,3,8,0.04)';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  ctx.fillStyle = theme === 'green' ? '#00ff41' : theme === 'amber' ? '#ff8c00' : theme === 'light' ? '#1a5c3a' : '#00b4ff';
+  ctx.font = fontSize + 'px Share Tech Mono';
+  for (let i = 0; i < drops.length; i++) {
+    const char = chars[Math.floor(Math.random() * chars.length)];
+    ctx.fillText(char, i * fontSize, drops[i] * fontSize);
+    if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
+    drops[i]++;
+  }
+}
+init(); setInterval(draw, 45);
+
+const themeNames = {
+  en: { green: '◈ Green', amber: '◈ Amber', blue: '◈ Blue', light: '◈ Light' },
+  pt: { green: '◈ Verde', amber: '◈ Âmbar', blue: '◈ Azul', light: '◈ Claro' },
+};
+function currentLang() {
+  const qp = new URLSearchParams(window.location.search);
+  const urlLang = qp.get('lang');
+  if (urlLang === 'en' || urlLang === 'pt') return urlLang;
+  return localStorage.getItem('lang') === 'pt' ? 'pt' : 'en';
+}
+function nextTheme(cur) { cur = cur || 'blue'; return cur==='blue'?'green':cur==='green'?'amber':cur==='amber'?'light':'blue'; }
+function updateThemeBtn(cur) { document.getElementById('theme-btn').textContent = themeNames[currentLang()][nextTheme(cur)]; }
+function toggleTheme() {
+  const html = document.documentElement;
+  const next = nextTheme(html.dataset.theme);
+  html.dataset.theme = next === 'blue' ? '' : next;
+  localStorage.setItem('theme', next);
+  updateThemeBtn(next);
+}
+
+function setLang(lang) {
+  document.querySelectorAll('.en').forEach(el => el.hidden = (lang !== 'en'));
+  document.querySelectorAll('.pt').forEach(el => el.hidden = (lang !== 'pt'));
+  document.getElementById('lang-btn').textContent = lang === 'en' ? 'PT-BR' : 'ENGLISH';
+  document.documentElement.lang = lang;
+  localStorage.setItem('lang', lang);
+  updateThemeBtn(document.documentElement.dataset.theme);
+}
+function toggleLang() { setLang(currentLang() === 'en' ? 'pt' : 'en'); }
+
+function shareTo(platform) {
+  const url = window.location.href;
+  const title = document.title.replace(/ — Julio Cesar Mauro$/, '');
+  const u = encodeURIComponent(url);
+  const t = encodeURIComponent(title);
+  if (platform === 'linkedin') {
+    window.open('https://www.linkedin.com/sharing/share-offsite/?url=' + u, '_blank', 'noopener');
+  } else if (platform === 'whatsapp') {
+    window.open('https://wa.me/?text=' + encodeURIComponent(title + ' ' + url), '_blank', 'noopener');
+  } else if (platform === 'telegram') {
+    window.open('https://t.me/share/url?url=' + u + '&text=' + t, '_blank', 'noopener');
+  } else if (platform === 'copy') {
+    const btn = event.target.closest('button');
+    const original = btn.innerHTML;
+    navigator.clipboard.writeText(url).then(() => {
+      btn.innerHTML = (currentLang() === 'pt') ? 'Link copiado!' : 'Link copied!';
+      setTimeout(() => { btn.innerHTML = original; }, 1800);
+    }).catch(() => { alert(url); });
+  }
+}
+setLang(currentLang());
+</script>
+</body>
+</html>

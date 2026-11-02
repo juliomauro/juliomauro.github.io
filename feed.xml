@@ -8,6 +8,22 @@
   <atom:link href="https://oruam.cloud/feed.xml" rel="self" type="application/rss+xml"/>
 
   <item>
+    <title>Broccoli2Shell: One Vulnerability, Three Names</title>
+    <link>https://oruam.cloud/writing/broccoli2shell/</link>
+    <guid>https://oruam.cloud/writing/broccoli2shell/</guid>
+    <pubDate>Mon, 02 Nov 2026 17:39:06 -0300</pubDate>
+    <description>CVE-2026-111497, a 9.2-CVSS out-of-bounds write in Google's Brotli decoder, shipped under three different names across Node.js, .NET and Python — and what that naming confusion says about auditing transitive dependencies.</description>
+  </item>
+
+  <item>
+    <title>Smart Sampa: Structural Cybersecurity Failures and Contractual Fragility</title>
+    <link>https://oruam.cloud/writing/smart-sampa/</link>
+    <guid>https://oruam.cloud/writing/smart-sampa/</guid>
+    <pubDate>Wed, 28 Oct 2026 19:20:41 -0300</pubDate>
+    <description>An investigation into São Paulo's R$588 million facial-recognition camera program found exposed credentials, infostealer leaks dating to 2024, warnings ignored since 2022, and an AI vendor swapped into the contract by amendment months before the leak came to light.</description>
+  </item>
+
+  <item>
     <title>BootROM Leak: The Key 95 Million PS5s Can't Replace</title>
     <link>https://oruam.cloud/writing/bootrom/</link>
     <guid>https://oruam.cloud/writing/bootrom/</guid>
