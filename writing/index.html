@@ -685,16 +685,16 @@ footer {
 
     <div class="section-label" data-i18n="section-latest">Latest</div>
 
-    <a class="article-item" data-tag="security" href="/writing/broccoli2shell/"
-         data-path="security/broccoli2shell-one-vulnerability-three-names.md">
+    <a class="article-item" data-tag="security" href="/writing/binance/"
+         data-path="security/binance-the-laptop-that-doesnt-explain-6-3-billion.md">
       <div class="article-inner">
         <div>
           <div class="article-meta">
-            <span class="article-tag security">Security · Vulnerability Management · Supply Chain</span>
+            <span class="article-tag security">Security · Incident Response · Digital Assets</span>
             <span class="article-level">// Foundational</span>
           </div>
-          <div class="article-title" data-i18n="title-broccoli2shell">Broccoli2Shell: One Vulnerability, Three Names</div>
-          <div class="article-desc" data-i18n="desc-broccoli2shell">CVE-2026-111497, a 9.2-CVSS out-of-bounds write in Google's Brotli decoder, shipped under three different names across Node.js, .NET and Python — and what that naming confusion says about auditing transitive dependencies.</div>
+          <div class="article-title" data-i18n="title-binance">Binance: The Laptop That Doesn't Explain $6.3 Billion</div>
+          <div class="article-desc" data-i18n="desc-binance">A compromised DevOps laptop was Binance's first explanation for the largest crypto theft in history. It didn't hold. What the $6.3 billion heist's EIP-7702 sweeper mechanism, the Bybit parallel, and the FBI's TraderTraitor attribution actually show.</div>
         </div>
         <div class="article-arrow">→</div>
       </div>
@@ -799,6 +799,21 @@ footer {
     </a>
 
     <div class="section-label" data-i18n="section-security">Security</div>
+
+    <a class="article-item" data-tag="security" href="/writing/broccoli2shell/"
+         data-path="security/broccoli2shell-one-vulnerability-three-names.md">
+      <div class="article-inner">
+        <div>
+          <div class="article-meta">
+            <span class="article-tag security">Security · Vulnerability Management · Supply Chain</span>
+            <span class="article-level">// Foundational</span>
+          </div>
+          <div class="article-title" data-i18n="title-broccoli2shell">Broccoli2Shell: One Vulnerability, Three Names</div>
+          <div class="article-desc" data-i18n="desc-broccoli2shell">CVE-2026-111497, a 9.2-CVSS out-of-bounds write in Google's Brotli decoder, shipped under three different names across Node.js, .NET and Python — and what that naming confusion says about auditing transitive dependencies.</div>
+        </div>
+        <div class="article-arrow">→</div>
+      </div>
+    </a>
 
     <a class="article-item" data-tag="security" href="/writing/smart-sampa/"
          data-path="security/smart-sampa-structural-cybersecurity-failures-and-contractual-fragility.md">
@@ -974,6 +989,8 @@ const i18n = {
     'desc-smart-sampa': 'An investigation into São Paulo\'s R$588 million facial-recognition camera program found exposed credentials, infostealer leaks dating to 2024, warnings ignored since 2022, and an AI vendor swapped into the contract by amendment months before the leak came to light.',
     'title-broccoli2shell':'Broccoli2Shell: One Vulnerability, Three Names',
     'desc-broccoli2shell': 'CVE-2026-111497, a 9.2-CVSS out-of-bounds write in Google\'s Brotli decoder, shipped under three different names across Node.js, .NET and Python — and what that naming confusion says about auditing transitive dependencies.',
+    'title-binance':'Binance: The Laptop That Doesn\'t Explain $6.3 Billion',
+    'desc-binance': 'A compromised DevOps laptop was Binance\'s first explanation for the largest crypto theft in history. It didn\'t hold. What the $6.3 billion heist\'s EIP-7702 sweeper mechanism, the Bybit parallel, and the FBI\'s TraderTraitor attribution actually show.',
     'title-bootrom':    'BootROM Leak: The Key 95 Million PS5s Can\'t Replace',
     'desc-bootrom':     'What actually leaked when PS5 BootROM key material surfaced online at the end of 2025 — why a key burned into silicon can\'t be patched like a kernel bug, and why most of the panic around it got ahead of the evidence.',
     'title-php2shell':  'PHP2Shell: 72 Hours of Internet-Wide Panic',
@@ -1017,6 +1034,8 @@ const i18n = {
     'desc-smart-sampa': 'Uma investigação sobre o programa de câmeras com reconhecimento facial de R$ 588 milhões da Prefeitura de São Paulo encontrou credenciais expostas, vazamentos por infostealer desde 2024, alertas ignorados desde 2022, e um fornecedor de IA trocado por aditivo contratual meses antes do vazamento vir à tona.',
     'title-broccoli2shell':'Broccoli2Shell: Uma Falha, Três Nomes',
     'desc-broccoli2shell': 'CVE-2026-111497, um out-of-bounds write nota 9.2 no CVSS no decoder Brotli do Google, apareceu com três nomes diferentes em Node.js, .NET e Python — e o que essa confusão de nomenclatura diz sobre auditar dependências transitivas.',
+    'title-binance':'Binance: O Laptop Que Não Explica US$ 6,3 Bilhões',
+    'desc-binance': 'Um laptop comprometido de DevOps foi a primeira explicação da Binance pro maior roubo de cripto da história. Não se sustentou. O que o mecanismo de sweeper EIP-7702 do roubo de US$ 6,3 bilhões, o paralelo com a Bybit, e a atribuição do FBI ao TraderTraitor realmente mostram.',
     'title-bootrom':    'Vazamento do BootROM: A Chave Que 95 Milhões de PS5 Não Podem Trocar',
     'desc-bootrom':     'O que realmente vazou quando uma chave do BootROM do PS5 surgiu online no fim de 2025 — por que uma chave gravada em silício não se corrige como um bug de kernel, e por que boa parte do pânico atropelou as evidências.',
     'title-php2shell':  'PHP2Shell: 72 Horas de Pânico na Internet',
@@ -1139,6 +1158,77 @@ Este incidente evidencia que infraestruturas críticas para a segurança públic
 * **Revogação de Credenciais:** Entidades governamentais devem monitorar proativamente violações de dados públicos e fóruns da dark web para invalidar contas administrativas comprometidas antes que sejam exploradas.
 * **Suspensão e Auditoria do Sistema:** A plataforma deve permanecer offline até que uma revisão completa de código, remediação de vulnerabilidades e implementação de MFA sejam concluídas.
 * **Restauração da Confiança Pública:** Uma campanha de comunicação transparente é necessária para explicar as correções técnicas e garantir que os cidadãos não desativem as notificações de emergência em seus dispositivos, o que pode colocar vidas em risco durante desastres reais.`,
+
+  binance: `# Binance: O Laptop Que Não Explica US$ 6,3 Bilhões
+
+> **Categoria:** Segurança · Resposta a Incidentes · Ativos Digitais
+> **Nível:** Fundamental
+
+---
+
+Entre 20h04 e 23h56 UTC de 29 de outubro de 2026, o sistema de saques da própria Binance assinou e liberou **US$ 6,3 bilhões** de **17 carteiras quentes**, espalhados por **9 blockchains**, pra uma conta que não era de nenhum cliente. O maior roubo de criptoativos já registrado — maior que o da Bybit (~US$ 1,5 bilhão, fevereiro de 2025), maior que o da Coincheck, maior que qualquer coisa antes dele. Em menos de quatro horas, uma fatia relevante de um dos maiores exchanges do mundo simplesmente saiu pela porta.
+
+A primeira explicação da Binance durou pouco. E é exatamente aí que esse caso fica interessante pra quem trabalha com segurança: não é a história de uma chave privada vazada, é a história de uma explicação que foi encolhendo conforme a investigação avançava.
+
+## A Explicação Que Não Resistiu
+
+Nas primeiras horas, a versão da Binance era direta: um **laptop comprometido de um engenheiro de DevOps** teria dado a um agente externo acesso a um container de serviço interno, permitindo a submissão de transações de saque não autorizadas. Uma história limpa, com um culpado específico (um dispositivo), uma causa específica (phishing ou malware num laptop) e uma lição óbvia (proteja os endpoints de quem tem acesso privilegiado).
+
+Não demorou pra essa versão não se sustentar. O co-CEO **Richard Teng** recuou publicamente, dizendo que o ataque envolveu um processo "mais complexo" do que o uso indevido das permissões de um único laptop. A Binance confirmou ter identificado **"pontos de violação adicionais"** além do laptop original — sem detalhar quais. Até a publicação deste texto, a empresa não divulgou como o laptop foi comprometido em primeiro lugar, nem confirmou se as carteiras afetadas usavam MPC, multisig, ou outro esquema de assinatura. Um post-mortem técnico completo e uma prova de reservas atualizada foram prometidos, mas ainda não saíram.
+
+Isso não é incomum — é o padrão. A primeira explicação de qualquer incidente grande quase sempre é a mais simples de contar e a mais incompleta de verdade, porque sai antes da investigação forense terminar.
+
+## O Que Realmente Aconteceu
+
+Reconstruções técnicas da TRM Labs e da Elliptic descrevem o mecanismo central: uma única transação reuniu **50 autorizações pré-assinadas no formato EIP-7702** (o padrão do Ethereum que permite uma conta comum — EOA — se comportar temporariamente como um contrato inteligente), redirecionando uma carteira quente da Binance pra um **contrato "sweeper"** — um contrato desenhado só pra varrer o saldo de uma carteira assim que ela aponta pra ele.
+
+O ponto crítico: as transações de saque carregavam **assinaturas válidas da própria infraestrutura de carteiras quentes da Binance**. Não houve vazamento de chave privada — a Binance foi categórica nisso. O que aconteceu foi que o atacante, tendo alcançado o container de serviço via o laptop comprometido, conseguiu fazer o **sistema de assinatura legítimo aprovar transações que nunca deveriam ter sido aprovadas**. O caminho de validação que deveria ter barrado esses saques simplesmente não barrou.
+
+Isso é uma distinção importante e é o tipo de detalhe que separa "a chave vazou" de "o processo que decide o que assinar foi enganado" — dois problemas completamente diferentes, com defesas completamente diferentes.
+
+## MPC Protege a Chave, Não a Decisão
+
+Esse incidente expôs um ponto que analistas de custódia (Fireblocks publicou uma análise em 30 de outubro) vinham discutindo de forma mais teórica até agora: **MPC (Multi-Party Computation) protege o material da chave, mas não protege a camada de orquestração que decide quando e o que vai ser assinado**.
+
+Dividir uma chave privada entre múltiplas partes, de forma que nenhuma parte sozinha consiga reconstruí-la, é uma defesa real contra roubo direto de chave. Mas se o sistema que instrui os nós de MPC sobre o que assinar for comprometido — e é exatamente esse sistema que decide "assine esta transação de saque" — a chave nunca precisa ser roubada. Ela faz exatamente o que foi projetada pra fazer: assinar o que foi mandado assinar. O problema não é a criptografia, é a camada de decisão em volta dela.
+
+Fireblocks apontou como defesas reais pra esse tipo de cenário: controles de política granulares, simulação de transação antes da assinatura (prever o resultado on-chain antes de aprovar), e restrições de delegação — exatamente os controles que, aparentemente, não pegaram 50 autorizações EIP-7702 saindo de uma vez só pra um contrato desconhecido.
+
+## O Paralelo Com a Bybit
+
+Esse padrão — a proteção criptográfica funcionando perfeitamente, e o ataque acontecendo na camada que decide ou mostra o que está sendo assinado — não é novo. É quase idêntico, estruturalmente, ao que aconteceu com a **Bybit em fevereiro de 2025** (~US$ 1,5 bilhão, majoritariamente em ETH).
+
+Na Bybit, o vetor foi diferente: JavaScript malicioso injetado na interface do Safe{Wallet} através de uma máquina de desenvolvedor comprometida (alguns relatos apontam credenciais AWS phishadas como ponto de entrada). O multisig era 2-de-3. Os três signatários viam, na tela, uma transação legítima — endereço de destino correto, URL correta, tudo batendo. Mas o payload que de fato chegava nos hardware wallets pra assinatura era outro: um delegatecall que trocava a masterCopy do contrato Safe por uma versão com backdoor. Os signatários assinaram exatamente o que viram na tela. O problema é que a tela estava mentindo.
+
+Bybit e Binance são, no fundo, a mesma lição contada de dois jeitos diferentes: **multisig e MPC protegem contra alguém roubar ou forjar uma assinatura, não contra o sistema em volta ser enganado pra pedir ou mostrar a assinatura errada**. Em ambos os casos, o mecanismo de assinatura funcionou perfeitamente — assinou exatamente o que foi instruído a assinar. A falha estava inteiramente em quem (ou o quê) decidia o que seria instruído.
+
+## Quem Está Por Trás
+
+A atribuição aqui seguiu uma hierarquia de confiança que vale notar. Primeiro vieram as firmas de inteligência blockchain: **TRM Labs** (com o que chamam de alta confiança, citando inteligência on-chain e off-chain), **Chainalysis**, e o investigador independente **ZachXBT**, todos apontando pro **TraderTraitor** — a unidade do **Lazarus Group**, ligado à Coreia do Norte. TRM citou características específicas batendo com ataques anteriores do grupo: as mesmas pequenas movimentações de "staging" via Tornado Cash bem antes do golpe principal, e mistura de fundos ligada a outros ataques já atribuídos a eles.
+
+Em **1º de novembro**, o **FBI confirmou oficialmente** a atribuição ao TraderTraitor, prevendo que os ativos roubados serão lavados via DeFi e serviços de swap instantâneo, e observando conversão em andamento pra Ethereum. O FBI também ligou esse ataque diretamente ao grupo responsável pela Bybit — mesmo ator, tradecraft parecido, quase dois anos de intervalo.
+
+Vale registrar a ressalva: nem toda a atribuição pública está alinhada. O presidente americano declarou publicamente "não sabemos se é a Coreia do Norte", mesmo depois da confirmação do FBI — um lembrete de que atribuição geopolítica de ataques cibernéticos raramente é unânime, mesmo quando agências técnicas e de inteligência convergem.
+
+## A Corrida Pra Conter o Dano
+
+A resposta de contenção foi rápida pros padrões do setor. **Tether** congelou mais de US$ 1,5 bilhão, **Circle** mais de US$ 800 milhões — entre as duas, e com outros parceiros, cerca de **US$ 3 bilhões** dos fundos sacados já estavam congelados na manhã seguinte ao ataque (30 de outubro). A Binance anunciou que **repôs cerca de 90% do valor roubado com capital próprio**, garantindo publicamente que usuários não arcariam com a perda. Saques foram retomados em fases a partir de **1º de novembro**.
+
+O impacto de mercado foi imediato mas contido: bitcoin caiu pra uma mínima de seis semanas, por volta de **US$ 76.368**, antes de se recuperar parcialmente.
+
+## O Que Ainda Falta Saber
+
+Reunindo o que está confirmado contra o que ainda está em aberto:
+
+**Confirmado:** o valor aproximado (~US$ 6,3 bilhões, com alguma variação entre fontes), a janela de tempo (20h04–23h56 UTC, 29/10), o número de carteiras e blockchains afetadas, o mecanismo on-chain (50 autorizações EIP-7702 redirecionando pra um sweeper), que as assinaturas eram válidas e nenhuma chave privada vazou, a atribuição ao TraderTraitor pelo FBI, e a resposta de contenção (congelamentos, reposição de 90%, retomada de saques).
+
+**Ainda não confirmado publicamente:** como o laptop do engenheiro foi comprometido originalmente, quais foram exatamente os "pontos de violação adicionais" que a Binance mencionou, se as carteiras afetadas usavam MPC, multisig ou outro esquema, e o valor final exato do roubo (as estimativas ainda variam entre US$ 5,9 e 6,7 bilhões dependendo da fonte).
+
+O post-mortem técnico completo prometido pela Binance é o documento que vai, de fato, decidir se esse foi um incidente isolado de um engenheiro específico ou uma falha sistêmica no modelo de acesso privilegiado da exchange. Até lá, qualquer reconstrução — inclusive esta — é baseada em inteligência de terceiros (TRM, Elliptic, Chainalysis) e declarações parciais da própria Binance, não num relatório forense completo e oficial.
+
+---
+
+*Relacionado: [BleepingComputer — Binance links $6.3 billion crypto theft to compromised DevOps laptop](https://www.bleepingcomputer.com/news/security/binance-links-63-billion-crypto-theft-to-compromised-devops-laptop/amp/) · [BleepingComputer — FBI links $6.3 billion Binance crypto heist to North Korean hackers](https://www.bleepingcomputer.com/news/security/fbi-links-63-billion-binance-crypto-heist-to-north-korean-hackers/) · [Forbes — Binance Lost $6.3 Billion In 20 Minutes](https://forbes.com/sites/digital-assets/2026/11/02/binance-lost-63-billion-in-20-minutes-who-holds-the-keys) · [CBC — Binance says vast majority of stolen $6.3B replaced](https://www.cbc.ca/news/world/binance-hack-north-korea-9.7404502) · [NCC Group — In-Depth Technical Analysis of the Bybit Hack](https://nccgroup.com/sg/research-blog/in-depth-technical-analysis-of-the-bybit-hack)*`,
 
   broccoli2shell: `# Broccoli2Shell: Uma Falha, Três Nomes
 
@@ -2042,6 +2132,7 @@ Separadamente, um vazamento das chaves do BootROM do PS5 no fim de 2025 não hab
 };
 
 const ART_KEY = {
+  'security/binance-the-laptop-that-doesnt-explain-6-3-billion.md': 'binance',
   'security/broccoli2shell-one-vulnerability-three-names.md': 'broccoli2shell',
   'security/bootrom-leak-the-key-95-million-ps5s-cant-replace.md': 'bootrom',
   'security/php2shell-72-hours-of-internet-wide-panic.md':   'php2shell',
