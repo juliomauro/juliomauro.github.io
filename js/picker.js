@@ -28,7 +28,7 @@
 
   var css = '' +
     '.nav-controls { gap: 10px; }' +
-    '.nav-controls .theme-toggle { font-size: 12px; padding: 8px 16px; border-radius: 6px;' +
+    '.nav-controls .theme-toggle { font-size: 12px; padding: 8px 16px; border-radius: 6px; white-space: nowrap;' +
     '  color: var(--green); border-color: var(--green-mid); transition: background-color 0.2s; }' +
     '.pk-wrap { position: relative; display: inline-flex; }' +
     '.pk-menu { position: absolute; top: calc(100% + 6px); right: 0; z-index: 1000; min-width: 200px;' +

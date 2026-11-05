@@ -924,6 +924,9 @@ footer {
 h1 { animation: glitch 8s ease infinite; }
 
 /* ── RESPONSIVE ── */
+/* the section links share the nav with the theme and language pickers */
+@media (max-width: 960px) { .pk-key { display: none; } }
+@media (max-width: 820px) { nav a[href^="#"] { display: none; } }
 @media (max-width: 640px) {
   .header-main { grid-template-columns: 1fr; }
   .avatar-wrap { display: none; }
@@ -1154,6 +1157,24 @@ h1 { animation: glitch 8s ease infinite; }
   <div id="matrix-intro-text"><span id="matrix-cursor"></span></div>
 </div>
 
+<!-- NAV -->
+<nav>
+  <div class="wrap">
+    <div class="nav-inner">
+      <a href="#summary" data-i18n="nav-summary">Summary</a>
+      <a href="#competencies" data-i18n="nav-skills">Skills</a>
+      <a href="#experience" data-i18n="nav-experience">Experience</a>
+      <a href="#education" data-i18n="nav-education">Education</a>
+      <a href="/projects/" data-i18n="nav-projects">Projects</a>
+      <a href="/writing/" data-i18n="nav-writing">Writing</a>
+      <div class="nav-controls">
+        <button class="theme-toggle" id="theme-btn" onclick="toggleTheme()">◈ Green</button>
+        <button class="theme-toggle" id="lang-btn" onclick="toggleLang()">◈ PT-BR</button>
+      </div>
+    </div>
+  </div>
+</nav>
+
 <div class="wrap">
 
   <!-- HEADER -->
@@ -1186,21 +1207,6 @@ h1 { animation: glitch 8s ease infinite; }
     </div>
   </header>
 
-  <!-- NAV -->
-  <nav>
-    <div class="nav-inner">
-      <a href="#summary" data-i18n="nav-summary">Summary</a>
-      <a href="#competencies" data-i18n="nav-skills">Skills</a>
-      <a href="#experience" data-i18n="nav-experience">Experience</a>
-      <a href="#education" data-i18n="nav-education">Education</a>
-      <a href="/projects/" data-i18n="nav-projects">Projects</a>
-      <a href="/writing/" data-i18n="nav-writing">Writing</a>
-      <div class="nav-controls">
-        <button class="theme-toggle" id="theme-btn" onclick="toggleTheme()">◈ Green</button>
-        <button class="theme-toggle" id="lang-btn" onclick="toggleLang()">◈ PT-BR</button>
-      </div>
-    </div>
-  </nav>
 
   <!-- SUMMARY -->
   <section id="summary">
