@@ -8,6 +8,14 @@
   <atom:link href="https://oruam.cloud/feed.xml" rel="self" type="application/rss+xml"/>
 
   <item>
+    <title>Linux Wasn't Ready for This</title>
+    <link>https://oruam.cloud/writing/linux-ai/</link>
+    <guid>https://oruam.cloud/writing/linux-ai/</guid>
+    <pubDate>Wed, 11 Nov 2026 17:49:21 -0300</pubDate>
+    <description>AI made finding Linux kernel bugs cheap. It did not make fixing them cheaper. Duplicate reports, a CVE count heading to 2,000, deleted subsystems, the end of embargo culture, and the one part of the kernel no machine can sign.</description>
+  </item>
+
+  <item>
     <title>Binance: The Laptop That Doesn't Explain $6.3 Billion</title>
     <link>https://oruam.cloud/writing/binance/</link>
     <guid>https://oruam.cloud/writing/binance/</guid>

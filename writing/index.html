@@ -685,16 +685,16 @@ footer {
 
     <div class="section-label" data-i18n="section-latest">Latest</div>
 
-    <a class="article-item" data-tag="security" href="/writing/binance/"
-         data-path="security/binance-the-laptop-that-doesnt-explain-6-3-billion.md">
+    <a class="article-item" data-tag="linux" href="/writing/linux-ai/"
+         data-path="linux/linux-wasnt-ready-for-this.md">
       <div class="article-inner">
         <div>
           <div class="article-meta">
-            <span class="article-tag security">Security · Incident Response · Digital Assets</span>
+            <span class="article-tag linux">Linux · Open Source · AI</span>
             <span class="article-level">// Foundational</span>
           </div>
-          <div class="article-title" data-i18n="title-binance">Binance: The Laptop That Doesn't Explain $6.3 Billion</div>
-          <div class="article-desc" data-i18n="desc-binance">A compromised DevOps laptop was Binance's first explanation for the largest crypto theft in history. It didn't hold. What the $6.3 billion heist's EIP-7702 sweeper mechanism, the Bybit parallel, and the FBI's TraderTraitor attribution actually show.</div>
+          <div class="article-title" data-i18n="title-linux-ai">Linux Wasn't Ready for This</div>
+          <div class="article-desc" data-i18n="desc-linux-ai">AI made finding Linux kernel bugs cheap. It did not make fixing them cheaper. Duplicate reports, a CVE count heading to 2,000, deleted subsystems, the end of embargo culture, and the one part of the kernel no machine can sign.</div>
         </div>
         <div class="article-arrow">→</div>
       </div>
@@ -799,6 +799,21 @@ footer {
     </a>
 
     <div class="section-label" data-i18n="section-security">Security</div>
+
+    <a class="article-item" data-tag="security" href="/writing/binance/"
+         data-path="security/binance-the-laptop-that-doesnt-explain-6-3-billion.md">
+      <div class="article-inner">
+        <div>
+          <div class="article-meta">
+            <span class="article-tag security">Security · Incident Response · Digital Assets</span>
+            <span class="article-level">// Foundational</span>
+          </div>
+          <div class="article-title" data-i18n="title-binance">Binance: The Laptop That Doesn't Explain $6.3 Billion</div>
+          <div class="article-desc" data-i18n="desc-binance">A compromised DevOps laptop was Binance's first explanation for the largest crypto theft in history. It didn't hold. What the $6.3 billion heist's EIP-7702 sweeper mechanism, the Bybit parallel, and the FBI's TraderTraitor attribution actually show.</div>
+        </div>
+        <div class="article-arrow">→</div>
+      </div>
+    </a>
 
     <a class="article-item" data-tag="security" href="/writing/broccoli2shell/"
          data-path="security/broccoli2shell-one-vulnerability-three-names.md">
@@ -989,6 +1004,8 @@ const i18n = {
     'desc-smart-sampa': 'An investigation into São Paulo\'s R$588 million facial-recognition camera program found exposed credentials, infostealer leaks dating to 2024, warnings ignored since 2022, and an AI vendor swapped into the contract by amendment months before the leak came to light.',
     'title-broccoli2shell':'Broccoli2Shell: One Vulnerability, Three Names',
     'desc-broccoli2shell': 'CVE-2026-111497, a 9.2-CVSS out-of-bounds write in Google\'s Brotli decoder, shipped under three different names across Node.js, .NET and Python — and what that naming confusion says about auditing transitive dependencies.',
+    'title-linux-ai':'Linux Wasn\'t Ready for This',
+    'desc-linux-ai': 'AI made finding Linux kernel bugs cheap. It did not make fixing them cheaper. Duplicate reports, a CVE count heading to 2,000, deleted subsystems, the end of embargo culture, and the one part of the kernel no machine can sign.',
     'title-binance':'Binance: The Laptop That Doesn\'t Explain $6.3 Billion',
     'desc-binance': 'A compromised DevOps laptop was Binance\'s first explanation for the largest crypto theft in history. It didn\'t hold. What the $6.3 billion heist\'s EIP-7702 sweeper mechanism, the Bybit parallel, and the FBI\'s TraderTraitor attribution actually show.',
     'title-bootrom':    'BootROM Leak: The Key 95 Million PS5s Can\'t Replace',
@@ -1034,6 +1051,8 @@ const i18n = {
     'desc-smart-sampa': 'Uma investigação sobre o programa de câmeras com reconhecimento facial de R$ 588 milhões da Prefeitura de São Paulo encontrou credenciais expostas, vazamentos por infostealer desde 2024, alertas ignorados desde 2022, e um fornecedor de IA trocado por aditivo contratual meses antes do vazamento vir à tona.',
     'title-broccoli2shell':'Broccoli2Shell: Uma Falha, Três Nomes',
     'desc-broccoli2shell': 'CVE-2026-111497, um out-of-bounds write nota 9.2 no CVSS no decoder Brotli do Google, apareceu com três nomes diferentes em Node.js, .NET e Python — e o que essa confusão de nomenclatura diz sobre auditar dependências transitivas.',
+    'title-linux-ai':'O Linux Não Estava Preparado Para Isso',
+    'desc-linux-ai': 'A IA deixou barato achar bug no kernel Linux. Não deixou mais barato consertar. Relatos duplicados, CVEs a caminho de 2.000 por versão, subsistemas apagados, o fim da cultura de embargo e a única parte do kernel que nenhuma máquina pode assinar.',
     'title-binance':'Binance: O Laptop Que Não Explica US$ 6,3 Bilhões',
     'desc-binance': 'Um laptop comprometido de DevOps foi a primeira explicação da Binance pro maior roubo de cripto da história. Não se sustentou. O que o mecanismo de sweeper EIP-7702 do roubo de US$ 6,3 bilhões, o paralelo com a Bybit, e a atribuição do FBI ao TraderTraitor realmente mostram.',
     'title-bootrom':    'Vazamento do BootROM: A Chave Que 95 Milhões de PS5 Não Podem Trocar',
@@ -1159,6 +1178,96 @@ Este incidente evidencia que infraestruturas críticas para a segurança públic
 * **Suspensão e Auditoria do Sistema:** A plataforma deve permanecer offline até que uma revisão completa de código, remediação de vulnerabilidades e implementação de MFA sejam concluídas.
 * **Restauração da Confiança Pública:** Uma campanha de comunicação transparente é necessária para explicar as correções técnicas e garantir que os cidadãos não desativem as notificações de emergência em seus dispositivos, o que pode colocar vidas em risco durante desastres reais.`,
 
+  'linux-ai': `# O Linux Não Estava Preparado Para Isso
+
+> **Categoria:** Linux · Open Source · IA  
+> **Nível:** Fundamental
+
+---
+
+Em 2024, a lista privada de segurança do kernel Linux recebia dois ou três relatos de falha por semana. Em março de 2026, segundo o Willy Tarreau, o ritmo já estava entre cinco e dez por dia. O dado curioso não é o volume em si, é a taxa de acerto: a maioria desses relatos é válida. E é justamente aí que mora o problema.
+
+Ferramentas de IA derrubaram o custo de encontrar um bug. O custo de corrigir, testar, revisar e assumir a responsabilidade pela correção continua o mesmo, e recai sobre um grupo pequeno de mantenedores que cuida do software por trás da maior parte dos servidores da internet, do Android e de quase todos os supercomputadores. Esse descompasso é o assunto deste texto.
+
+## De Ruído a Ferramenta Séria
+
+Até pouco tempo atrás, relato gerado por IA era sinônimo de **AI slop**: texto convincente sobre falhas inexistentes, que não sobrevivia ao primeiro teste. Era fácil de identificar e mais fácil ainda de descartar.
+
+Segundo os próprios mantenedores, isso mudou de forma abrupta no início deste ano, num intervalo de semanas, sem uma causa clara. Os modelos melhoraram e os relatos assistidos por IA começaram a apontar problemas reais.
+
+**Greg Kroah-Hartman** deu um exemplo concreto: um pedido simples a uma dessas ferramentas devolveu **60 problemas, todos com proposta de correção**. Aproximadamente um terço estava errado. Os outros dois terços procediam, ainda que precisassem de ajuste humano. É um índice de erro relevante (os melhores modelos ainda falham em algo entre 25% e 33% dos casos, e sem demonstrar dúvida), mas para quem sempre fez esse trabalho manualmente, o ganho de escala é enorme.
+
+**Daniel Stenberg**, mantenedor do curl, descreve a mesma transição: os relatos inúteis praticamente desapareceram e deram lugar a algo mais difícil de administrar, volume alto com qualidade alta. Ou seja, a dificuldade nunca foi a IA errar. Começou quando ela passou a acertar.
+
+## Duplicatas em Escala
+
+A conclusão intuitiva seria: mais falhas encontradas, kernel mais seguro. Na prática, o que chega à lista é repetição. O mesmo defeito no subsistema de rede aparece três, quatro vezes, descrito com palavras diferentes, porque várias pessoas rodaram ferramentas parecidas (muitas vezes a mesma) contra o mesmo código.
+
+**Willy Tarreau**, que participa da triagem da lista, relatou exatamente esse cenário: situações inéditas todos os dias e um volume crescente de duplicatas. Em maio, **Linus Torvalds** aproveitou o anúncio de uma versão de testes pra registrar que a lista de segurança tinha se tornado praticamente ingerenciável, tomada por relatos repetidos com a mesma causa raiz.
+
+O reflexo aparece nos CVEs. O Linux 7.0 passou de 1.000, o 7.2 passou de 1.500, e a contagem por versão já se aproxima de 2.000, e a busca automatizada de falhas com IA é apontada como um dos fatores.
+
+Existe também um desequilíbrio de incentivos. Encontrar vulnerabilidade virou vitrine: empresas de IA divulgam scanners que varrem projetos open source e cada achado vira material de marketing. A correção, por outro lado, é custo, e quem arca com ele não é quem encontrou, é quem precisa validar, corrigir e manter.
+
+## Torvalds Não É Contra a IA
+
+Seria natural esperar uma reação de rejeição do projeto. Não foi o que aconteceu.
+
+Cerca de dois meses depois daquela reclamação, a comunidade se dividiu em torno de um bot de revisão automática de patches. Parte dos desenvolvedores quis o direito de recusar revisões feitas por máquina. Um deles chegou a argumentar que não há justificativa ética pra usar IA generativa em software livre.
+
+A resposta do Torvalds foi categórica. Como mantenedor principal, ele deixou claro que o Linux não é um projeto anti-IA e que quem discordar tem a saída que o próprio open source oferece: fazer um fork ou sair. Reconheceu que a IA pode ser uma ferramenta dolorosa pros mantenedores, inclusive porque não para de achar bugs constrangedores, mas lembrou que ninguém é obrigado a usá-la. E completou, numa frase que repercutiu bastante, que a IA tem defeitos, mas a inteligência natural também nem sempre é grande coisa.
+
+Não há contradição com o desabafo de maio. A crítica nunca foi à ferramenta, foi à forma de uso. Na mesma mensagem, ele pedia que quem quisesse contribuir lesse a documentação, enviasse a correção junto com o relato e agregasse valor real ao que a IA produziu. O incômodo é de curto prazo. No longo prazo, bug encontrado e corrigido é ganho.
+
+O próprio Torvalds usa essas ferramentas. Semanas depois, ao depurar um problema no driver de GPU Intel Xe (24 patches de depuração e 18 boots depois, a correção era trocar um \`round_up()\` por \`round_down()\`), ele relatou que a IA fez boa parte do trabalho pesado, apesar de ter afirmado mais de uma vez que o problema era impossível.
+
+O atrito, portanto, não está na tecnologia. Está nos gargalos e no desgaste humano que uma ferramenta tão eficiente provoca.
+
+## O Embargo Perdeu o Sentido
+
+A divulgação responsável sempre seguiu um roteiro conhecido: quem encontra uma falha grave avisa o responsável de forma privada, aguarda a correção e só então torna o problema público. A lista privada do kernel existe por causa desse modelo.
+
+O modelo depende de uma premissa, a de que a falha é conhecida por poucos. Com IA, essa premissa não se sustenta: se uma pessoa encontrou o bug com uma ferramenta, é razoável supor que dezenas de outras encontraram o mesmo.
+
+O kernel formalizou isso. A documentação oficial agora orienta que falhas encontradas com auxílio de IA sejam tratadas como públicas, mantendo uma ressalva importante: detalhes de exploração não devem ser divulgados. O relato informa que o problema existe e o mantenedor solicita informações adicionais em privado, se necessário. Como mais de 90% do que chega não é crítico, falhas de severidade baixa ou média passam a ser corrigidas diretamente no Git, sem destacar o aspecto de segurança.
+
+É uma mudança cultural grande. O sigilo que organizou a divulgação de vulnerabilidades por décadas está sendo abandonado, não por escolha, mas porque deixou de ser possível.
+
+## Cortar Pra Sobreviver
+
+Com mais relatos do que capacidade de análise, a equipe de rede do kernel optou por reduzir a superfície. O código inclui drivers de placas de rede dos anos 90, suporte a radioamador, ATM e ISDN: tecnologias com pouquíssimos usuários, mas que as ferramentas de IA analisam com o mesmo rigor do resto do código, encontrando falhas do mesmo jeito.
+
+**Jakub Kicinski**, um dos mantenedores de rede, foi objetivo: não existe capacidade pra revisar todas as correções geradas por IA, e ignorar correções de segurança não é uma alternativa. A proposta foi remover o código: um pull request tirando drivers antigos e subsistemas inteiros como ISDN, AX.25 (radioamador), CAIF e ATM, cerca de **138 mil linhas** no total. A justificativa pra retirar o suporte a radioamador mencionava explicitamente a falta de voluntários pra lidar com o volume de relatos gerados por IA.
+
+Meses depois, ao consolidar as mudanças de rede do Linux 7.3, Kicinski estimou que entre um terço e metade do que entrou no net-next era motivado por IA. Nas estatísticas do ciclo anterior, ele já tinha registrado que os mantenedores gastavam cerca de metade do tempo tentando refutar revisões feitas por IA.
+
+O resultado é contraintuitivo: uma tecnologia que deveria aumentar a segurança do kernel está levando à remoção de partes dele. O código antigo funcionava e não incomodava ninguém. Virou problema quando passou a ser analisado incansavelmente.
+
+## Proibir Não Resolve
+
+Alguns projetos tentaram o caminho da proibição. O **QEMU**, amplamente usado em virtualização, vetou contribuições feitas com IA. Um ano depois, um dos principais desenvolvedores sugeriu flexibilizar a regra, argumentando que, com a evolução das ferramentas, uma proibição total ficou difícil de defender. A proposta segue em discussão e o veto continua em vigor.
+
+O Torvalds rejeita essa abordagem de forma explícita. Ele disse que vai ignorar, em alto e bom som, quem tentar impedir os outros de usar essas ferramentas, e que a resposta aos problemas da IA não é enfiar a cabeça na areia e cantar "lá lá lá, não estou ouvindo".
+
+Há ainda um contraponto revelador: a própria equipe de rede, a mais afetada pelo volume, já usa bots de revisão por IA em cada patch enviado e, segundo o pull request de rede do 7.3, conta com acesso a vários modelos de ponta com crédito à Meta. A mesma tecnologia que gera a sobrecarga ajuda a absorvê-la. A posição do Torvalds resume bem: o objetivo é que essas ferramentas trabalhem a favor dos mantenedores, e não apenas contra eles.
+
+## O Que a IA Não Pode Assinar
+
+Resta a pergunta: se a IA encontra falhas e escreve correções, ela poderia manter o kernel sozinha?
+
+Os mantenedores do BPF, um dos subsistemas mais sensíveis do kernel, publicaram um aviso intitulado "férias de verão": vários deles ficariam ausentes ao mesmo tempo, e mais bugs seriam marcados como "não será corrigido". **Alexei Starovoitov** criticou os patches em que alguém só repassa o bug achado pela IA e a correção escrita pela IA, sem checar quase nada. A IA já é boa em encontrar problemas, mas ainda não é confiável pra corrigi-los sem supervisão. Na avaliação dele, aplicar cem correções pra cem bugs que nunca ocorreriam em produção não é motivo de comemoração.
+
+Na lista de segurança, Tarreau descreveu algo semelhante: no volume atual, o trabalho se limita à triagem, separando o que é urgente do que pode esperar.
+
+É aqui que aparece o limite real. Toda alteração aceita no kernel leva uma linha \`Signed-off-by\`, que identifica quem responde por ela, e a documentação do projeto é explícita: um agente de IA não pode assinar. Só uma pessoa pode atestar, inclusive do ponto de vista legal, a origem do código.
+
+Isso significa que, por mais correções que as ferramentas produzam, cada uma depende de alguém que a leia, entenda e aceite assumir a responsabilidade por ela. E esse grupo não cresce no mesmo ritmo. Empresas contratam desenvolvedores de kernel pra criar funcionalidades, raramente pra manutenção, que acaba acontecendo em boa parte no tempo livre das pessoas. É um modelo pouco sustentável e que não atrai novos mantenedores. As pessoas tiram férias, se esgotam e removem código antigo pra conseguir dar conta do resto.
+
+A IA não está quebrando o Linux. Está deixando evidente que uma peça central da infraestrutura da internet depende do tempo e da atenção de um grupo de pessoas pequeno demais pra responsabilidade que carrega. O recurso escasso no kernel hoje não é código. É atenção humana.
+
+---
+
+*Relacionado: [Tom's Hardware: Torvalds says AI bug reports made the security list almost entirely unmanageable](https://www.tomshardware.com/software/linux/linus-torvalds-says-ai-bug-reports-have-made-the-linux-security-mailing-list-almost-entirely-unmanageable) · [The Register: Linux kernel czar says AI bug reports aren't slop anymore](https://www.theregister.com/software/2026/03/26/linux-kernel-czar-says-ai-bug-reports-arent-slop-anymore/5226256) · [The Register: AI slop got better, so now maintainers have more work](https://www.theregister.com/software/2026/04/06/ai-slop-got-better-so-now-maintainers-have-more-work/5223172) · [Tom's Hardware: Linux kernel nears 2,000 CVEs per release](https://www.tomshardware.com/software/linux/linux-kernel-nears-2-000-cves-per-release-as-ai-bug-hunters-scour-40-million-lines-of-code-maintainers-say-they-are-completely-overwhelmed) · [The Register: Linus Torvalds tells AI haters to fork off](https://www.theregister.com/ai-and-ml/2026/07/15/linus-torvalds-tells-ai-haters-to-fork-off/5271894) · [ADTmag: Torvalds tells kernel critics AI isn't going anywhere](https://adtmag.com/articles/2026/07/28/torvalds-tells-linux-kernel-critics-ai-is-not-going-anywhere.aspx) · [PC Gamer: Torvalds' debug session from hell](https://www.pcgamer.com/hardware/linus-torvalds-details-his-debug-session-from-hell-pushing-an-ai-to-fix-an-error-it-repeatedly-said-was-impossible-and-unsolvable-he-then-made-it-write-the-report/) · [kernel.org: Reporting security bugs](https://docs.kernel.org/process/security-bugs.html) · [kernel.org: AI Coding Assistants](https://docs.kernel.org/process/coding-assistants.html) · [Phoronix: Pull request to remove old network drivers and ISDN due to AI/LLM noise](https://www.phoronix.com/news/Linux-7.1-PR-Remove-Old-Net) · [LWN: Kernel code removals driven by LLM-created security reports](https://lwn.net/Articles/1068928/) · [LWN: netdev development stats for 7.1](https://lwn.net/Articles/1067741/) · [BPF list: Summer vacations and "Won't Fix" bugs](https://ratatoskr.run/bpf/2026/07/17206127) · [The Register: QEMU mulls relaxing AI contribution ban](https://www.theregister.com/ai-and-ml/2026/05/29/qemu-mulls-relaxing-ai-contribution-ban/5248638)*`,
   binance: `# Binance: O Laptop Que Não Explica US$ 6,3 Bilhões
 
 > **Categoria:** Segurança · Resposta a Incidentes · Ativos Digitais
@@ -2132,6 +2241,7 @@ Separadamente, um vazamento das chaves do BootROM do PS5 no fim de 2025 não hab
 };
 
 const ART_KEY = {
+  'linux/linux-wasnt-ready-for-this.md': 'linux-ai',
   'security/binance-the-laptop-that-doesnt-explain-6-3-billion.md': 'binance',
   'security/broccoli2shell-one-vulnerability-three-names.md': 'broccoli2shell',
   'security/bootrom-leak-the-key-95-million-ps5s-cant-replace.md': 'bootrom',
