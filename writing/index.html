@@ -441,6 +441,15 @@ h1 {
   background: linear-gradient(90deg, var(--border), transparent);
 }
 
+
+/* two-column card grid on wider screens; Latest stays full width */
+@media (min-width: 900px) {
+  .articles { display: grid; grid-template-columns: 1fr 1fr; column-gap: 16px; align-items: stretch; }
+  .articles > .section-label,
+  .articles > .section-label[data-i18n="section-latest"] + .article-item { grid-column: 1 / -1; }
+  .articles > .article-item { margin-bottom: 16px; display: flex; flex-direction: column; }
+  .articles > .article-item .article-inner { flex: 1; align-items: start; }
+}
 /* ── ARTICLE VIEW ── */
 #article-view {
   display: none;
