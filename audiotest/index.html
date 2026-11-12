@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Linux Wasn't Ready for This — Julio Cesar Mauro</title>
+<meta name="description" content="AI made finding Linux kernel bugs cheap. It did not make fixing them cheaper. Duplicate reports, a CVE count heading to 2,000, deleted subsystems, the end of embargo culture, and the one part of the kernel no machine can sign.">
+<link rel="canonical" href="https://oruam.cloud/writing/linux-ai/">
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' fill='%23000308'/><text x='6' y='23' font-size='20' fill='%2300b4ff' font-family='monospace'>_</text></svg>">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://oruam.cloud/writing/linux-ai/">
+<meta property="og:title" content="Linux Wasn't Ready for This">
+<meta property="og:description" content="AI made finding Linux kernel bugs cheap. It did not make fixing them cheaper. Duplicate reports, a CVE count heading to 2,000, deleted subsystems, the end of embargo culture, and the one part of the kernel no machine can sign.">
+<meta property="og:image" content="https://oruam.cloud/og/linux-ai.png">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Linux Wasn't Ready for This">
+<meta name="twitter:description" content="AI made finding Linux kernel bugs cheap. It did not make fixing them cheaper. Duplicate reports, a CVE count heading to 2,000, deleted subsystems, the end of embargo culture, and the one part of the kernel no machine can sign.">
+<meta name="twitter:image" content="https://oruam.cloud/og/linux-ai.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+<script>(function(){var t=null,q=null;try{q=new URLSearchParams(location.search).get('theme');}catch(e){}var ok=['blue','green','amber','light'];if(q&&ok.indexOf(q)>-1){t=q;try{localStorage.setItem('theme',q);}catch(e){}}else{try{t=localStorage.getItem('theme');}catch(e){}}if(t==='green'||t==='amber'||t==='light')document.documentElement.dataset.theme=t;})();</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "Linux Wasn't Ready for This",
+  "description": "AI made finding Linux kernel bugs cheap. It did not make fixing them cheaper. Duplicate reports, a CVE count heading to 2,000, deleted subsystems, the end of embargo culture, and the one part of the kernel no machine can sign.",
+  "author": { "@type": "Person", "name": "Julio Cesar Mauro", "alternateName": "Julio Mauro", "url": "https://oruam.cloud" },
+  "publisher": { "@type": "Person", "name": "Julio Cesar Mauro" },
+  "mainEntityOfPage": { "@type": "WebPage", "@id": "https://oruam.cloud/writing/linux-ai/" },
+  "image": "https://oruam.cloud/og/linux-ai.png",
+  "inLanguage": "en"
+}
+</script>
+<style>
+:root {
+  --bg:          #000308;
+  --surface:     #020810;
+  --border:      #003388;
+  --green:       #00b4ff;
+  --green-mid:   #0088cc;
+  --green-dim:   #00b4ff22;
+  --text:        #00bbee;
+  --text-dim:    #0088bb;
+  --white:       #cce8ff;
+  --glow:        0 0 10px #00b4ff66, 0 0 20px #00b4ff33;
+  --glow-strong: 0 0 8px #00b4ff, 0 0 20px #00b4ff88, 0 0 40px #00b4ff44;
+}
+
+[data-theme="green"] {
+  --bg:          #000300;
+  --surface:     #020b02;
+  --border:      #003300;
+  --green:       #00ff41;
+  --green-mid:   #00cc33;
+  --green-dim:   #00aa2233;
+  --text:        #00cc33;
+  --text-dim:    #006622;
+  --white:       #ccffcc;
+  --glow:        0 0 10px #00ff4166, 0 0 20px #00ff4133;
+  --glow-strong: 0 0 8px #00ff41, 0 0 20px #00ff4188, 0 0 40px #00ff4144;
+}
+[data-theme="green"] nav { background: rgba(0,3,0,0.95); }
+
+[data-theme="amber"] {
+  --bg:          #020100;
+  --surface:     #0a0500;
+  --border:      #663300;
+  --green:       #ff8c00;
+  --green-mid:   #cc6600;
+  --green-dim:   #ff8c0033;
+  --text:        #ee7700;
+  --text-dim:    #bb5500;
+  --white:       #ffe8cc;
+  --glow:        0 0 10px #ff8c0066, 0 0 20px #ff8c0033;
+  --glow-strong: 0 0 8px #ff8c00, 0 0 20px #ff8c0088, 0 0 40px #ff8c0044;
+}
+[data-theme="amber"] nav { background: rgba(2,1,0,0.95); }
+
+[data-theme="light"] {
+  --bg:          #f5f2eb;
+  --surface:     #eae6db;
+  --border:      #b0a888;
+  --green:       #1a5c3a;
+  --green-mid:   #2a7a50;
+  --green-dim:   rgba(26,92,58,0.1);
+  --white:       #0a1a10;
+  --text:        #1a3a28;
+  --text-dim:    #5a7a68;
+  --glow:        none;
+  --glow-strong: none;
+}
+[data-theme="light"] body           { background: #f5f2eb; }
+[data-theme="light"] nav            { background: rgba(245,242,235,0.95); }
+[data-theme="light"] body::after    { background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.04) 2px, rgba(0,0,0,0.04) 4px); }
+[data-theme="light"] body::before   { background: radial-gradient(ellipse at center, transparent 60%, rgba(0,0,0,0.08) 100%); }
+[data-theme="light"] h1             { animation: none; color: var(--green); text-shadow: none; }
+[data-theme="light"] #matrix-canvas { opacity: 0.035; }
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Share Tech Mono', monospace;
+  line-height: 1.7;
+  overflow-x: hidden;
+  min-height: 100vh;
+}
+
+#matrix-canvas {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  z-index: 0;
+  opacity: 0.06;
+  pointer-events: none;
+}
+
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg, transparent, transparent 2px,
+    rgba(0,0,0,0.12) 2px, rgba(0,0,0,0.12) 4px
+  );
+  pointer-events: none;
+  z-index: 999;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(ellipse at center, transparent 60%, rgba(0,0,0,0.7) 100%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.wrap {
+  position: relative;
+  z-index: 10;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 0 32px;
+}
+
+nav {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(0,3,8,0.95);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--border);
+  padding: 14px 0;
+}
+
+.nav-inner {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+}
+
+.nav-home {
+  font-family: 'Orbitron', monospace;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--green);
+  text-decoration: none;
+  text-shadow: var(--glow);
+  letter-spacing: 2px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.nav-home::before { content: '←'; }
+
+nav a.nav-link {
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text);
+  text-decoration: none;
+  transition: all 0.2s;
+}
+
+nav a.nav-link:hover {
+  color: var(--green);
+  text-shadow: var(--glow);
+}
+
+.nav-controls {
+  margin-left: auto;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.theme-toggle {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  background: none;
+  border: 1px solid var(--border);
+  padding: 4px 10px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.theme-toggle:hover {
+  color: var(--green);
+  border-color: var(--green-mid);
+  background: var(--green-dim);
+}
+
+#article-view {
+  padding: 40px 0 80px;
+}
+
+.art-back {
+  margin-bottom: 40px;
+}
+
+.back-btn {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 12px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  background: none;
+  border: 1px solid var(--border);
+  padding: 6px 16px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.back-btn:hover {
+  color: var(--green);
+  border-color: var(--green-mid);
+  background: var(--green-dim);
+  box-shadow: var(--glow);
+}
+
+.art-body {
+  max-width: 760px;
+}
+
+.article-meta {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.article-tag {
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  padding: 3px 10px;
+  border: 1px solid var(--border);
+  color: var(--text-dim);
+}
+.article-tag.security { color: #ff6644; border-color: #ff664444; }
+.article-tag.linux    { color: #00ff41; border-color: #00ff4144; }
+
+.article-level {
+  font-size: 11px;
+  letter-spacing: 1px;
+  color: var(--text-dim);
+}
+
+.share-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+  margin: 18px 0 0;
+}
+
+.share-label {
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+
+.share-btn {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  background: none;
+  border: 1px solid var(--border);
+  padding: 5px 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.share-btn:hover {
+  color: var(--green);
+  border-color: var(--green-mid);
+  background: var(--green-dim);
+  box-shadow: var(--glow);
+}
+
+.art-body h1 {
+  font-family: 'Orbitron', monospace;
+  font-size: clamp(20px, 3vw, 30px);
+  font-weight: 900;
+  color: var(--green);
+  text-shadow: var(--glow-strong);
+  letter-spacing: 1px;
+  margin: 0 0 28px;
+  line-height: 1.3;
+}
+
+.art-body h2 {
+  font-family: 'Orbitron', monospace;
+  font-size: clamp(14px, 2vw, 18px);
+  font-weight: 700;
+  color: var(--green);
+  letter-spacing: 1px;
+  margin: 40px 0 14px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+}
+
+.art-body h3 {
+  font-size: 15px;
+  color: var(--text);
+  letter-spacing: 1px;
+  margin: 28px 0 10px;
+}
+
+.art-body p {
+  font-size: 15px;
+  color: var(--white);
+  line-height: 1.85;
+  margin-bottom: 16px;
+}
+
+.art-body ul, .art-body ol {
+  margin: 0 0 16px 24px;
+}
+
+.art-body li {
+  font-size: 15px;
+  color: var(--white);
+  line-height: 1.85;
+  margin-bottom: 6px;
+}
+
+.art-body li::marker { color: var(--green-mid); }
+
+.art-body blockquote {
+  border-left: 3px solid var(--green-mid);
+  padding: 8px 20px;
+  margin: 20px 0;
+  background: var(--surface);
+  color: var(--text-dim);
+  font-size: 14px;
+}
+
+.art-body pre {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--green-mid);
+  padding: 16px 20px;
+  margin: 20px 0;
+  overflow-x: auto;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.art-body pre code {
+  color: var(--text);
+  background: none;
+  padding: 0;
+  font-family: 'Share Tech Mono', monospace;
+}
+
+.art-body code {
+  color: var(--green);
+  background: var(--green-dim);
+  padding: 2px 6px;
+  font-size: 13px;
+  font-family: 'Share Tech Mono', monospace;
+}
+
+.art-body a {
+  color: var(--green-mid);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  transition: color 0.15s;
+}
+.art-body a:hover { color: var(--green); }
+
+.art-body hr {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 36px 0;
+}
+
+footer {
+  padding: 40px 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid var(--border);
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.footer-sig {
+  font-family: 'Orbitron', monospace;
+  font-size: 13px;
+  color: var(--green);
+  text-shadow: var(--glow);
+  letter-spacing: 2px;
+}
+
+.footer-copy {
+  font-size: 11px;
+  color: var(--text-dim);
+  letter-spacing: 2px;
+}
+
+@media (max-width: 640px) {
+  .wrap { padding: 0 16px; }
+  .nav-inner { gap: 8px; }
+  .nav-home { font-size: 10px; letter-spacing: 1px; }
+  nav a.nav-link { font-size: 10px; }
+  .theme-toggle { font-size: 9px; padding: 4px 7px; }
+}
+
+
+[hidden] { display: none !important; }
+/* MOBILE-V2: menu em duas linhas e letra maior no celular */
+@media (max-width: 640px) {
+  .nav-inner { flex-wrap: wrap; gap: 8px 18px; }
+  .nav-inner::after { content: ''; order: 2; flex-basis: 100%; height: 0; }
+  nav a.nav-link { order: 3; }
+  .nav-home { font-size: 13px; letter-spacing: 2px; }
+  nav a.nav-link { font-size: 12px; }
+  .nav-controls { order: 1; margin-left: auto; gap: 6px; }
+  .theme-toggle { font-size: 10px; letter-spacing: 1px; padding: 5px 8px; }
+  .share-row { margin-bottom: 28px; }
+  .art-body p, .art-body li { font-size: 17px; line-height: 1.75; }
+  .art-body blockquote { font-size: 16px; }
+  .art-body code, .art-body pre { font-size: 14px; }
+  .article-tag, .article-level, .share-label, .share-btn, .back-btn { font-size: 12px; }
+  .article-title { font-size: 17px; }
+  .article-desc, .card-desc, .header-sub { font-size: 16px; }
+  .module-item, .badge, .card-codename, .modules-label { font-size: 12px; }
+  .stack-tag, .card-meta, .card-link { font-size: 13px; }
+  .footer-copy { font-size: 12px; }
+}
+@media (max-width: 380px) {
+  .nav-home { font-size: 11px; letter-spacing: 1px; gap: 6px; }
+  .nav-inner { column-gap: 12px; }
+  .theme-toggle { font-size: 9px; letter-spacing: 0.5px; padding: 4px 6px; }
+}
+@media (max-width: 600px) { .art-body hr { margin: 20px 0; } }
+/* FIM MOBILE-V2 */
+/* TTS-TEST */
+.tts-row { display:flex; flex-wrap:wrap; align-items:center; gap:8px; margin:-12px 0 28px; }
+.tts-row .share-btn[disabled] { opacity:.35; cursor:default; }
+.tts-row select.share-btn { padding:4px 6px; }
+.tts-status { font-family:'Share Tech Mono',monospace; font-size:11px; color:var(--text-dim); letter-spacing:.5px; flex-basis:100%; }
+.tts-row.tts-sticky { position:sticky; top:var(--tts-top,0px); z-index:50; background:var(--surface); border-bottom:1px solid var(--border); padding:10px 0; margin-left:-16px; margin-right:-16px; padding-left:16px; padding-right:16px; }
+.tts-on { outline:1px solid var(--green-mid, #00ff41); outline-offset:6px; background:rgba(0,255,65,.05); }
+@media (max-width:600px){ .tts-row .share-btn, .tts-status { font-size:12px; } }
+/* FIM TTS-TEST */
+</style>
+<script data-goatcounter="https://oruam.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</head>
+<body>
+
+<canvas id="matrix-canvas"></canvas>
+
+<nav>
+  <div class="wrap">
+    <div class="nav-inner">
+      <a href="/" class="nav-home">ORUAM.CLOUD</a>
+      <a href="/projects/" class="nav-link"><span class="en">Projects</span><span class="pt" hidden>Projetos</span></a>
+      <a href="/writing/" class="nav-link"><span class="en">Writing</span><span class="pt" hidden>Textos</span></a>
+      <div class="nav-controls">
+        <button class="theme-toggle" id="theme-btn" onclick="toggleTheme()">◈ Green</button>
+        <button class="theme-toggle" id="lang-btn" onclick="toggleLang()">PT-BR</button>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<div class="wrap">
+  <div id="article-view">
+    <div class="art-back">
+      <a class="back-btn" href="/writing/" style="display:inline-block; text-decoration:none;">
+        <span class="en">← Writing</span><span class="pt" hidden>← Textos</span>
+      </a>
+    </div>
+    <div class="article-meta" style="margin-bottom:20px;">
+      <span class="article-tag linux">Linux · Open Source · AI</span>
+      <span class="article-level">// Foundational</span>
+    </div>
+    <div class="share-row">
+      <span class="share-label"><span class="en">Share:</span><span class="pt" hidden>Compartilhar:</span></span>
+      <button class="share-btn" onclick="shareTo('linkedin')" type="button">LinkedIn</button>
+      <button class="share-btn" onclick="shareTo('whatsapp')" type="button">WhatsApp</button>
+      <button class="share-btn" onclick="shareTo('telegram')" type="button">Telegram</button>
+      <button class="share-btn" onclick="shareTo('copy')" type="button"><span class="en">Copy URL</span><span class="pt" hidden>Copiar link</span></button>
+    </div>
+    <div class="tts-row" id="tts-row">
+      <span class="share-label"><span class="en">Listen:</span><span class="pt" hidden>Ouvir:</span></span>
+      <button class="share-btn" id="tts-play" type="button">&#9654; <span class="en">Play</span><span class="pt" hidden>Ouvir</span></button>
+      <button class="share-btn" id="tts-pause" type="button" disabled>&#10073;&#10073; <span class="en">Pause</span><span class="pt" hidden>Pausar</span></button>
+      <button class="share-btn" id="tts-stop" type="button" disabled>&#9632; <span class="en">Stop</span><span class="pt" hidden>Parar</span></button>
+      <select class="share-btn" id="tts-rate" aria-label="Speed">
+        <option value="0.9">0.9x</option><option value="1" selected>1x</option><option value="1.15">1.15x</option><option value="1.3">1.3x</option><option value="1.5">1.5x</option>
+      </select>
+      <span class="tts-status" id="tts-status"></span>
+    </div>
+    <div class="art-body en">
+<h1>Linux Wasn't Ready for This</h1>
+<div style="height:12px"></div>
+<blockquote><strong>Category:</strong> Linux · Open Source · AI</blockquote>
+<blockquote><strong>Level:</strong> Foundational</blockquote>
+<div style="height:12px"></div>
+<hr>
+<div style="height:12px"></div>
+<p>In 2024, the Linux kernel's private security list received two or three bug reports a week. By March 2026, according to Willy Tarreau, the pace was already between five and ten a day. The interesting part is not the volume itself, it is the hit rate: most of those reports are valid. And that is exactly where the problem lies.</p>
+<div style="height:12px"></div>
+<p>AI tools have collapsed the cost of finding a bug. The cost of fixing it, testing it, reviewing it and taking responsibility for the fix has not changed, and it falls on a small group of maintainers who look after the software behind most of the internet's servers, Android and nearly every supercomputer. That mismatch is what this post is about.</p>
+<div style="height:12px"></div>
+<h2>From Noise to a Serious Tool</h2>
+<div style="height:12px"></div>
+<p>Until recently, an AI-generated report meant <strong>AI slop</strong>: convincing text about bugs that did not exist, which did not survive the first test. Easy to spot and even easier to discard.</p>
+<div style="height:12px"></div>
+<p>According to the maintainers themselves, that changed abruptly early this year, over a span of weeks, with no clear cause. The models got better and AI-assisted reports started pointing at real problems.</p>
+<div style="height:12px"></div>
+<p><strong>Greg Kroah-Hartman</strong> gave a concrete example: a simple request to one of these tools returned <strong>60 issues, each with a proposed fix</strong>. Roughly a third were wrong. The other two thirds held up, even if they needed human adjustment. That is a meaningful error rate (the best models still fail somewhere between 25% and 33% of the time, without showing any doubt), but for people who have always done this work by hand, the gain in scale is enormous.</p>
+<div style="height:12px"></div>
+<p><strong>Daniel Stenberg</strong>, maintainer of curl, describes the same transition: the useless reports have practically disappeared, replaced by something harder to manage, high volume with high quality. In other words, the difficulty was never AI being wrong. It started when AI began to be right.</p>
+<div style="height:12px"></div>
+<h2>Duplicates at Scale</h2>
+<div style="height:12px"></div>
+<p>The intuitive conclusion would be: more bugs found, more secure kernel. In practice, what reaches the list is repetition. The same defect in the networking subsystem shows up three, four times, described in different words, because several people ran similar tools (often the same one) against the same code.</p>
+<div style="height:12px"></div>
+<p><strong>Willy Tarreau</strong>, who helps triage the list, described exactly that scenario: something new every day and a growing volume of duplicates. In May, <strong>Linus Torvalds</strong> used a release-candidate announcement to note that the security list had become practically unmanageable, flooded with repeated reports sharing the same root cause.</p>
+<div style="height:12px"></div>
+<p>The CVE count reflects it. Linux 7.0 went past 1,000 CVEs, 7.2 past 1,500, and the per-release count is now approaching 2,000, and automated AI-driven bug hunting is cited as one of the factors.</p>
+<div style="height:12px"></div>
+<p>There is also an imbalance of incentives. Finding vulnerabilities became a showcase: AI companies promote scanners that sweep open source projects, and every finding becomes marketing material. The fix, on the other hand, is a cost, and the one who bears it is not who found the bug but who has to validate, fix and maintain it.</p>
+<div style="height:12px"></div>
+<h2>Torvalds Is Not Against AI</h2>
+<div style="height:12px"></div>
+<p>A rejection from the project would have been the natural reaction. That is not what happened.</p>
+<div style="height:12px"></div>
+<p>About two months after that complaint, the community split over an automated patch review bot. Some developers wanted the right to refuse machine reviews. One went as far as arguing that there is no ethical justification for using generative AI in free software.</p>
+<div style="height:12px"></div>
+<p>Torvalds' answer was categorical. As top-level maintainer, he made it clear that Linux is not an anti-AI project, and that anyone who disagrees has the exit open source itself provides: fork it or leave. He acknowledged AI can be a painful tool for maintainers, partly because it keeps finding embarrassing bugs, but noted nobody is required to use it. And he added, in a line that got a lot of attention, that AI has flaws, but natural intelligence is not always all that great either.</p>
+<div style="height:12px"></div>
+<p>There is no contradiction with the May complaint. The criticism was never about the tool, it was about how it was being used. In that same message he asked anyone who wanted to contribute to read the documentation, send the fix along with the report and add real value on top of what the AI produced. The friction is short-term. In the long run, a bug found and fixed is a gain.</p>
+<div style="height:12px"></div>
+<p>Torvalds uses these tools himself. Weeks later, while debugging an Intel Xe GPU driver problem (24 debug patches and 18 boots later, the fix was turning a <code>round_up()</code> into a <code>round_down()</code>), he reported that AI did a good part of the heavy lifting, despite claiming more than once that the problem was impossible.</p>
+<div style="height:12px"></div>
+<p>The friction, then, is not in the technology. It is in the bottlenecks and the human strain that such an effective tool creates.</p>
+<div style="height:12px"></div>
+<h2>The Embargo Lost Its Purpose</h2>
+<div style="height:12px"></div>
+<p>Responsible disclosure has always followed a familiar script: whoever finds a serious flaw tells the owner privately, waits for the fix and only then makes it public. The kernel's private list exists because of that model.</p>
+<div style="height:12px"></div>
+<p>The model rests on one premise, that the flaw is known to few. With AI, that premise does not hold: if one person found the bug with a tool, it is reasonable to assume dozens of others found the same one.</p>
+<div style="height:12px"></div>
+<p>The kernel made it official. The documentation now says that bugs found with the help of AI should be treated as public, with one important caveat: exploitation details must not be disclosed. The report states that the problem exists and the maintainer asks for more information privately if needed. Since more than 90% of what arrives is not critical, low and medium severity issues are now fixed directly in Git, without highlighting the security angle.</p>
+<div style="height:12px"></div>
+<p>It is a big cultural shift. The secrecy that organized vulnerability disclosure for decades is being abandoned, not by choice, but because it stopped being possible.</p>
+<div style="height:12px"></div>
+<h2>Cutting to Survive</h2>
+<div style="height:12px"></div>
+<p>With more reports than review capacity, the kernel networking team chose to shrink the surface. The tree includes drivers for 1990s network cards, amateur radio, ATM and ISDN support: technologies with very few users, but which AI tools analyze as rigorously as the rest of the code, finding bugs all the same.</p>
+<div style="height:12px"></div>
+<p><strong>Jakub Kicinski</strong>, one of the networking maintainers, was straightforward: there is no capacity to review every AI-generated fix, and ignoring security fixes is not an alternative. The proposal was to remove the code: a pull request dropping old drivers and entire subsystems such as ISDN, AX.25 (amateur radio), CAIF and ATM, about <strong>138,000 lines</strong> in total. The rationale for dropping amateur radio support explicitly mentioned the lack of volunteers to handle the volume of AI-generated reports.</p>
+<div style="height:12px"></div>
+<p>Months later, while assembling the networking changes for Linux 7.3, Kicinski estimated that between a third and half of what landed in net-next was AI-driven. In the stats for the previous cycle he had already noted that maintainers were spending around half their time trying to disprove AI reviews.</p>
+<div style="height:12px"></div>
+<p>The outcome is counterintuitive: a technology that should make the kernel more secure is leading to parts of it being removed. The old code worked and bothered nobody. It became a problem once it started being analyzed relentlessly.</p>
+<div style="height:12px"></div>
+<h2>Banning Doesn't Solve It</h2>
+<div style="height:12px"></div>
+<p>Some projects tried the ban route. <strong>QEMU</strong>, widely used for virtualization, prohibited AI-assisted contributions. A year later, one of its main developers suggested relaxing the rule, arguing that as the tools evolved, a total ban had become hard to defend. The proposal is still under discussion and the ban remains in force.</p>
+<div style="height:12px"></div>
+<p>Torvalds explicitly rejects that approach. He said he will very loudly ignore people who try to stop others from using these tools, and that the answer to AI's downsides is not to bury your head in the sand and sing "la la la, I can't hear you".</p>
+<div style="height:12px"></div>
+<p>There is also a telling counterpoint: the networking team itself, the most affected by the volume, already runs AI review bots on every posted patch and, according to the 7.3 networking pull request, has access to several frontier models, credited to Meta. The same technology that creates the overload helps absorb it. Torvalds' position sums it up well: the goal is for these tools to work for maintainers, not only against them.</p>
+<div style="height:12px"></div>
+<h2>What AI Cannot Sign</h2>
+<div style="height:12px"></div>
+<p>One question remains: if AI finds bugs and writes fixes, could it maintain the kernel on its own?</p>
+<div style="height:12px"></div>
+<p>The BPF maintainers, responsible for one of the kernel's most sensitive subsystems, posted a notice titled "summer vacation": several of them would be away at the same time, and more bugs would be marked as won't fix. <strong>Alexei Starovoitov</strong> criticized patches where someone just forwards an AI-found bug and an AI-written fix with little checking. AI is already good at finding problems, but not yet reliable at fixing them unsupervised. In his assessment, applying a hundred fixes for a hundred bugs that would never happen in production is no reason to celebrate.</p>
+<div style="height:12px"></div>
+<p>On the security list, Tarreau described something similar: at the current volume, the work is limited to triage, separating what is urgent from what can wait.</p>
+<div style="height:12px"></div>
+<p>This is where the real limit shows up. Every change accepted into the kernel carries a <code>Signed-off-by</code> line identifying who answers for it, and the project's documentation is explicit: an AI agent cannot sign. Only a person can attest, legally included, to where the code came from.</p>
+<div style="height:12px"></div>
+<p>That means however many fixes the tools produce, each one depends on someone who reads it, understands it and accepts responsibility for it. And that group does not grow at the same pace. Companies hire kernel developers to build features, rarely for maintenance, which ends up happening largely in people's free time. It is a barely sustainable model, and it does not attract new maintainers. People take vacations, burn out and remove old code to keep up with the rest.</p>
+<div style="height:12px"></div>
+<p>AI is not breaking Linux. It is making it obvious that a central piece of the internet's infrastructure depends on the time and attention of a group of people too small for the responsibility it carries. The scarce resource in the kernel today is not code. It is human attention.</p>
+<div style="height:12px"></div>
+<hr>
+<div style="height:12px"></div>
+<p><em>Related: <a href="https://www.tomshardware.com/software/linux/linus-torvalds-says-ai-bug-reports-have-made-the-linux-security-mailing-list-almost-entirely-unmanageable" target="_blank" rel="noopener">Tom's Hardware: Torvalds says AI bug reports made the security list almost entirely unmanageable</a> · <a href="https://www.theregister.com/software/2026/03/26/linux-kernel-czar-says-ai-bug-reports-arent-slop-anymore/5226256" target="_blank" rel="noopener">The Register: Linux kernel czar says AI bug reports aren't slop anymore</a> · <a href="https://www.theregister.com/software/2026/04/06/ai-slop-got-better-so-now-maintainers-have-more-work/5223172" target="_blank" rel="noopener">The Register: AI slop got better, so now maintainers have more work</a> · <a href="https://www.tomshardware.com/software/linux/linux-kernel-nears-2-000-cves-per-release-as-ai-bug-hunters-scour-40-million-lines-of-code-maintainers-say-they-are-completely-overwhelmed" target="_blank" rel="noopener">Tom's Hardware: Linux kernel nears 2,000 CVEs per release</a> · <a href="https://www.theregister.com/ai-and-ml/2026/07/15/linus-torvalds-tells-ai-haters-to-fork-off/5271894" target="_blank" rel="noopener">The Register: Linus Torvalds tells AI haters to fork off</a> · <a href="https://adtmag.com/articles/2026/07/28/torvalds-tells-linux-kernel-critics-ai-is-not-going-anywhere.aspx" target="_blank" rel="noopener">ADTmag: Torvalds tells kernel critics AI isn't going anywhere</a> · <a href="https://www.pcgamer.com/hardware/linus-torvalds-details-his-debug-session-from-hell-pushing-an-ai-to-fix-an-error-it-repeatedly-said-was-impossible-and-unsolvable-he-then-made-it-write-the-report/" target="_blank" rel="noopener">PC Gamer: Torvalds' debug session from hell</a> · <a href="https://docs.kernel.org/process/security-bugs.html" target="_blank" rel="noopener">kernel.org: Reporting security bugs</a> · <a href="https://docs.kernel.org/process/coding-assistants.html" target="_blank" rel="noopener">kernel.org: AI Coding Assistants</a> · <a href="https://www.phoronix.com/news/Linux-7.1-PR-Remove-Old-Net" target="_blank" rel="noopener">Phoronix: Pull request to remove old network drivers and ISDN due to AI/LLM noise</a> · <a href="https://lwn.net/Articles/1068928/" target="_blank" rel="noopener">LWN: Kernel code removals driven by LLM-created security reports</a> · <a href="https://lwn.net/Articles/1067741/" target="_blank" rel="noopener">LWN: netdev development stats for 7.1</a> · <a href="https://ratatoskr.run/bpf/2026/07/17206127" target="_blank" rel="noopener">BPF list: Summer vacations and "Won't Fix" bugs</a> · <a href="https://www.theregister.com/ai-and-ml/2026/05/29/qemu-mulls-relaxing-ai-contribution-ban/5248638" target="_blank" rel="noopener">The Register: QEMU mulls relaxing AI contribution ban</a></em></p>
+<div style="height:12px"></div>
+    </div>
+    <div class="art-body pt" hidden>
+<h1>O Linux Não Estava Preparado Para Isso</h1>
+<div style="height:12px"></div>
+<blockquote><strong>Categoria:</strong> Linux · Open Source · IA</blockquote>
+<blockquote><strong>Nível:</strong> Fundamental</blockquote>
+<div style="height:12px"></div>
+<hr>
+<div style="height:12px"></div>
+<p>Em 2024, a lista privada de segurança do kernel Linux recebia dois ou três relatos de falha por semana. Em março de 2026, segundo o Willy Tarreau, o ritmo já estava entre cinco e dez por dia. O dado curioso não é o volume em si, é a taxa de acerto: a maioria desses relatos é válida. E é justamente aí que mora o problema.</p>
+<div style="height:12px"></div>
+<p>Ferramentas de IA derrubaram o custo de encontrar um bug. O custo de corrigir, testar, revisar e assumir a responsabilidade pela correção continua o mesmo, e recai sobre um grupo pequeno de mantenedores que cuida do software por trás da maior parte dos servidores da internet, do Android e de quase todos os supercomputadores. Esse descompasso é o assunto deste texto.</p>
+<div style="height:12px"></div>
+<h2>De Ruído a Ferramenta Séria</h2>
+<div style="height:12px"></div>
+<p>Até pouco tempo atrás, relato gerado por IA era sinônimo de <strong>AI slop</strong>: texto convincente sobre falhas inexistentes, que não sobrevivia ao primeiro teste. Era fácil de identificar e mais fácil ainda de descartar.</p>
+<div style="height:12px"></div>
+<p>Segundo os próprios mantenedores, isso mudou de forma abrupta no início deste ano, num intervalo de semanas, sem uma causa clara. Os modelos melhoraram e os relatos assistidos por IA começaram a apontar problemas reais.</p>
+<div style="height:12px"></div>
+<p><strong>Greg Kroah-Hartman</strong> deu um exemplo concreto: um pedido simples a uma dessas ferramentas devolveu <strong>60 problemas, todos com proposta de correção</strong>. Aproximadamente um terço estava errado. Os outros dois terços procediam, ainda que precisassem de ajuste humano. É um índice de erro relevante (os melhores modelos ainda falham em algo entre 25% e 33% dos casos, e sem demonstrar dúvida), mas para quem sempre fez esse trabalho manualmente, o ganho de escala é enorme.</p>
+<div style="height:12px"></div>
+<p><strong>Daniel Stenberg</strong>, mantenedor do curl, descreve a mesma transição: os relatos inúteis praticamente desapareceram e deram lugar a algo mais difícil de administrar, volume alto com qualidade alta. Ou seja, a dificuldade nunca foi a IA errar. Começou quando ela passou a acertar.</p>
+<div style="height:12px"></div>
+<h2>Duplicatas em Escala</h2>
+<div style="height:12px"></div>
+<p>A conclusão intuitiva seria: mais falhas encontradas, kernel mais seguro. Na prática, o que chega à lista é repetição. O mesmo defeito no subsistema de rede aparece três, quatro vezes, descrito com palavras diferentes, porque várias pessoas rodaram ferramentas parecidas (muitas vezes a mesma) contra o mesmo código.</p>
+<div style="height:12px"></div>
+<p><strong>Willy Tarreau</strong>, que participa da triagem da lista, relatou exatamente esse cenário: situações inéditas todos os dias e um volume crescente de duplicatas. Em maio, <strong>Linus Torvalds</strong> aproveitou o anúncio de uma versão de testes pra registrar que a lista de segurança tinha se tornado praticamente ingerenciável, tomada por relatos repetidos com a mesma causa raiz.</p>
+<div style="height:12px"></div>
+<p>O reflexo aparece nos CVEs. O Linux 7.0 passou de 1.000, o 7.2 passou de 1.500, e a contagem por versão já se aproxima de 2.000, e a busca automatizada de falhas com IA é apontada como um dos fatores.</p>
+<div style="height:12px"></div>
+<p>Existe também um desequilíbrio de incentivos. Encontrar vulnerabilidade virou vitrine: empresas de IA divulgam scanners que varrem projetos open source e cada achado vira material de marketing. A correção, por outro lado, é custo, e quem arca com ele não é quem encontrou, é quem precisa validar, corrigir e manter.</p>
+<div style="height:12px"></div>
+<h2>Torvalds Não É Contra a IA</h2>
+<div style="height:12px"></div>
+<p>Seria natural esperar uma reação de rejeição do projeto. Não foi o que aconteceu.</p>
+<div style="height:12px"></div>
+<p>Cerca de dois meses depois daquela reclamação, a comunidade se dividiu em torno de um bot de revisão automática de patches. Parte dos desenvolvedores quis o direito de recusar revisões feitas por máquina. Um deles chegou a argumentar que não há justificativa ética pra usar IA generativa em software livre.</p>
+<div style="height:12px"></div>
+<p>A resposta do Torvalds foi categórica. Como mantenedor principal, ele deixou claro que o Linux não é um projeto anti-IA e que quem discordar tem a saída que o próprio open source oferece: fazer um fork ou sair. Reconheceu que a IA pode ser uma ferramenta dolorosa pros mantenedores, inclusive porque não para de achar bugs constrangedores, mas lembrou que ninguém é obrigado a usá-la. E completou, numa frase que repercutiu bastante, que a IA tem defeitos, mas a inteligência natural também nem sempre é grande coisa.</p>
+<div style="height:12px"></div>
+<p>Não há contradição com o desabafo de maio. A crítica nunca foi à ferramenta, foi à forma de uso. Na mesma mensagem, ele pedia que quem quisesse contribuir lesse a documentação, enviasse a correção junto com o relato e agregasse valor real ao que a IA produziu. O incômodo é de curto prazo. No longo prazo, bug encontrado e corrigido é ganho.</p>
+<div style="height:12px"></div>
+<p>O próprio Torvalds usa essas ferramentas. Semanas depois, ao depurar um problema no driver de GPU Intel Xe (24 patches de depuração e 18 boots depois, a correção era trocar um <code>round_up()</code> por <code>round_down()</code>), ele relatou que a IA fez boa parte do trabalho pesado, apesar de ter afirmado mais de uma vez que o problema era impossível.</p>
+<div style="height:12px"></div>
+<p>O atrito, portanto, não está na tecnologia. Está nos gargalos e no desgaste humano que uma ferramenta tão eficiente provoca.</p>
+<div style="height:12px"></div>
+<h2>O Embargo Perdeu o Sentido</h2>
+<div style="height:12px"></div>
+<p>A divulgação responsável sempre seguiu um roteiro conhecido: quem encontra uma falha grave avisa o responsável de forma privada, aguarda a correção e só então torna o problema público. A lista privada do kernel existe por causa desse modelo.</p>
+<div style="height:12px"></div>
+<p>O modelo depende de uma premissa, a de que a falha é conhecida por poucos. Com IA, essa premissa não se sustenta: se uma pessoa encontrou o bug com uma ferramenta, é razoável supor que dezenas de outras encontraram o mesmo.</p>
+<div style="height:12px"></div>
+<p>O kernel formalizou isso. A documentação oficial agora orienta que falhas encontradas com auxílio de IA sejam tratadas como públicas, mantendo uma ressalva importante: detalhes de exploração não devem ser divulgados. O relato informa que o problema existe e o mantenedor solicita informações adicionais em privado, se necessário. Como mais de 90% do que chega não é crítico, falhas de severidade baixa ou média passam a ser corrigidas diretamente no Git, sem destacar o aspecto de segurança.</p>
+<div style="height:12px"></div>
+<p>É uma mudança cultural grande. O sigilo que organizou a divulgação de vulnerabilidades por décadas está sendo abandonado, não por escolha, mas porque deixou de ser possível.</p>
+<div style="height:12px"></div>
+<h2>Cortar Pra Sobreviver</h2>
+<div style="height:12px"></div>
+<p>Com mais relatos do que capacidade de análise, a equipe de rede do kernel optou por reduzir a superfície. O código inclui drivers de placas de rede dos anos 90, suporte a radioamador, ATM e ISDN: tecnologias com pouquíssimos usuários, mas que as ferramentas de IA analisam com o mesmo rigor do resto do código, encontrando falhas do mesmo jeito.</p>
+<div style="height:12px"></div>
+<p><strong>Jakub Kicinski</strong>, um dos mantenedores de rede, foi objetivo: não existe capacidade pra revisar todas as correções geradas por IA, e ignorar correções de segurança não é uma alternativa. A proposta foi remover o código: um pull request tirando drivers antigos e subsistemas inteiros como ISDN, AX.25 (radioamador), CAIF e ATM, cerca de <strong>138 mil linhas</strong> no total. A justificativa pra retirar o suporte a radioamador mencionava explicitamente a falta de voluntários pra lidar com o volume de relatos gerados por IA.</p>
+<div style="height:12px"></div>
+<p>Meses depois, ao consolidar as mudanças de rede do Linux 7.3, Kicinski estimou que entre um terço e metade do que entrou no net-next era motivado por IA. Nas estatísticas do ciclo anterior, ele já tinha registrado que os mantenedores gastavam cerca de metade do tempo tentando refutar revisões feitas por IA.</p>
+<div style="height:12px"></div>
+<p>O resultado é contraintuitivo: uma tecnologia que deveria aumentar a segurança do kernel está levando à remoção de partes dele. O código antigo funcionava e não incomodava ninguém. Virou problema quando passou a ser analisado incansavelmente.</p>
+<div style="height:12px"></div>
+<h2>Proibir Não Resolve</h2>
+<div style="height:12px"></div>
+<p>Alguns projetos tentaram o caminho da proibição. O <strong>QEMU</strong>, amplamente usado em virtualização, vetou contribuições feitas com IA. Um ano depois, um dos principais desenvolvedores sugeriu flexibilizar a regra, argumentando que, com a evolução das ferramentas, uma proibição total ficou difícil de defender. A proposta segue em discussão e o veto continua em vigor.</p>
+<div style="height:12px"></div>
+<p>O Torvalds rejeita essa abordagem de forma explícita. Ele disse que vai ignorar, em alto e bom som, quem tentar impedir os outros de usar essas ferramentas, e que a resposta aos problemas da IA não é enfiar a cabeça na areia e cantar "lá lá lá, não estou ouvindo".</p>
+<div style="height:12px"></div>
+<p>Há ainda um contraponto revelador: a própria equipe de rede, a mais afetada pelo volume, já usa bots de revisão por IA em cada patch enviado e, segundo o pull request de rede do 7.3, conta com acesso a vários modelos de ponta com crédito à Meta. A mesma tecnologia que gera a sobrecarga ajuda a absorvê-la. A posição do Torvalds resume bem: o objetivo é que essas ferramentas trabalhem a favor dos mantenedores, e não apenas contra eles.</p>
+<div style="height:12px"></div>
+<h2>O Que a IA Não Pode Assinar</h2>
+<div style="height:12px"></div>
+<p>Resta a pergunta: se a IA encontra falhas e escreve correções, ela poderia manter o kernel sozinha?</p>
+<div style="height:12px"></div>
+<p>Os mantenedores do BPF, um dos subsistemas mais sensíveis do kernel, publicaram um aviso intitulado "férias de verão": vários deles ficariam ausentes ao mesmo tempo, e mais bugs seriam marcados como "não será corrigido". <strong>Alexei Starovoitov</strong> criticou os patches em que alguém só repassa o bug achado pela IA e a correção escrita pela IA, sem checar quase nada. A IA já é boa em encontrar problemas, mas ainda não é confiável pra corrigi-los sem supervisão. Na avaliação dele, aplicar cem correções pra cem bugs que nunca ocorreriam em produção não é motivo de comemoração.</p>
+<div style="height:12px"></div>
+<p>Na lista de segurança, Tarreau descreveu algo semelhante: no volume atual, o trabalho se limita à triagem, separando o que é urgente do que pode esperar.</p>
+<div style="height:12px"></div>
+<p>É aqui que aparece o limite real. Toda alteração aceita no kernel leva uma linha <code>Signed-off-by</code>, que identifica quem responde por ela, e a documentação do projeto é explícita: um agente de IA não pode assinar. Só uma pessoa pode atestar, inclusive do ponto de vista legal, a origem do código.</p>
+<div style="height:12px"></div>
+<p>Isso significa que, por mais correções que as ferramentas produzam, cada uma depende de alguém que a leia, entenda e aceite assumir a responsabilidade por ela. E esse grupo não cresce no mesmo ritmo. Empresas contratam desenvolvedores de kernel pra criar funcionalidades, raramente pra manutenção, que acaba acontecendo em boa parte no tempo livre das pessoas. É um modelo pouco sustentável e que não atrai novos mantenedores. As pessoas tiram férias, se esgotam e removem código antigo pra conseguir dar conta do resto.</p>
+<div style="height:12px"></div>
+<p>A IA não está quebrando o Linux. Está deixando evidente que uma peça central da infraestrutura da internet depende do tempo e da atenção de um grupo de pessoas pequeno demais pra responsabilidade que carrega. O recurso escasso no kernel hoje não é código. É atenção humana.</p>
+<div style="height:12px"></div>
+<hr>
+<div style="height:12px"></div>
+<p><em>Relacionado: <a href="https://www.tomshardware.com/software/linux/linus-torvalds-says-ai-bug-reports-have-made-the-linux-security-mailing-list-almost-entirely-unmanageable" target="_blank" rel="noopener">Tom's Hardware: Torvalds says AI bug reports made the security list almost entirely unmanageable</a> · <a href="https://www.theregister.com/software/2026/03/26/linux-kernel-czar-says-ai-bug-reports-arent-slop-anymore/5226256" target="_blank" rel="noopener">The Register: Linux kernel czar says AI bug reports aren't slop anymore</a> · <a href="https://www.theregister.com/software/2026/04/06/ai-slop-got-better-so-now-maintainers-have-more-work/5223172" target="_blank" rel="noopener">The Register: AI slop got better, so now maintainers have more work</a> · <a href="https://www.tomshardware.com/software/linux/linux-kernel-nears-2-000-cves-per-release-as-ai-bug-hunters-scour-40-million-lines-of-code-maintainers-say-they-are-completely-overwhelmed" target="_blank" rel="noopener">Tom's Hardware: Linux kernel nears 2,000 CVEs per release</a> · <a href="https://www.theregister.com/ai-and-ml/2026/07/15/linus-torvalds-tells-ai-haters-to-fork-off/5271894" target="_blank" rel="noopener">The Register: Linus Torvalds tells AI haters to fork off</a> · <a href="https://adtmag.com/articles/2026/07/28/torvalds-tells-linux-kernel-critics-ai-is-not-going-anywhere.aspx" target="_blank" rel="noopener">ADTmag: Torvalds tells kernel critics AI isn't going anywhere</a> · <a href="https://www.pcgamer.com/hardware/linus-torvalds-details-his-debug-session-from-hell-pushing-an-ai-to-fix-an-error-it-repeatedly-said-was-impossible-and-unsolvable-he-then-made-it-write-the-report/" target="_blank" rel="noopener">PC Gamer: Torvalds' debug session from hell</a> · <a href="https://docs.kernel.org/process/security-bugs.html" target="_blank" rel="noopener">kernel.org: Reporting security bugs</a> · <a href="https://docs.kernel.org/process/coding-assistants.html" target="_blank" rel="noopener">kernel.org: AI Coding Assistants</a> · <a href="https://www.phoronix.com/news/Linux-7.1-PR-Remove-Old-Net" target="_blank" rel="noopener">Phoronix: Pull request to remove old network drivers and ISDN due to AI/LLM noise</a> · <a href="https://lwn.net/Articles/1068928/" target="_blank" rel="noopener">LWN: Kernel code removals driven by LLM-created security reports</a> · <a href="https://lwn.net/Articles/1067741/" target="_blank" rel="noopener">LWN: netdev development stats for 7.1</a> · <a href="https://ratatoskr.run/bpf/2026/07/17206127" target="_blank" rel="noopener">BPF list: Summer vacations and "Won't Fix" bugs</a> · <a href="https://www.theregister.com/ai-and-ml/2026/05/29/qemu-mulls-relaxing-ai-contribution-ban/5248638" target="_blank" rel="noopener">The Register: QEMU mulls relaxing AI contribution ban</a></em></p>
+<div style="height:12px"></div>
+    </div>
+  </div>
+
+  <footer>
+    <div class="footer-sig">ORUAM_OLIUJ</div>
+    <div class="footer-copy"><span class="en">&gt; oruam.cloud/writing · 2026_</span><span class="pt" hidden>&gt; oruam.cloud/writing · 2026_</span></div>
+  </footer>
+</div>
+
+<script>
+const canvas = document.getElementById('matrix-canvas');
+const ctx = canvas.getContext('2d');
+canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+window.addEventListener('resize', () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; init(); });
+const chars = 'アイウエオカキクケコ0123456789ABCDEF$#@%&';
+const fontSize = 16;
+let columns, drops;
+function init() { columns = Math.floor(canvas.width / fontSize); drops = Array(columns).fill(1); }
+function draw() {
+  const theme = document.documentElement.dataset.theme;
+  ctx.fillStyle = theme === 'green' ? 'rgba(0,3,0,0.04)' : theme === 'amber' ? 'rgba(2,1,0,0.04)' : theme === 'light' ? 'rgba(245,242,235,0.06)' : 'rgba(0,3,8,0.04)';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  ctx.fillStyle = theme === 'green' ? '#00ff41' : theme === 'amber' ? '#ff8c00' : theme === 'light' ? '#1a5c3a' : '#00b4ff';
+  ctx.font = fontSize + 'px Share Tech Mono';
+  for (let i = 0; i < drops.length; i++) {
+    const char = chars[Math.floor(Math.random() * chars.length)];
+    ctx.fillText(char, i * fontSize, drops[i] * fontSize);
+    if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
+    drops[i]++;
+  }
+}
+init(); setInterval(draw, 45);
+
+const themeNames = {
+  en: { green: '◈ Green', amber: '◈ Amber', blue: '◈ Blue', light: '◈ Light' },
+  pt: { green: '◈ Verde', amber: '◈ Âmbar', blue: '◈ Azul', light: '◈ Claro' },
+};
+function currentLang() {
+  const qp = new URLSearchParams(window.location.search);
+  const urlLang = qp.get('lang');
+  if (urlLang === 'en' || urlLang === 'pt') return urlLang;
+  return localStorage.getItem('lang') === 'pt' ? 'pt' : 'en';
+}
+function nextTheme(cur) { cur = cur || 'blue'; return cur==='blue'?'green':cur==='green'?'amber':cur==='amber'?'light':'blue'; }
+function updateThemeBtn(cur) { document.getElementById('theme-btn').textContent = themeNames[currentLang()][nextTheme(cur)]; }
+function toggleTheme() {
+  const html = document.documentElement;
+  const next = nextTheme(html.dataset.theme);
+  html.dataset.theme = next === 'blue' ? '' : next;
+  localStorage.setItem('theme', next);
+  updateThemeBtn(next);
+}
+
+function setLang(lang) {
+  document.querySelectorAll('.en').forEach(el => el.hidden = (lang !== 'en'));
+  document.querySelectorAll('.pt').forEach(el => el.hidden = (lang !== 'pt'));
+  document.getElementById('lang-btn').textContent = lang === 'en' ? 'PT-BR' : 'ENGLISH';
+  document.documentElement.lang = lang;
+  localStorage.setItem('lang', lang);
+  updateThemeBtn(document.documentElement.dataset.theme);
+}
+function toggleLang() { setLang(currentLang() === 'en' ? 'pt' : 'en'); }
+
+function shareTo(platform) {
+  const url = window.location.href;
+  const title = document.title.replace(/ — Julio Cesar Mauro$/, '');
+  const u = encodeURIComponent(url);
+  const t = encodeURIComponent(title);
+  if (platform === 'linkedin') {
+    window.open('https://www.linkedin.com/sharing/share-offsite/?url=' + u, '_blank', 'noopener');
+  } else if (platform === 'whatsapp') {
+    window.open('https://wa.me/?text=' + encodeURIComponent(title + ' ' + url), '_blank', 'noopener');
+  } else if (platform === 'telegram') {
+    window.open('https://t.me/share/url?url=' + u + '&text=' + t, '_blank', 'noopener');
+  } else if (platform === 'copy') {
+    const btn = event.target.closest('button');
+    const original = btn.innerHTML;
+    navigator.clipboard.writeText(url).then(() => {
+      btn.innerHTML = (currentLang() === 'pt') ? 'Link copiado!' : 'Link copied!';
+      setTimeout(() => { btn.innerHTML = original; }, 1800);
+    }).catch(() => { alert(url); });
+  }
+}
+setLang(currentLang());
+</script>
+<script src="/js/picker.js?v=2" defer></script>
+<script>
+/* TTS-TEST: leitura em voz alta com a Web Speech API */
+(function(){
+  const S = window.speechSynthesis;
+  const $ = id => document.getElementById(id);
+  const status = $('tts-status');
+  if (!S || !window.SpeechSynthesisUtterance) {
+    $('tts-row').querySelectorAll('button,select').forEach(b => b.disabled = true);
+    status.textContent = 'Text to speech not supported in this browser.';
+    return;
+  }
+  let blocks = [], idx = 0, playing = false, paused = false, token = 0;
+  const lang = () => (document.documentElement.lang || 'en').startsWith('pt') ? 'pt-BR' : 'en-US';
+  function pickVoice(){
+    const L = lang(), base = L.slice(0,2);
+    const vs = S.getVoices().filter(v => v.lang.replace('_','-').toLowerCase().startsWith(base));
+    const exact = vs.filter(v => v.lang.replace('_','-') === L);
+    const pool = exact.length ? exact : vs;
+    return pool.find(v => /premium|enhanced|natural|neural|google/i.test(v.name)) || pool.find(v => v.default) || pool[0] || null;
+  }
+  function collect(){
+    const body = [...document.querySelectorAll('.art-body')].find(b => !b.hidden);
+    if (!body) return [];
+    return [...body.querySelectorAll('h1,h2,h3,p,li')]
+      .filter(e => !e.closest('pre,table,code') && !(e.tagName==='P' && e.closest('li')) && e.innerText.trim());
+  }
+  function mark(el, on){ if (el) el.classList.toggle('tts-on', on); }
+  function ui(){
+    const nav = document.querySelector('nav');
+    $('tts-row').style.setProperty('--tts-top', (nav ? nav.offsetHeight : 0) + 'px');
+    $('tts-row').classList.toggle('tts-sticky', playing || paused);
+    $('tts-play').disabled = playing && !paused;
+    $('tts-pause').disabled = !playing || paused;
+    $('tts-stop').disabled = !playing && !paused;
+  }
+  function say(){
+    if (idx >= blocks.length) { stop(true); return; }
+    const my = ++token, el = blocks[idx];
+    const u = new SpeechSynthesisUtterance(el.innerText.replace(/\s+/g,' ').trim());
+    u.lang = lang(); const v = pickVoice(); if (v) u.voice = v;
+    u.rate = parseFloat($('tts-rate').value) || 1;
+    u.onstart = () => { if (my!==token) return; mark(el,true); el.scrollIntoView({behavior:'smooth', block:'center'});
+      status.textContent = (v ? v.name : u.lang) + '  ·  ' + (idx+1) + '/' + blocks.length; };
+    u.onend = () => { if (my!==token) return; mark(el,false); idx++; if (playing && !paused) say(); };
+    u.onerror = e => { if (my!==token) return; mark(el,false); if (e.error==='interrupted'||e.error==='canceled') return;
+      status.textContent = 'Error: ' + e.error; idx++; if (playing && !paused) say(); };
+    S.speak(u);
+  }
+  function play(){
+    if (!playing) { blocks = collect(); idx = 0; }
+    playing = true; paused = false; ui();
+    S.cancel(); say();
+    try { window.goatcounter && window.goatcounter.count({path:'tts-play-linux-ai', title:'TTS play', event:true}); } catch(e){}
+  }
+  function pause(){ paused = true; token++; S.cancel(); blocks.forEach(b=>mark(b,false)); ui();
+    status.textContent = (lang()==='pt-BR' ? 'Pausado em ' : 'Paused at ') + (idx+1) + '/' + blocks.length; }
+  function stop(done){ playing = false; paused = false; token++; S.cancel(); blocks.forEach(b=>mark(b,false)); idx = 0; ui();
+    status.textContent = done ? (lang()==='pt-BR' ? 'Fim.' : 'Done.') : ''; }
+  $('tts-play').onclick = play;
+  $('tts-pause').onclick = pause;
+  $('tts-stop').onclick = () => stop(false);
+  $('tts-rate').onchange = () => { if (playing && !paused) { token++; S.cancel(); say(); } };
+  // trocar idioma para a leitura
+  const lb = document.getElementById('lang-btn');
+  if (lb) lb.addEventListener('click', () => { if (playing || paused) stop(false); });
+  window.addEventListener('pagehide', () => S.cancel());
+  function showVoice(){ const v = pickVoice(); if (!playing && !paused) status.textContent = v ? ('Voice: ' + v.name + ' (' + v.lang + ')') : ''; }
+  showVoice(); if ('onvoiceschanged' in S) S.addEventListener('voiceschanged', showVoice);
+  ui();
+})();
+</script>
+</body>
+</html>
