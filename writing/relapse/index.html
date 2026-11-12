@@ -437,6 +437,24 @@ footer {
 
 
 [hidden] { display: none !important; }
+/* MOBILE-V2: menu em duas linhas e letra maior no celular */
+@media (max-width: 640px) {
+  .nav-inner { flex-wrap: wrap; gap: 10px 16px; }
+  .nav-home { font-size: 13px; letter-spacing: 2px; }
+  nav a.nav-link { font-size: 12px; }
+  .nav-controls { width: 100%; margin-left: 0; justify-content: flex-start; }
+  .theme-toggle { font-size: 11px; padding: 6px 12px; }
+  .art-body p, .art-body li { font-size: 17px; line-height: 1.75; }
+  .art-body blockquote { font-size: 16px; }
+  .art-body code, .art-body pre { font-size: 14px; }
+  .article-tag, .article-level, .share-label, .share-btn, .back-btn { font-size: 12px; }
+  .article-title { font-size: 17px; }
+  .article-desc, .card-desc, .header-sub { font-size: 16px; }
+  .module-item, .badge, .card-codename, .modules-label { font-size: 12px; }
+  .stack-tag, .card-meta, .card-link { font-size: 13px; }
+  .footer-copy { font-size: 12px; }
+}
+/* FIM MOBILE-V2 */
 </style>
 <script data-goatcounter="https://oruam.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 </head>
