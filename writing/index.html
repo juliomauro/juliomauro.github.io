@@ -654,11 +654,14 @@ footer {
 
 /* MOBILE-V2: menu em duas linhas e letra maior no celular */
 @media (max-width: 640px) {
-  .nav-inner { flex-wrap: wrap; gap: 10px 16px; }
+  .nav-inner { flex-wrap: wrap; gap: 8px 18px; }
+  .nav-inner::after { content: ''; order: 2; flex-basis: 100%; height: 0; }
+  nav a.nav-link { order: 3; }
   .nav-home { font-size: 13px; letter-spacing: 2px; }
   nav a.nav-link { font-size: 12px; }
-  .nav-controls { width: 100%; margin-left: 0; justify-content: flex-start; }
-  .theme-toggle { font-size: 11px; padding: 6px 12px; }
+  .nav-controls { order: 1; margin-left: auto; gap: 6px; }
+  .theme-toggle { font-size: 10px; letter-spacing: 1px; padding: 5px 8px; }
+  .share-row { margin-bottom: 28px; }
   .art-body p, .art-body li { font-size: 17px; line-height: 1.75; }
   .art-body blockquote { font-size: 16px; }
   .art-body code, .art-body pre { font-size: 14px; }
@@ -669,6 +672,12 @@ footer {
   .stack-tag, .card-meta, .card-link { font-size: 13px; }
   .footer-copy { font-size: 12px; }
 }
+@media (max-width: 380px) {
+  .nav-home { font-size: 11px; letter-spacing: 1px; gap: 6px; }
+  .nav-inner { column-gap: 12px; }
+  .theme-toggle { font-size: 9px; letter-spacing: 0.5px; padding: 4px 6px; }
+}
+@media (max-width: 600px) { .art-body hr { margin: 20px 0; } }
 /* FIM MOBILE-V2 */
 </style>
 <script data-goatcounter="https://oruam.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
@@ -954,6 +963,7 @@ footer {
     <div class="art-back">
       <button class="back-btn" onclick="closeArticle()" data-i18n="back-btn">← Writing</button>
     </div>
+    <div id="article-view-meta" class="article-meta" style="margin-bottom:20px;"></div>
     <div class="share-row">
       <span class="share-label"><span class="en">Share:</span><span class="pt" hidden>Compartilhar:</span></span>
       <button class="share-btn" onclick="shareTo('linkedin')" type="button">LinkedIn</button>
@@ -2390,6 +2400,11 @@ function openArticle(path) {
   window.scrollTo({ top: 0, behavior: 'smooth' });
 
   const key = ART_KEY[path];
+
+  const metaBox = document.getElementById('article-view-meta');
+  const srcItem = document.querySelector('.article-item[data-path="' + path + '"] .article-meta');
+  metaBox.innerHTML = srcItem ? srcItem.innerHTML : '';
+  metaBox.style.display = srcItem ? '' : 'none';
 
   const shareSlug = key || slug;
   currentShareUrl = 'https://oruam.cloud/writing/' + shareSlug + '/';
