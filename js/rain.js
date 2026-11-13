@@ -40,7 +40,7 @@
         y: Math.random() * H,
         len: (8 + Math.random() * 24) * dpr,
         v: (3 + Math.random() * 7) * dpr,
-        a: 0.1 + Math.random() * 0.38,
+        a: 0.05 + Math.random() * 0.15,
         mag: Math.random() < 0.22
       });
     }
