@@ -84,23 +84,29 @@
 [data-theme="amber"] nav { background: rgba(2,1,0,0.95); }
 
 [data-theme="noir"] {
-  --bg:         #060d0e;
-  --surface:    #0a1618;
-  --border:     #13585a;
-  --green:      #37cdd4;
-  --green-mid:  #2aa3a9;
-  --green-dim:  #37cdd422;
-  --green-dark: #06302f;
-  --text:       #86d4d8;
-  --text-dim:   #5f9b9d;
-  --white:      #e6f6f6;
-  --glow:       0 0 10px #37cdd466, 0 0 20px #37cdd433;
-  --glow-strong:0 0 8px #37cdd4, 0 0 20px #37cdd488, 0 0 40px #37cdd444;
+  --bg:         #07110f;
+  --surface:    #0c1a17;
+  --border:     #15605c;
+  --green:      #2fe3cf;
+  --green-mid:  #1fb3a2;
+  --green-dim:  #2fe3cf22;
+  --green-dark: #063330;
+  --text:       #93e7dc;
+  --text-dim:   #5aa39a;
+  --white:      #eafff9;
+  --glow:       0 0 10px #2fe3cf55, 0 0 22px #ff2e8833;
+  --glow-strong:0 0 8px #2fe3cf, 0 0 22px #2fe3cf88, 0 0 44px #ff2e8855;
 }
-[data-theme="noir"] nav            { background: rgba(6,13,14,0.95); }
-[data-theme="noir"] .link-pill     { border-color: #13585a; }
-[data-theme="noir"] .section-label { color: #ff2e88; }
-[data-theme="noir"] .tl-year       { color: #f0a74b; }
+[data-theme="noir"] nav              { background: rgba(7,17,15,0.95); }
+[data-theme="noir"] .link-pill       { border-color: #7a2a52; }
+[data-theme="noir"] .link-pill:hover { border-color: #ff2e88; box-shadow: 0 0 14px #ff2e8855; }
+[data-theme="noir"] .section-label   { color: #ff2e88; }
+[data-theme="noir"] .section-label::after { background: linear-gradient(90deg, #ff2e88, transparent); }
+[data-theme="noir"] .latest-box      { border-color: #7a2a52; }
+[data-theme="noir"] .latest-label    { color: #ff2e88; }
+[data-theme="noir"] .tl-year         { color: #f0a74b; }
+[data-theme="noir"] .tl-company      { color: #f0a74b; }
+[data-theme="noir"] .tl-dot          { color: #ff2e88; }
 [data-theme="light"] {
   --bg:          #f5f2eb;
   --surface:     #eae6db;
