@@ -19,7 +19,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
 <link rel="canonical" href="https://oruam.cloud/writing/">
 <link rel="alternate" type="application/rss+xml" title="Julio Cesar Mauro — Writing" href="https://oruam.cloud/feed.xml">
-<script>(function(){var t=null,q=null;try{q=new URLSearchParams(location.search).get('theme');}catch(e){}var ok=['blue','green','amber','light'];if(q&&ok.indexOf(q)>-1){t=q;try{localStorage.setItem('theme',q);}catch(e){}}else{try{t=localStorage.getItem('theme');}catch(e){}}if(t==='green'||t==='amber'||t==='light')document.documentElement.dataset.theme=t;})();</script>
+<script>(function(){var t=null,q=null;try{q=new URLSearchParams(location.search).get('theme');}catch(e){}var ok=['blue','green','amber','light','noir'];if(q&&ok.indexOf(q)>-1){t=q;try{localStorage.setItem('theme',q);}catch(e){}}else{try{t=localStorage.getItem('theme');}catch(e){}}if(t==='green'||t==='amber'||t==='light'||t==='noir')document.documentElement.dataset.theme=t;})();</script>
 <style>
 :root {
   --bg:          #000308;
@@ -65,6 +65,24 @@
 }
 [data-theme="amber"] nav { background: rgba(2,1,0,0.95); }
 
+[data-theme="noir"] {
+  --bg:         #060d0e;
+  --surface:    #0a1618;
+  --border:     #13585a;
+  --green:      #37cdd4;
+  --green-mid:  #2aa3a9;
+  --green-dim:  #37cdd422;
+  --green-dark: #06302f;
+  --text:       #86d4d8;
+  --text-dim:   #5f9b9d;
+  --white:      #e6f6f6;
+  --glow:       0 0 10px #37cdd466, 0 0 20px #37cdd433;
+  --glow-strong:0 0 8px #37cdd4, 0 0 20px #37cdd488, 0 0 40px #37cdd444;
+}
+[data-theme="noir"] nav            { background: rgba(6,13,14,0.95); }
+[data-theme="noir"] .link-pill     { border-color: #13585a; }
+[data-theme="noir"] .section-label { color: #ff2e88; }
+[data-theme="noir"] .tl-year       { color: #f0a74b; }
 [data-theme="light"] {
   --bg:          #f5f2eb;
   --surface:     #eae6db;
@@ -2301,13 +2319,13 @@ let currentShareUrl = null;
 let currentShareTitle = null;
 
 const themeNames = {
-  en:  { green: '◈ Green', amber: '◈ Amber', blue: '◈ Blue', light: '◈ Light' },
-  pt:  { green: '◈ Verde', amber: '◈ Âmbar', blue: '◈ Azul', light: '◈ Claro' },
+  en:  { green: '◈ Green', amber: '◈ Amber', blue: '◈ Blue', light: '◈ Light', noir: '◈ Noir' },
+  pt:  { green: '◈ Verde', amber: '◈ Âmbar', blue: '◈ Azul', light: '◈ Claro', noir: '◈ Noir' },
 };
 function updateThemeBtn(currentTheme) {
   const btn = document.getElementById('theme-btn');
   if (!btn) return;
-  const next = currentTheme === 'blue' ? 'green' : currentTheme === 'green' ? 'amber' : currentTheme === 'amber' ? 'light' : 'blue';
+  const next = currentTheme === 'blue' ? 'green' : currentTheme === 'green' ? 'amber' : currentTheme === 'amber' ? 'light' : currentTheme === 'light' ? 'noir' : 'blue';
   btn.textContent = (themeNames[localStorage.getItem('lang') || 'en'] || themeNames.en)[next];
 }
 
@@ -2343,7 +2361,7 @@ function toggleLang() {
 function toggleTheme() {
   const html = document.documentElement;
   const cur = html.dataset.theme || 'blue';
-  const next = cur === 'blue' ? 'green' : cur === 'green' ? 'amber' : cur === 'amber' ? 'light' : 'blue';
+  const next = cur === 'blue' ? 'green' : cur === 'green' ? 'amber' : cur === 'amber' ? 'light' : cur === 'light' ? 'noir' : 'blue';
   html.dataset.theme = next === 'blue' ? '' : next;
   localStorage.setItem('theme', next);
   updateThemeBtn(next);
