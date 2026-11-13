@@ -18,7 +18,7 @@
 <meta name="twitter:image" content="https://oruam.cloud/og/header.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
-<script>(function(){var t=null,q=null;try{q=new URLSearchParams(location.search).get('theme');}catch(e){}var ok=['blue','green','amber','light','noir'];if(q&&ok.indexOf(q)>-1){t=q;try{localStorage.setItem('theme',q);}catch(e){}}else{try{t=localStorage.getItem('theme');}catch(e){}}if(t==='green'||t==='amber'||t==='light'||t==='noir')document.documentElement.dataset.theme=t;})();</script>
+<script>(function(){var t=null,q=null;try{q=new URLSearchParams(location.search).get('theme');}catch(e){}var ok=['blue','green','amber','light','noir'];if(q&&ok.indexOf(q)>-1){t=q;try{localStorage.setItem('theme',q);}catch(e){}}else{try{t=localStorage.getItem('theme');}catch(e){}}if(!t)t='noir';if(t==='green'||t==='amber'||t==='light'||t==='noir')document.documentElement.dataset.theme=t;})();</script>
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -93,6 +93,7 @@
 }
 [data-theme="noir"] body             { background: radial-gradient(90% 60% at 82% -8%, rgba(240,167,75,0.10), transparent 55%), radial-gradient(80% 70% at 12% 4%, rgba(255,46,136,0.07), transparent 55%), linear-gradient(180deg, #0a1618, #060d0e 55%); }
 [data-theme="noir"] nav              { background: rgba(6,13,14,0.92); }
+[data-theme="noir"] #matrix-canvas   { display: none; }
 [data-theme="noir"] h1               { color: var(--white); }
 [data-theme="noir"] .art-body h1     { color: var(--white); }
 [data-theme="noir"] .article-title   { color: var(--white); }
@@ -978,5 +979,6 @@ function shareTo(platform) {
 setLang(currentLang());
 </script>
 <script src="/js/picker.js?v=3" defer></script>
+<script src="/js/rain.js?v=1" defer></script>
 </body>
 </html>
