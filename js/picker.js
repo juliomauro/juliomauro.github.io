@@ -9,17 +9,18 @@
 (function () {
   'use strict';
 
-  var THEMES = ['blue', 'green', 'amber', 'light'];
+  var THEMES = ['blue', 'green', 'amber', 'light', 'noir'];
   var NAMES = {
-    en: { blue: 'Blue', green: 'Green', amber: 'Amber', light: 'Light', en: 'English', pt: 'Português', theme: 'Theme', lang: 'Language' },
-    pt: { blue: 'Azul', green: 'Verde', amber: 'Âmbar', light: 'Claro', en: 'English', pt: 'Português', theme: 'Tema', lang: 'Idioma' }
+    en: { blue: 'Blue', green: 'Green', amber: 'Amber', light: 'Light', noir: 'Noir', en: 'English', pt: 'Português', theme: 'Theme', lang: 'Language' },
+    pt: { blue: 'Azul', green: 'Verde', amber: 'Âmbar', light: 'Claro', noir: 'Noir', en: 'English', pt: 'Português', theme: 'Tema', lang: 'Idioma' }
   };
   // background color with the text color in the corner, as each theme shows it
   var SWATCH = {
     blue: 'linear-gradient(135deg, #000308 58%, #00b4ff 58%)',
     green: 'linear-gradient(135deg, #000300 58%, #00ff41 58%)',
     amber: 'linear-gradient(135deg, #020100 58%, #ff8c00 58%)',
-    light: 'linear-gradient(135deg, #f5f2eb 58%, #1a5c3a 58%)'
+    light: 'linear-gradient(135deg, #f5f2eb 58%, #1a5c3a 58%)',
+    noir: 'linear-gradient(135deg, #060d0e 58%, #37cdd4 58%)'
   };
 
   var themeBtn = document.getElementById('theme-btn');

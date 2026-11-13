@@ -1,0 +1,4 @@
+# Deploy tooling (local only, never published by GitHub Pages)
+cf-purge.sh
+deploy.sh
+.DS_Store
